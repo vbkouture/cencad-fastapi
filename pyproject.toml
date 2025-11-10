@@ -1,0 +1,72 @@
+[project]  # PEP 621 project metadata table (basic package info for packaging and tools)
+name = "fastapi-mongo-starter"  # Distribution package name used when publishing/installing
+version = "0.1.0"  # Current package version (follow semantic versioning)
+description = "Production-grade FastAPI + MongoDB starter (training track)"  # Short package description
+readme = "README.md"  # Path to the README file used as long description on PyPI
+requires-python = ">=3.12"  # Minimum supported Python version
+license = { text = "MIT" }  # License metadata (MIT license text)
+authors = [{ name = "Your Name" }]  # Package author(s) metadata
+dependencies = [  # Runtime dependencies
+  "fastapi==0.115.0",  # FastAPI web framework
+  "uvicorn[standard]==0.30.0",  # ASGI server
+  "pydantic==2.8.2",  # Data validation library
+  "pydantic-settings==2.3.1",  # Settings management from env vars
+  "motor==3.5.1",  # Async MongoDB driver
+  "pymongo==4.7.2",  # MongoDB Python driver (required by motor)
+  "python-jose[cryptography]==3.3.0",  # JWT token generation/verification
+  "passlib[bcrypt]==1.7.4",  # Password hashing
+  "python-multipart==0.0.6",  # Form data support
+]
+
+[project.optional-dependencies]  # Optional dependency groups (extras) such as dev/test tooling
+dev = [  # "dev" extra: development-only packages for formatting, linting, testing, etc.
+  # format/lint/type/test  # human-readable grouping comment for the following packages
+  "black==24.8.0",  # Black: opinionated code formatter pinned to a specific version
+  "ruff==0.6.8",  # Ruff: fast linter/auto-fixer (Rust-based) pinned version
+  "mypy==1.11.2",  # Mypy: static type checker pinned version
+  "pytest==8.3.2",  # Pytest: test runner pinned version
+  "pytest-asyncio==0.23.8",  # Pytest-asyncio: asyncio support for pytest
+  "httpx==0.27.2",  # HTTPX: async HTTP client (useful for testing async endpoints)
+  # security/tools  # grouping comment for security and auditing tools
+  "bandit==1.7.9",  # Bandit: security linter to find common security issues
+  "pip-audit==2.7.3",  # pip-audit: audit installed packages for known vulnerabilities
+  # pre-commit  # grouping comment for pre-commit tooling
+  "pre-commit==4.0.1",  # pre-commit: manage and run pre-commit hooks
+  # typing helpers  # grouping comment for typing-related helpers
+  "types-requests",  # types-requests: optional type stubs for the requests package
+]
+
+[build-system]  # PEP 517/518 build system table (how to build the package)
+requires = ["setuptools>=68", "wheel"]  # Build-time requirements (setuptools and wheel)
+build-backend = "setuptools.build_meta"  # Build backend entrypoint used by pip/build tools
+
+[tool.black]  # Configuration for the Black code formatter
+line-length = 100  # Maximum line length Black will wrap to (overrides default 88)
+target-version = ["py312"]  # Target Python version(s) for formatting decisions (3.12)
+
+[tool.ruff]  # Configuration for the Ruff linter/formatter
+line-length = 100  # Ruff's configured line length to match Black
+target-version = "py312"  # Target Python version used by Ruff for rules
+select = ["E","F","I","N","B","UP","C90","S","W","PL"]  # Categories / codes to enable
+ignore = ["S101"]  # allow asserts in tests (ignore security rule S101)
+exclude = ["venv", ".venv", "build", "dist", "node_modules"]  # file paths Ruff should skip
+
+[tool.pytest.ini_options]  # Pytest configuration (mirrors pytest.ini settings)
+minversion = "8.0"  # Minimum pytest version required to run tests
+addopts = "-q --asyncio-mode=auto"  # Additional pytest CLI options (quiet output, asyncio mode only)
+testpaths = ["tests"]  # Default directories where pytest will look for tests
+filterwarnings = [
+    "ignore::DeprecationWarning:jose.jwt",  # Ignore python-jose deprecation warnings (external library)
+]
+
+[tool.asyncio]  # Asyncio configuration for pytest-asyncio
+asyncio_mode = "auto"  # Automatically detect and use asyncio backend
+
+[tool.mypy]  # Configuration for the Mypy static type checker
+python_version = "3.12"  # Assume Python 3.12 semantics for type checking
+strict = true  # Enable strict mode (enables many strong checks)
+warn_unused_ignores = true  # Warn about unused "# type: ignore" comments
+warn_redundant_casts = true  # Warn when casts are redundant
+show_error_codes = true  # Include mypy error codes in output to help look up issues
+pretty = true  # Use pretty-printed output for mypy results
+exclude = "(^venv/|^\\.venv/|^build/|^dist/)"  # Regex of paths to exclude from type checking

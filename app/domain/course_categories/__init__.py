@@ -1,0 +1,1 @@
+"""Course categories domain module."""

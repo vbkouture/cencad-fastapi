@@ -1,0 +1,1 @@
+"""Job roles domain module."""
