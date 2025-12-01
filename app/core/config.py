@@ -22,6 +22,13 @@ class Settings(BaseSettings):
     mongodb_username: str | None = None
     mongodb_password: str | None = None
 
+    # Mailtrap settings
+    mailtrap_api_token: str = ""
+    mailtrap_sender_email: str = "noreply@example.com"
+    mailtrap_sender_name: str = "Support"
+    mailtrap_use_sandbox: bool = True
+    mailtrap_inbox_id: int | None = None
+
     # App settings
     debug: bool = False
 

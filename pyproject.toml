@@ -9,13 +9,14 @@ authors = [{ name = "Your Name" }]  # Package author(s) metadata
 dependencies = [  # Runtime dependencies
   "fastapi==0.115.0",  # FastAPI web framework
   "uvicorn[standard]==0.30.0",  # ASGI server
-  "pydantic==2.8.2",  # Data validation library
+  "pydantic==2.11.7",  # Data validation library (updated for mailtrap compatibility)
   "pydantic-settings==2.3.1",  # Settings management from env vars
   "motor==3.5.1",  # Async MongoDB driver
   "pymongo==4.7.2",  # MongoDB Python driver (required by motor)
   "python-jose[cryptography]==3.3.0",  # JWT token generation/verification
   "passlib[bcrypt]==1.7.4",  # Password hashing
   "python-multipart==0.0.6",  # Form data support
+  "mailtrap==2.3.0",  # Mailtrap email service SDK
 ]
 
 [project.optional-dependencies]  # Optional dependency groups (extras) such as dev/test tooling

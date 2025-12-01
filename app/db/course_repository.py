@@ -79,7 +79,7 @@ class CourseRepository:
             "cost": cost,
             "categoryId": category_id,
             "vendorId": vendor_id,
-            "jobRoleIds": [ObjectId(jid) for jid in (job_role_ids or [])],
+            "jobRoleIds": job_role_ids or [],
             "created_at": ObjectId().generation_time,
             "updated_at": ObjectId().generation_time,
         }
@@ -94,13 +94,22 @@ class CourseRepository:
         Find a course by ID.
 
         Args:
-            course_id: MongoDB ObjectId as string
+            course_id: MongoDB ObjectId as string or string ID
 
         Returns:
             Course document if found, None otherwise
         """
         try:
-            return await self.collection.find_one({"_id": ObjectId(course_id)})
+            # First try as a string ID (current storage format)
+            result = await self.collection.find_one({"_id": course_id})
+            if result:
+                return result
+            
+            # If not found, try as ObjectId in case of mixed format
+            try:
+                return await self.collection.find_one({"_id": ObjectId(course_id)})
+            except Exception:
+                return None
         except Exception:
             return None
 
@@ -167,13 +176,13 @@ class CourseRepository:
         Get courses related to a job role.
 
         Args:
-            job_role_id: MongoDB ObjectId as string
+            job_role_id: Job role ID (as string/UUID)
 
         Returns:
             List of courses related to this job role
         """
         try:
-            return await self.collection.find({"jobRoleIds": ObjectId(job_role_id)}).to_list(length=None)  # type: ignore[return-value]
+            return await self.collection.find({"jobRoleIds": job_role_id}).to_list(length=None)  # type: ignore[return-value]
         except Exception:
             return []
 
@@ -272,7 +281,7 @@ class CourseRepository:
                 update_data["vendorId"] = ObjectId(vendor_id) if vendor_id else None
 
             if job_role_ids is not None:
-                update_data["jobRoleIds"] = [ObjectId(jid) for jid in job_role_ids]
+                update_data["jobRoleIds"] = job_role_ids
 
             if not update_data:
                 # No changes to make

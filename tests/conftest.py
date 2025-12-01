@@ -9,13 +9,24 @@ from app.db import connect_to_mongodb, close_mongodb_connection, get_database
 from app.main import create_app
 
 
+
+@pytest.fixture
+def anyio_backend():
+    """Force anyio to use asyncio backend."""
+    return 'asyncio'
+
+
 @pytest.fixture
 async def setup_db() -> AsyncGenerator[None, None]:
     """Setup and teardown MongoDB for tests."""
     await connect_to_mongodb()
-    yield
-    # Cleanup: drop test database
+    # Ensure clean slate
     db = get_database()  # type: ignore[assignment]
+    await db.client.drop_database(db.name)  # type: ignore[attr-defined]
+    
+    yield
+    
+    # Cleanup: drop test database
     await db.client.drop_database(db.name)  # type: ignore[attr-defined]
     await close_mongodb_connection()
 

@@ -9,6 +9,7 @@ from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.routers import get_v1_router
 from app.db import connect_to_mongodb, close_mongodb_connection
@@ -45,6 +46,18 @@ def create_app() -> FastAPI:
         docs_url="/docs",  # Swagger UI
         redoc_url="/redoc",  # ReDoc UI
         openapi_url="/openapi.json",  # OpenAPI spec
+    )
+
+    # Configure CORS
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=[
+            "http://localhost:5173",
+            "http://localhost:3000",
+        ],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
     )
 
     # Mount v1

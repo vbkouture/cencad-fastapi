@@ -27,21 +27,27 @@ class CourseDetailsDTO(BaseModel):
     """DTO for detailed course information."""
 
     overview: str = Field(
-        min_length=10, max_length=10000, description="Course overview"
+        default="", max_length=10000, description="Course overview"
     )
-    objectives: list[str] = Field(description="Learning objectives")
+    objectives: list[str] = Field(
+        default_factory=list,
+        description="Learning objectives (optional)",
+    )
     prerequisites: list[str] = Field(
         default_factory=list,
         description="Course prerequisites (optional)",
     )
-    syllabus: list[SyllabusWeekDTO] = Field(description="Course syllabus by week")
+    syllabus: list[SyllabusWeekDTO] = Field(
+        default_factory=list,
+        description="Course syllabus by week (optional)",
+    )
 
     @field_validator("objectives")
     @classmethod
     def validate_objectives(cls, v: list[str]) -> list[str]:
         """Validate objectives list."""
-        if not v or len(v) > 20:
-            raise ValueError("Objectives must have 1-20 items")
+        if len(v) > 20:
+            raise ValueError("Objectives must have 0-20 items")
         return v
 
     @field_validator("prerequisites")
@@ -56,8 +62,8 @@ class CourseDetailsDTO(BaseModel):
     @classmethod
     def validate_syllabus(cls, v: list[SyllabusWeekDTO]) -> list[SyllabusWeekDTO]:
         """Validate syllabus list."""
-        if not v or len(v) > 52:
-            raise ValueError("Syllabus must have 1-52 weeks")
+        if len(v) > 52:
+            raise ValueError("Syllabus must have 0-52 weeks")
         return v
 
 
@@ -147,11 +153,26 @@ class CourseResponse(BaseModel):
     image: str | None = Field(description="Course image URL")
     rating: float | None = Field(description="Course rating")
     students: int | None = Field(description="Number of students")
-    certifications: list[str] = Field(description="Associated certifications")
+    certifications: list[str] = Field(
+        default_factory=list, description="Associated certifications"
+    )
     cost: float | None = Field(description="Course cost/price")
     category_id: str | None = Field(description="Category ID")
     vendor_id: str | None = Field(description="Vendor ID")
-    job_role_ids: list[str] = Field(description="Related job role IDs")
+    job_role_ids: list[str] = Field(
+        default_factory=list, description="Related job role IDs"
+    )
     course_details: CourseDetailsDTO = Field(description="Detailed course information")
     created_at: datetime = Field(description="Creation timestamp")
     updated_at: datetime = Field(description="Last update timestamp")
+
+
+class PaginatedCourseResponse(BaseModel):
+    """Response DTO for paginated courses list."""
+
+    data: list[CourseResponse] = Field(description="List of courses")
+    total: int = Field(description="Total number of courses matching filters")
+    skip: int = Field(description="Number of results skipped (offset)")
+    limit: int = Field(description="Number of results in this page")
+    pages: int = Field(description="Total number of pages")
+

@@ -11,6 +11,7 @@ from app.api.v1.schemas.course_dto import (
     CourseResponse,
     CourseDetailsDTO,
     SyllabusWeekDTO,
+    PaginatedCourseResponse,
 )
 from app.core.dependencies import require_admin
 from app.db import get_database
@@ -22,7 +23,7 @@ router = APIRouter(prefix="/courses", tags=["courses"])
 security = HTTPBearer(auto_error=False)
 
 
-@router.get("", response_model=list[CourseResponse])
+@router.get("", response_model=PaginatedCourseResponse)
 async def get_courses(
     category_id: Optional[str] = Query(None, description="Filter by category ID"),
     level: Optional[str] = Query(None, description="Filter by course level (BEGINNER, INTERMEDIATE, ADVANCED, EXPERT)"),
@@ -32,7 +33,7 @@ async def get_courses(
     vendor_ids: Optional[list[str]] = Query(None, description="Filter by one or more vendor IDs"),
     skip: int = Query(0, ge=0, description="Number of results to skip (pagination)"),
     limit: int = Query(20, ge=1, le=100, description="Number of results to return (max 100)"),
-) -> list[CourseResponse]:
+) -> PaginatedCourseResponse:
     """
     Get courses with optional filters and pagination.
 
@@ -113,31 +114,27 @@ async def get_courses(
         ]
     
     if filters.get("job_role_ids"):
-        from bson import ObjectId
-        filter_job_role_ids = [
-            ObjectId(jid) if isinstance(jid, str) else jid 
-            for jid in filters["job_role_ids"]
-        ]
         filtered_courses = [
             c for c in filtered_courses 
-            if any(jid in c.get("jobRoleIds", []) for jid in filter_job_role_ids)
+            if any(jid in c.get("jobRoleIds", []) for jid in filters["job_role_ids"])
         ]
     
     if filters.get("vendor_ids"):
-        from bson import ObjectId
-        filter_vendor_ids = [
-            ObjectId(vid) if isinstance(vid, str) else vid 
-            for vid in filters["vendor_ids"]
-        ]
         filtered_courses = [
             c for c in filtered_courses 
-            if c.get("vendorId") and c["vendorId"] in filter_vendor_ids
+            if c.get("vendorId") in filters["vendor_ids"]
         ]
 
     # Apply pagination
     paginated_courses = filtered_courses[skip : skip + limit]
 
-    return [_course_doc_to_response(course) for course in paginated_courses]
+    return PaginatedCourseResponse(
+        data=[_course_doc_to_response(course) for course in paginated_courses],
+        total=len(filtered_courses),
+        skip=skip,
+        limit=limit,
+        pages=(len(filtered_courses) + limit - 1) // limit,  # Ceiling division
+    )
 
 
 @router.get("/{course_id}", response_model=CourseResponse)
@@ -337,13 +334,8 @@ async def delete_course(
 
 def _course_doc_to_response(course_doc: dict[str, any]) -> CourseResponse:  # type: ignore[name-defined]
     """Convert a course document from DB to CourseResponse DTO."""
-    from bson import ObjectId
-
-    # Convert ObjectId fields to strings
-    job_role_ids = [
-        str(jid) if isinstance(jid, ObjectId) else jid
-        for jid in course_doc.get("jobRoleIds", [])
-    ]
+    # job_role_ids are already strings in the database
+    job_role_ids = course_doc.get("jobRoleIds", [])
 
     # Build CourseDetailsDTO
     course_details_data = course_doc.get("courseDetails", {})
@@ -373,7 +365,7 @@ def _course_doc_to_response(course_doc: dict[str, any]) -> CourseResponse:  # ty
         image=course_doc.get("image"),
         rating=course_doc.get("rating"),
         students=course_doc.get("students"),
-        certifications=course_doc.get("certifications", []),
+        certifications=course_doc.get("certifications") or [],
         cost=course_doc.get("cost"),
         category_id=str(course_doc["categoryId"])
         if course_doc.get("categoryId")

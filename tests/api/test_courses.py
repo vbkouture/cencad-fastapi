@@ -97,7 +97,7 @@ class TestGetAllCourses:
         """Test getting courses when none exist."""
         response = await client.get("/api/v1/courses")
         assert response.status_code == status.HTTP_200_OK
-        assert response.json() == []
+        assert response.json()["data"] == []
 
     @pytest.mark.anyio
     async def test_get_all_courses_success(
@@ -118,7 +118,7 @@ class TestGetAllCourses:
         )
         response = await client.get("/api/v1/courses")
         assert response.status_code == status.HTTP_200_OK
-        assert len(response.json()) == 1
+        assert len(response.json()["data"]) == 1
 
     @pytest.mark.anyio
     async def test_get_all_courses_multiple(
@@ -140,7 +140,7 @@ class TestGetAllCourses:
             )
         response = await client.get("/api/v1/courses")
         assert response.status_code == status.HTTP_200_OK
-        assert len(response.json()) == 5
+        assert len(response.json()["data"]) == 5
 
 
 class TestGetSingleCourse:
@@ -635,7 +635,7 @@ class TestCourseFiltering:
         # Filter by BEGINNER level
         response = await client.get("/api/v1/courses?level=BEGINNER")
         assert response.status_code == status.HTTP_200_OK
-        courses = response.json()
+        courses = response.json()["data"]
         assert len(courses) == 1
         assert courses[0]["level"] == "BEGINNER"
 
@@ -663,7 +663,7 @@ class TestCourseFiltering:
         # Filter by English
         response = await client.get("/api/v1/courses?language=English")
         assert response.status_code == status.HTTP_200_OK
-        courses = response.json()
+        courses = response.json()["data"]
         assert len(courses) == 1
         assert courses[0]["language"] == "English"
 
@@ -697,7 +697,7 @@ class TestCourseFiltering:
         # Filter by AWS certification
         response = await client.get("/api/v1/courses?certifications=AWS")
         assert response.status_code == status.HTTP_200_OK
-        courses = response.json()
+        courses = response.json()["data"]
         assert len(courses) == 2  # Two courses have AWS
 
     @pytest.mark.anyio
@@ -723,16 +723,16 @@ class TestCourseFiltering:
         # Get first 5
         response1 = await client.get("/api/v1/courses?limit=5")
         assert response1.status_code == status.HTTP_200_OK
-        assert len(response1.json()) == 5
+        assert len(response1.json()["data"]) == 5
         
         # Get next 5 with skip
         response2 = await client.get("/api/v1/courses?skip=5&limit=5")
         assert response2.status_code == status.HTTP_200_OK
-        assert len(response2.json()) == 5
+        assert len(response2.json()["data"]) == 5
         
         # Verify different courses
-        courses1 = response1.json()
-        courses2 = response2.json()
+        courses1 = response1.json()["data"]
+        courses2 = response2.json()["data"]
         assert courses1[0]["id"] != courses2[0]["id"]
 
     @pytest.mark.anyio
@@ -782,7 +782,7 @@ class TestCourseFiltering:
         # Filter by level AND language
         response = await client.get("/api/v1/courses?level=ADVANCED&language=English")
         assert response.status_code == status.HTTP_200_OK
-        courses = response.json()
+        courses = response.json()["data"]
         assert len(courses) == 1
         assert courses[0]["title"] == "Advanced AWS Course"
 
