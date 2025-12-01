@@ -1,0 +1,1262 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "FastAPI - courses",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/v1/courses": {
+      "get": {
+        "tags": [
+          "courses"
+        ],
+        "summary": "Get Courses",
+        "description": "Get courses with optional filters and pagination.\n\nNo authentication required - anyone can read courses.\n\nQuery Parameters:\n    category_id: Optional course category ID\n    level: Optional course level (BEGINNER, INTERMEDIATE, ADVANCED, EXPERT)\n    language: Optional course language\n    certifications: Optional list of certification names to filter by\n    job_role_ids: Optional list of job role IDs to filter by\n    vendor_ids: Optional list of vendor IDs to filter by\n    skip: Pagination offset (default 0)\n    limit: Pagination limit (default 20, max 100)\n\nReturns:\n    List of courses matching the filters.\n\nRaises:\n    HTTPException: If level is invalid.",
+        "operationId": "get_courses_api_v1_courses_get",
+        "parameters": [
+          {
+            "name": "category_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by category ID",
+              "title": "Category Id"
+            },
+            "description": "Filter by category ID"
+          },
+          {
+            "name": "level",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by course level (BEGINNER, INTERMEDIATE, ADVANCED, EXPERT)",
+              "title": "Level"
+            },
+            "description": "Filter by course level (BEGINNER, INTERMEDIATE, ADVANCED, EXPERT)"
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by language",
+              "title": "Language"
+            },
+            "description": "Filter by language"
+          },
+          {
+            "name": "certifications",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by one or more certifications",
+              "title": "Certifications"
+            },
+            "description": "Filter by one or more certifications"
+          },
+          {
+            "name": "job_role_ids",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by one or more job role IDs",
+              "title": "Job Role Ids"
+            },
+            "description": "Filter by one or more job role IDs"
+          },
+          {
+            "name": "vendor_ids",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by one or more vendor IDs",
+              "title": "Vendor Ids"
+            },
+            "description": "Filter by one or more vendor IDs"
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of results to skip (pagination)",
+              "default": 0,
+              "title": "Skip"
+            },
+            "description": "Number of results to skip (pagination)"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Number of results to return (max 100)",
+              "default": 20,
+              "title": "Limit"
+            },
+            "description": "Number of results to return (max 100)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedCourseResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "courses"
+        ],
+        "summary": "Create Course",
+        "description": "Create a new course.\n\n**Admin only** - requires valid JWT token with admin role.\n\nArgs:\n    request: Course creation request with all details\n    _: Admin role requirement (validates JWT token and role)\n\nReturns:\n    Created course.\n\nRaises:\n    HTTPException: If title already exists or validation fails.",
+        "operationId": "create_course_api_v1_courses_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CourseCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CourseResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/courses/{course_id}": {
+      "get": {
+        "tags": [
+          "courses"
+        ],
+        "summary": "Get Course",
+        "description": "Get a specific course by ID.\n\nNo authentication required - anyone can read courses.\n\nArgs:\n    course_id: MongoDB ObjectId as string\n\nReturns:\n    Course details.\n\nRaises:\n    HTTPException: If course not found.",
+        "operationId": "get_course_api_v1_courses__course_id__get",
+        "parameters": [
+          {
+            "name": "course_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Course Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CourseResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "courses"
+        ],
+        "summary": "Update Course",
+        "description": "Update a course.\n\n**Admin only** - requires valid JWT token with admin role.\n\nArgs:\n    course_id: MongoDB ObjectId as string\n    request: Update request with optional fields\n    _: Admin role requirement (validates JWT token and role)\n\nReturns:\n    Updated course.\n\nRaises:\n    HTTPException: If course not found, validation fails, or title already exists.",
+        "operationId": "update_course_api_v1_courses__course_id__put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "course_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Course Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CourseUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CourseResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "courses"
+        ],
+        "summary": "Delete Course",
+        "description": "Delete a course.\n\n**Admin only** - requires valid JWT token with admin role.\n\nArgs:\n    course_id: MongoDB ObjectId as string\n    _: Admin role requirement (validates JWT token and role)\n\nRaises:\n    HTTPException: If course not found.",
+        "operationId": "delete_course_api_v1_courses__course_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "course_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Course Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "null",
+                  "title": "Response Delete Course Api V1 Courses  Course Id  Delete"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CourseCreateRequest": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Title",
+            "description": "Course title"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 5000,
+            "minLength": 10,
+            "title": "Description",
+            "description": "Course description"
+          },
+          "duration": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Duration",
+            "description": "Course duration (e.g., '8 Weeks')"
+          },
+          "level": {
+            "type": "string",
+            "title": "Level",
+            "description": "Course level (BEGINNER, INTERMEDIATE, ADVANCED, EXPERT)"
+          },
+          "course_details": {
+            "$ref": "#/components/schemas/CourseDetailsDTO",
+            "description": "Detailed course information"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Url",
+            "description": "Optional course URL"
+          },
+          "language": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 50
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Language",
+            "description": "Course language"
+          },
+          "image": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2048
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image",
+            "description": "Course image URL"
+          },
+          "rating": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 5.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rating",
+            "description": "Course rating"
+          },
+          "students": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Students",
+            "description": "Number of students"
+          },
+          "certifications": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Certifications",
+            "description": "Associated certifications"
+          },
+          "cost": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost",
+            "description": "Course cost/price"
+          },
+          "category_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category Id",
+            "description": "Optional category ID"
+          },
+          "vendor_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vendor Id",
+            "description": "Optional vendor ID"
+          },
+          "job_role_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Job Role Ids",
+            "description": "Related job role IDs"
+          },
+          "resources": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ResourceDTO"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resources",
+            "description": "Course resources"
+          },
+          "notice": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notice",
+            "description": "Important notice"
+          },
+          "tags": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tags",
+            "description": "Search tags"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status",
+            "description": "Course status (DRAFT, PUBLISHED, ARCHIVED)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "description",
+          "duration",
+          "level",
+          "course_details"
+        ],
+        "title": "CourseCreateRequest",
+        "description": "Request DTO for creating a course."
+      },
+      "CourseDetailsDTO": {
+        "properties": {
+          "overview": {
+            "type": "string",
+            "maxLength": 10000,
+            "title": "Overview",
+            "description": "Course overview",
+            "default": ""
+          },
+          "objectives": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Objectives",
+            "description": "Learning objectives (optional)"
+          },
+          "prerequisites": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Prerequisites",
+            "description": "Course prerequisites (optional)"
+          },
+          "syllabus": {
+            "items": {
+              "$ref": "#/components/schemas/SyllabusWeekDTO"
+            },
+            "type": "array",
+            "title": "Syllabus",
+            "description": "Course syllabus by week (optional)"
+          }
+        },
+        "type": "object",
+        "title": "CourseDetailsDTO",
+        "description": "DTO for detailed course information."
+      },
+      "CourseResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Course ID (MongoDB ObjectId as string)"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title",
+            "description": "Course title"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "description": "Course description"
+          },
+          "duration": {
+            "type": "string",
+            "title": "Duration",
+            "description": "Course duration"
+          },
+          "level": {
+            "type": "string",
+            "title": "Level",
+            "description": "Course level"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Url",
+            "description": "Course URL"
+          },
+          "language": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Language",
+            "description": "Course language"
+          },
+          "image": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image",
+            "description": "Course image URL"
+          },
+          "rating": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rating",
+            "description": "Course rating"
+          },
+          "students": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Students",
+            "description": "Number of students"
+          },
+          "certifications": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Certifications",
+            "description": "Associated certifications"
+          },
+          "cost": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost",
+            "description": "Course cost/price"
+          },
+          "category_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category Id",
+            "description": "Category ID"
+          },
+          "vendor_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vendor Id",
+            "description": "Vendor ID"
+          },
+          "job_role_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Job Role Ids",
+            "description": "Related job role IDs"
+          },
+          "resources": {
+            "items": {
+              "$ref": "#/components/schemas/ResourceDTO"
+            },
+            "type": "array",
+            "title": "Resources",
+            "description": "Course resources"
+          },
+          "notice": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notice",
+            "description": "Important notice"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Tags",
+            "description": "Search tags"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "Course status"
+          },
+          "course_details": {
+            "$ref": "#/components/schemas/CourseDetailsDTO",
+            "description": "Detailed course information"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At",
+            "description": "Creation timestamp"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At",
+            "description": "Last update timestamp"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "description",
+          "duration",
+          "level",
+          "url",
+          "language",
+          "image",
+          "rating",
+          "students",
+          "cost",
+          "category_id",
+          "vendor_id",
+          "notice",
+          "status",
+          "course_details",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "CourseResponse",
+        "description": "Response DTO for course."
+      },
+      "CourseUpdateRequest": {
+        "properties": {
+          "title": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title",
+            "description": "Course title"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 5000,
+                "minLength": 10
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "Course description"
+          },
+          "duration": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration",
+            "description": "Course duration"
+          },
+          "level": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Level",
+            "description": "Course level (BEGINNER, INTERMEDIATE, ADVANCED, EXPERT)"
+          },
+          "course_details": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CourseDetailsDTO"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Detailed course information"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Url",
+            "description": "Course URL"
+          },
+          "language": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 50
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Language",
+            "description": "Course language"
+          },
+          "image": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2048
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image",
+            "description": "Course image URL"
+          },
+          "rating": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 5.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rating",
+            "description": "Course rating"
+          },
+          "students": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Students",
+            "description": "Number of students"
+          },
+          "certifications": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Certifications",
+            "description": "Associated certifications"
+          },
+          "cost": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost",
+            "description": "Course cost/price"
+          },
+          "category_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category Id",
+            "description": "Category ID"
+          },
+          "vendor_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vendor Id",
+            "description": "Vendor ID"
+          },
+          "job_role_ids": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Job Role Ids",
+            "description": "Related job role IDs"
+          },
+          "resources": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ResourceDTO"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resources",
+            "description": "Course resources"
+          },
+          "notice": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notice",
+            "description": "Important notice"
+          },
+          "tags": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tags",
+            "description": "Search tags"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status",
+            "description": "Course status (DRAFT, PUBLISHED, ARCHIVED)"
+          }
+        },
+        "type": "object",
+        "title": "CourseUpdateRequest",
+        "description": "Request DTO for updating a course."
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "PaginatedCourseResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/CourseResponse"
+            },
+            "type": "array",
+            "title": "Data",
+            "description": "List of courses"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total",
+            "description": "Total number of courses matching filters"
+          },
+          "skip": {
+            "type": "integer",
+            "title": "Skip",
+            "description": "Number of results skipped (offset)"
+          },
+          "limit": {
+            "type": "integer",
+            "title": "Limit",
+            "description": "Number of results in this page"
+          },
+          "pages": {
+            "type": "integer",
+            "title": "Pages",
+            "description": "Total number of pages"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "total",
+          "skip",
+          "limit",
+          "pages"
+        ],
+        "title": "PaginatedCourseResponse",
+        "description": "Response DTO for paginated courses list."
+      },
+      "ResourceDTO": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Title",
+            "description": "Resource title"
+          },
+          "url": {
+            "type": "string",
+            "maxLength": 2048,
+            "minLength": 1,
+            "title": "Url",
+            "description": "Resource URL"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "url"
+        ],
+        "title": "ResourceDTO",
+        "description": "DTO for course resource."
+      },
+      "SyllabusWeekDTO": {
+        "properties": {
+          "week": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Week",
+            "description": "Week identifier"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Title",
+            "description": "Week title"
+          },
+          "topics": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Topics",
+            "description": "Topics covered in this week"
+          }
+        },
+        "type": "object",
+        "required": [
+          "week",
+          "title",
+          "topics"
+        ],
+        "title": "SyllabusWeekDTO",
+        "description": "DTO for a week in course syllabus."
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}

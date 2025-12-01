@@ -80,7 +80,11 @@ def _create_valid_course_payload() -> dict[str, any]:  # type: ignore[name-defin
             ]
         },
         "language": "English",
-        "certifications": []
+        "certifications": [],
+        "resources": [{"title": "Book", "url": "http://example.com"}],
+        "notice": "Important notice",
+        "tags": ["python", "basics"],
+        "status": "DRAFT"
     }
 
 
@@ -200,6 +204,11 @@ class TestCreateCourse:
         data = response.json()
         assert data["title"] == "Python Basics"
         assert data["level"] == "BEGINNER"
+        assert data["status"] == "DRAFT"
+        assert len(data["resources"]) == 1
+        assert data["resources"][0]["title"] == "Book"
+        assert data["notice"] == "Important notice"
+        assert "python" in data["tags"]
 
     @pytest.mark.anyio
     async def test_create_course_missing_auth(

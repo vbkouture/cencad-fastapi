@@ -1,0 +1,87 @@
+[
+  {
+    "_id": "5f8d0d55b54764421b715701",
+    "title": "Complete Python Bootcamp",
+    "description": "Learn Python from scratch to advanced concepts.",
+    "duration": "20 hours",
+    "level": "BEGINNER",
+    "courseDetails": {
+      "overview": "This course covers everything you need to know about Python.",
+      "objectives": ["Learn syntax", "Build apps", "Data analysis"],
+      "prerequisites": ["None"],
+      "syllabus": []
+    },
+    "url": "https://example.com/python-bootcamp",
+    "language": "English",
+    "image": "https://example.com/images/python.jpg",
+    "rating": 4.8,
+    "students": 1500,
+    "certification": ["Python Institute"],
+    "cost": 49.99,
+    "vendorId": "5f8d0d55b54764421b7156d1",
+    "categoryId": "5f8d0d55b54764421b7156f1",
+    "jobRoles": ["5f8d0d55b54764421b7156e1"],
+    "resources": [
+      {"title": "FastAPI Documentation", "url": "https://fastapi.tiangolo.com/"}
+    ],
+    "notice": "Please install Python 3.10+ before starting.",
+    "tags": ["python", "backend", "api"],
+    "status": "PUBLISHED"
+  },
+  {
+    "_id": "5f8d0d55b54764421b715702",
+    "title": "Advanced React Patterns",
+    "description": "Master React with advanced patterns and performance optimization.",
+    "duration": "15 hours",
+    "level": "ADVANCED",
+    "courseDetails": {
+      "overview": "Deep dive into React internals.",
+      "objectives": ["Hooks", "Context", "Performance"],
+      "prerequisites": ["Basic React"],
+      "syllabus": []
+    },
+    "url": "https://example.com/react-advanced",
+    "language": "English",
+    "image": "https://example.com/images/react.jpg",
+    "rating": 4.9,
+    "students": 800,
+    "certification": [],
+    "cost": 79.99,
+    "vendorId": "5f8d0d55b54764421b7156d2",
+    "categoryId": "5f8d0d55b54764421b7156f1",
+    "jobRoles": ["5f8d0d55b54764421b7156e2"],
+    "resources": [],
+    "notice": null,
+    "tags": ["react", "frontend", "javascript"],
+    "status": "PUBLISHED"
+  },
+  {
+    "_id": "5f8d0d55b54764421b715703",
+    "title": "Data Science Fundamentals",
+    "description": "Introduction to Data Science using Python and Pandas.",
+    "duration": "25 hours",
+    "level": "BEGINNER",
+    "courseDetails": {
+      "overview": "Start your data science journey.",
+      "objectives": ["Pandas", "NumPy", "Matplotlib"],
+      "prerequisites": ["Basic Python"],
+      "syllabus": []
+    },
+    "url": "https://example.com/data-science",
+    "language": "English",
+    "image": "https://example.com/images/ds.jpg",
+    "rating": 4.7,
+    "students": 1200,
+    "certification": ["Data Science Council"],
+    "cost": 59.99,
+    "vendorId": "5f8d0d55b54764421b7156d3",
+    "categoryId": "5f8d0d55b54764421b7156f2",
+    "jobRoles": ["5f8d0d55b54764421b7156e3"],
+    "resources": [
+        {"title": "Kaggle", "url": "https://www.kaggle.com/"}
+    ],
+    "notice": "Requires high-performance GPU for deep learning modules.",
+    "tags": ["data-science", "python", "ml"],
+    "status": "DRAFT"
+  }
+]

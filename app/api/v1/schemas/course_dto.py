@@ -67,6 +67,13 @@ class CourseDetailsDTO(BaseModel):
         return v
 
 
+class ResourceDTO(BaseModel):
+    """DTO for course resource."""
+
+    title: str = Field(min_length=1, max_length=200, description="Resource title")
+    url: str = Field(min_length=1, max_length=2048, description="Resource URL")
+
+
 class CourseCreateRequest(BaseModel):
     """Request DTO for creating a course."""
 
@@ -97,6 +104,12 @@ class CourseCreateRequest(BaseModel):
     vendor_id: str | None = Field(None, description="Optional vendor ID")
     job_role_ids: list[str] = Field(
         default_factory=list, description="Related job role IDs"
+    )
+    resources: list[ResourceDTO] | None = Field(None, description="Course resources")
+    notice: str | None = Field(None, max_length=2000, description="Important notice")
+    tags: list[str] | None = Field(None, description="Search tags")
+    status: str | None = Field(
+        None, description="Course status (DRAFT, PUBLISHED, ARCHIVED)"
     )
 
     @field_validator("certifications")
@@ -138,6 +151,12 @@ class CourseUpdateRequest(BaseModel):
     category_id: str | None = Field(None, description="Category ID")
     vendor_id: str | None = Field(None, description="Vendor ID")
     job_role_ids: list[str] | None = Field(None, description="Related job role IDs")
+    resources: list[ResourceDTO] | None = Field(None, description="Course resources")
+    notice: str | None = Field(None, max_length=2000, description="Important notice")
+    tags: list[str] | None = Field(None, description="Search tags")
+    status: str | None = Field(
+        None, description="Course status (DRAFT, PUBLISHED, ARCHIVED)"
+    )
 
 
 class CourseResponse(BaseModel):
@@ -162,6 +181,12 @@ class CourseResponse(BaseModel):
     job_role_ids: list[str] = Field(
         default_factory=list, description="Related job role IDs"
     )
+    resources: list[ResourceDTO] = Field(
+        default_factory=list, description="Course resources"
+    )
+    notice: str | None = Field(description="Important notice")
+    tags: list[str] = Field(default_factory=list, description="Search tags")
+    status: str = Field(description="Course status")
     course_details: CourseDetailsDTO = Field(description="Detailed course information")
     created_at: datetime = Field(description="Creation timestamp")
     updated_at: datetime = Field(description="Last update timestamp")
@@ -175,4 +200,3 @@ class PaginatedCourseResponse(BaseModel):
     skip: int = Field(description="Number of results skipped (offset)")
     limit: int = Field(description="Number of results in this page")
     pages: int = Field(description="Total number of pages")
-

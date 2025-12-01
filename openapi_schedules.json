@@ -1,0 +1,575 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "FastAPI - schedules",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/v1/schedules/": {
+      "post": {
+        "tags": [
+          "schedules"
+        ],
+        "summary": "Create a new schedule",
+        "description": "Create a new schedule.\n\n**Admin only**.",
+        "operationId": "create_schedule_api_v1_schedules__post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScheduleCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScheduleResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "schedules"
+        ],
+        "summary": "Get schedules",
+        "description": "Get schedules, optionally filtered by course or tutor.",
+        "operationId": "get_schedules_api_v1_schedules__get",
+        "parameters": [
+          {
+            "name": "course_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by course ID",
+              "title": "Course Id"
+            },
+            "description": "Filter by course ID"
+          },
+          {
+            "name": "tutor_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by tutor ID",
+              "title": "Tutor Id"
+            },
+            "description": "Filter by tutor ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ScheduleResponse"
+                  },
+                  "title": "Response Get Schedules Api V1 Schedules  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/schedules/{schedule_id}": {
+      "get": {
+        "tags": [
+          "schedules"
+        ],
+        "summary": "Get schedule by ID",
+        "description": "Get a schedule by ID.",
+        "operationId": "get_schedule_api_v1_schedules__schedule_id__get",
+        "parameters": [
+          {
+            "name": "schedule_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Schedule Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScheduleResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "schedules"
+        ],
+        "summary": "Update schedule",
+        "description": "Update a schedule.\n\n**Admin only**.",
+        "operationId": "update_schedule_api_v1_schedules__schedule_id__put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "schedule_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Schedule Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScheduleUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScheduleResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "schedules"
+        ],
+        "summary": "Delete schedule",
+        "description": "Delete a schedule.\n\n**Admin only**.",
+        "operationId": "delete_schedule_api_v1_schedules__schedule_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "schedule_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Schedule Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ScheduleCreateRequest": {
+        "properties": {
+          "course_id": {
+            "type": "string",
+            "title": "Course Id",
+            "description": "Course ID"
+          },
+          "tutor_id": {
+            "type": "string",
+            "title": "Tutor Id",
+            "description": "Tutor ID"
+          },
+          "sessions": {
+            "items": {
+              "$ref": "#/components/schemas/SessionDTO"
+            },
+            "type": "array",
+            "title": "Sessions",
+            "description": "List of sessions"
+          },
+          "capacity": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Capacity",
+            "description": "Maximum capacity"
+          },
+          "meeting_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Meeting Url",
+            "description": "Meeting URL for online sessions"
+          },
+          "timezone": {
+            "type": "string",
+            "title": "Timezone",
+            "description": "Timezone (e.g., 'America/New_York')",
+            "default": "UTC"
+          }
+        },
+        "type": "object",
+        "required": [
+          "course_id",
+          "tutor_id",
+          "sessions",
+          "capacity"
+        ],
+        "title": "ScheduleCreateRequest",
+        "description": "Request DTO for creating a schedule."
+      },
+      "ScheduleResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Schedule ID"
+          },
+          "course_id": {
+            "type": "string",
+            "title": "Course Id",
+            "description": "Course ID"
+          },
+          "tutor_id": {
+            "type": "string",
+            "title": "Tutor Id",
+            "description": "Tutor ID"
+          },
+          "sessions": {
+            "items": {
+              "$ref": "#/components/schemas/SessionDTO"
+            },
+            "type": "array",
+            "title": "Sessions",
+            "description": "List of sessions"
+          },
+          "capacity": {
+            "type": "integer",
+            "title": "Capacity",
+            "description": "Maximum capacity"
+          },
+          "enrollment_count": {
+            "type": "integer",
+            "title": "Enrollment Count",
+            "description": "Current enrollment count"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "Schedule status"
+          },
+          "meeting_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Meeting Url",
+            "description": "Meeting URL"
+          },
+          "timezone": {
+            "type": "string",
+            "title": "Timezone",
+            "description": "Timezone"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At",
+            "description": "Creation timestamp"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At",
+            "description": "Last update timestamp"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "course_id",
+          "tutor_id",
+          "sessions",
+          "capacity",
+          "enrollment_count",
+          "status",
+          "meeting_url",
+          "timezone",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "ScheduleResponse",
+        "description": "Response DTO for schedule."
+      },
+      "ScheduleUpdateRequest": {
+        "properties": {
+          "tutor_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tutor Id",
+            "description": "Tutor ID"
+          },
+          "sessions": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/SessionDTO"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sessions",
+            "description": "List of sessions"
+          },
+          "capacity": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Capacity",
+            "description": "Maximum capacity"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status",
+            "description": "Schedule status (UPCOMING, ACTIVE, COMPLETED, CANCELLED)"
+          },
+          "meeting_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Meeting Url",
+            "description": "Meeting URL"
+          },
+          "timezone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Timezone",
+            "description": "Timezone"
+          }
+        },
+        "type": "object",
+        "title": "ScheduleUpdateRequest",
+        "description": "Request DTO for updating a schedule."
+      },
+      "SessionDTO": {
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Date",
+            "description": "Session date"
+          },
+          "start_time": {
+            "type": "string",
+            "title": "Start Time",
+            "description": "Start time (e.g., '18:00')"
+          },
+          "end_time": {
+            "type": "string",
+            "title": "End Time",
+            "description": "End time (e.g., '20:00')"
+          }
+        },
+        "type": "object",
+        "required": [
+          "date",
+          "start_time",
+          "end_time"
+        ],
+        "title": "SessionDTO",
+        "description": "DTO for a single session."
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}

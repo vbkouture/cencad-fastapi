@@ -1,0 +1,26 @@
+[
+  {
+    "_id": "5f8d0d55b54764421b715901",
+    "user_id": "5f8d0d55b54764421b7156c3",
+    "schedule_id": "5f8d0d55b54764421b715801",
+    "course_id": "5f8d0d55b54764421b715701",
+    "status": "ENROLLED",
+    "payment_status": "PAID",
+    "payment_transaction_id": "tx_123456789",
+    "enrolled_at": "2024-12-01T10:00:00",
+    "instructor_notes": []
+  },
+  {
+    "_id": "5f8d0d55b54764421b715902",
+    "user_id": "5f8d0d55b54764421b7156c3",
+    "schedule_id": "5f8d0d55b54764421b715802",
+    "course_id": "5f8d0d55b54764421b715702",
+    "status": "IN_PROGRESS",
+    "payment_status": "PAID",
+    "payment_transaction_id": "tx_987654321",
+    "enrolled_at": "2024-10-25T14:30:00",
+    "instructor_notes": [
+      {"note": "Great participation in week 1", "date": "2024-11-05T00:00:00"}
+    ]
+  }
+]

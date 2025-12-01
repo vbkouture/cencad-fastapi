@@ -1,0 +1,16 @@
+[
+  {
+    "_id": "5f8d0d55b54764421b715711",
+    "name": "John Doe",
+    "email": "john@example.com",
+    "subject": "Course Inquiry",
+    "message": "I am interested in the Python course. Do you offer student discounts?"
+  },
+  {
+    "_id": "5f8d0d55b54764421b715712",
+    "name": "Jane Smith",
+    "email": "jane@example.com",
+    "subject": "Technical Issue",
+    "message": "I cannot access my account. Please help."
+  }
+]

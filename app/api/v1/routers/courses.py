@@ -220,6 +220,10 @@ async def create_course(
             category_id=request.category_id,
             vendor_id=request.vendor_id,
             job_role_ids=request.job_role_ids,
+            resources=[r.model_dump() for r in request.resources] if request.resources else None,
+            notice=request.notice,
+            tags=request.tags,
+            status=request.status or "DRAFT",
         )
     except ValueError as e:
         raise HTTPException(
@@ -287,6 +291,10 @@ async def update_course(
             category_id=request.category_id,
             vendor_id=request.vendor_id,
             job_role_ids=request.job_role_ids,
+            resources=[r.model_dump() for r in request.resources] if request.resources else None,
+            notice=request.notice,
+            tags=request.tags,
+            status=request.status,
         )
     except ValueError as e:
         raise HTTPException(
@@ -335,7 +343,7 @@ async def delete_course(
 def _course_doc_to_response(course_doc: dict[str, any]) -> CourseResponse:  # type: ignore[name-defined]
     """Convert a course document from DB to CourseResponse DTO."""
     # job_role_ids are already strings in the database
-    job_role_ids = course_doc.get("jobRoleIds", [])
+    job_role_ids = course_doc.get("jobRoleIds") or []
 
     # Build CourseDetailsDTO
     course_details_data = course_doc.get("courseDetails", {})
@@ -375,4 +383,8 @@ def _course_doc_to_response(course_doc: dict[str, any]) -> CourseResponse:  # ty
         course_details=course_details,
         created_at=course_doc["created_at"],
         updated_at=course_doc["updated_at"],
+        resources=course_doc.get("resources") or [],
+        notice=course_doc.get("notice"),
+        tags=course_doc.get("tags") or [],
+        status=course_doc.get("status", "DRAFT"),
     )

@@ -32,6 +32,10 @@ class CourseRepository:
         category_id: str | None = None,
         vendor_id: str | None = None,
         job_role_ids: list[str] | None = None,
+        resources: list[dict[str, str]] | None = None,
+        notice: str | None = None,
+        tags: list[str] | None = None,
+        status: str = "DRAFT",
     ) -> dict[str, Any]:
         """
         Create a new course in the database.
@@ -52,6 +56,10 @@ class CourseRepository:
             category_id: Optional category ID
             vendor_id: Optional vendor ID
             job_role_ids: Optional list of job role IDs
+            resources: Optional list of resources
+            notice: Optional notice
+            tags: Optional list of tags
+            status: Course status
 
         Returns:
             Created course document with _id
@@ -75,11 +83,15 @@ class CourseRepository:
             "image": image,
             "rating": rating,
             "students": students,
-            "certifications": certifications or [],
+            "certifications": certifications,
             "cost": cost,
-            "categoryId": category_id,
-            "vendorId": vendor_id,
-            "jobRoleIds": job_role_ids or [],
+            "categoryId": ObjectId(category_id) if category_id else None,
+            "vendorId": ObjectId(vendor_id) if vendor_id else None,
+            "jobRoleIds": job_role_ids,
+            "resources": resources,
+            "notice": notice,
+            "tags": tags,
+            "status": status,
             "created_at": ObjectId().generation_time,
             "updated_at": ObjectId().generation_time,
         }
@@ -204,6 +216,10 @@ class CourseRepository:
         category_id: str | None = None,
         vendor_id: str | None = None,
         job_role_ids: list[str] | None = None,
+        resources: list[dict[str, str]] | None = None,
+        notice: str | None = None,
+        tags: list[str] | None = None,
+        status: str | None = None,
     ) -> dict[str, Any] | None:
         """
         Update a course.
@@ -225,6 +241,10 @@ class CourseRepository:
             category_id: New category ID (optional)
             vendor_id: New vendor ID (optional)
             job_role_ids: New job role IDs (optional)
+            resources: New resources (optional)
+            notice: New notice (optional)
+            tags: New tags (optional)
+            status: New status (optional)
 
         Returns:
             Updated course document if found and updated, None otherwise
@@ -283,6 +303,18 @@ class CourseRepository:
             if job_role_ids is not None:
                 update_data["jobRoleIds"] = job_role_ids
 
+            if resources is not None:
+                update_data["resources"] = resources
+
+            if notice is not None:
+                update_data["notice"] = notice
+
+            if tags is not None:
+                update_data["tags"] = tags
+
+            if status is not None:
+                update_data["status"] = status
+
             if not update_data:
                 # No changes to make
                 return await self.find_by_id(course_id)
@@ -328,3 +360,7 @@ class CourseRepository:
         await self.collection.create_index("vendorId")
         # Index on jobRoleIds for many-to-many queries
         await self.collection.create_index("jobRoleIds")
+        # Index on tags for search
+        await self.collection.create_index("tags")
+        # Index on status for filtering
+        await self.collection.create_index("status")

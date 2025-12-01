@@ -1,0 +1,17 @@
+[
+  {
+    "_id": "5f8d0d55b54764421b7156f1",
+    "name": "Web Development",
+    "description": "Courses related to building websites and web applications."
+  },
+  {
+    "_id": "5f8d0d55b54764421b7156f2",
+    "name": "Data Science",
+    "description": "Courses related to statistics, data analysis, and machine learning."
+  },
+  {
+    "_id": "5f8d0d55b54764421b7156f3",
+    "name": "Cloud Computing",
+    "description": "Courses related to cloud platforms and services."
+  }
+]

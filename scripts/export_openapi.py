@@ -26,6 +26,8 @@ from app.api.v1.routers import (
     submissions_router,
     users_router,
     vendors_router,
+    schedules_router,
+    enrollments_router,
 )
 
 DOMAIN_ROUTERS = {
@@ -40,6 +42,10 @@ DOMAIN_ROUTERS = {
     "submissions": submissions_router,
     "users": users_router,
     "vendors": vendors_router,
+    "schedules": schedules_router,
+    "enrollments": enrollments_router,
+
+    
 }
 
 def export_openapi(domain: str | None = None):

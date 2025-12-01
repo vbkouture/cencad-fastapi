@@ -1,0 +1,17 @@
+[
+  {
+    "_id": "5f8d0d55b54764421b7156e1",
+    "name": "Backend Developer",
+    "description": "Responsible for server-side web application logic."
+  },
+  {
+    "_id": "5f8d0d55b54764421b7156e2",
+    "name": "Frontend Developer",
+    "description": "Responsible for implementing visual elements that users see and interact with."
+  },
+  {
+    "_id": "5f8d0d55b54764421b7156e3",
+    "name": "Data Scientist",
+    "description": "Analyze and interpret complex data to help organizations make better decisions."
+  }
+]

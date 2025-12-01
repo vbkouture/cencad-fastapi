@@ -16,6 +16,14 @@ class CourseLevel(str, Enum):
     EXPERT = "EXPERT"
 
 
+class CourseStatus(str, Enum):
+    """Course status."""
+
+    DRAFT = "DRAFT"
+    PUBLISHED = "PUBLISHED"
+    ARCHIVED = "ARCHIVED"
+
+
 class SyllabusWeek:
     """Represents a week in the course syllabus."""
 
@@ -128,6 +136,10 @@ class Course:
         category_id: str | None = None,
         vendor_id: str | None = None,
         job_role_ids: list[str] | None = None,
+        resources: list[dict[str, str]] | None = None,
+        notice: str | None = None,
+        tags: list[str] | None = None,
+        status: CourseStatus = CourseStatus.DRAFT,
         created_at: datetime | None = None,
         updated_at: datetime | None = None,
     ) -> None:
@@ -150,7 +162,12 @@ class Course:
             cost: Optional course cost/price
             category_id: Optional reference to course category
             vendor_id: Optional reference to vendor
+            vendor_id: Optional reference to vendor
             job_role_ids: Optional list of related job role IDs
+            resources: Optional list of resources (e.g. [{"title": "...", "url": "..."}])
+            notice: Optional notice text
+            tags: Optional list of tags
+            status: Course status (DRAFT, PUBLISHED, ARCHIVED)
             created_at: Creation timestamp
             updated_at: Last update timestamp
         """
@@ -169,7 +186,12 @@ class Course:
         self.cost = cost
         self.category_id = category_id
         self.vendor_id = vendor_id
+        self.vendor_id = vendor_id
         self.job_role_ids = job_role_ids or []
+        self.resources = resources or []
+        self.notice = notice
+        self.tags = tags or []
+        self.status = status
         self.created_at = created_at
         self.updated_at = updated_at
 
@@ -190,7 +212,12 @@ class Course:
             "cost": self.cost,
             "categoryId": self.category_id,
             "vendorId": self.vendor_id,
+            "vendorId": self.vendor_id,
             "jobRoleIds": self.job_role_ids,
+            "resources": self.resources,
+            "notice": self.notice,
+            "tags": self.tags,
+            "status": self.status.value,
             "courseDetails": self.course_details.to_dict(),
             "created_at": self.created_at,
             "updated_at": self.updated_at,

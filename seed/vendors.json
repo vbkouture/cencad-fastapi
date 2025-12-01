@@ -1,0 +1,20 @@
+[
+  {
+    "_id": "5f8d0d55b54764421b7156d1",
+    "name": "TechLearning",
+    "description": "Leading provider of technical education.",
+    "logo": "https://example.com/logos/techlearning.png"
+  },
+  {
+    "_id": "5f8d0d55b54764421b7156d2",
+    "name": "CodeMaster",
+    "description": "Master coding with our expert-led courses.",
+    "logo": "https://example.com/logos/codemaster.png"
+  },
+  {
+    "_id": "5f8d0d55b54764421b7156d3",
+    "name": "DataWizards",
+    "description": "Data science and AI training specialists.",
+    "logo": "https://example.com/logos/datawizards.png"
+  }
+]

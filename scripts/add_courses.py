@@ -18,7 +18,7 @@ from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from app.core.config import settings
-from app.domain.courses.course import CourseLevel
+from app.domain.courses.course import CourseLevel, CourseStatus
 
 
 def utcnow() -> datetime:
@@ -41,6 +41,21 @@ def parse_course_level(level_str: str | None) -> str:
     # Default fallback
     print(f"   ⚠️  Unknown level '{level_str}', defaulting to BEGINNER")
     return CourseLevel.BEGINNER.value
+
+
+def parse_course_status(status_str: str | None) -> str:
+    """Parse and validate course status."""
+    if not status_str:
+        return CourseStatus.DRAFT.value
+
+    status_upper = status_str.upper().strip()
+
+    # Try to match against enum values
+    for status in CourseStatus:
+        if status.value == status_upper:
+            return status.value
+
+    return CourseStatus.DRAFT.value
 
 
 def build_course_details(item: dict[str, Any]) -> dict[str, Any]:
@@ -72,6 +87,11 @@ async def add_course(
         if existing_course:
             return True, f"⏭️  Course '{item.get('title', 'Unknown')}' already exists"
 
+        # Handle certifications (could be list 'certifications' or string 'certification')
+        certifications = item.get("certifications", [])
+        if not certifications and item.get("certification"):
+            certifications = [item.get("certification")]
+
         # Build course document
         course_doc: dict[str, Any] = {
             "_id": course_id,
@@ -85,8 +105,12 @@ async def add_course(
             "image": item.get("image"),
             "rating": item.get("rating"),
             "students": item.get("students"),
-            "certifications": item.get("certification"),  # Could be string or None
+            "certifications": certifications,
             "cost": item.get("cost"),
+            "resources": item.get("resources", []),
+            "notice": item.get("notice"),
+            "tags": item.get("tags", []),
+            "status": parse_course_status(item.get("status")),
             "courseDetails": build_course_details(item),
         }
 
@@ -98,7 +122,7 @@ async def add_course(
             course_doc["categoryId"] = item["categoryId"]
 
         # Handle job roles
-        job_role_ids = item.get("jobRoles", [])
+        job_role_ids = item.get("jobRoles") or item.get("jobRoleIds", [])
         if job_role_ids and isinstance(job_role_ids, list):
             course_doc["jobRoleIds"] = job_role_ids
         else:

@@ -1,0 +1,26 @@
+[
+  {
+    "_id": "5f8d0d55b54764421b7156c1",
+    "email": "admin@example.com",
+    "name": "Admin User",
+    "password": "password123",
+    "role": "admin",
+    "is_active": true
+  },
+  {
+    "_id": "5f8d0d55b54764421b7156c2",
+    "email": "instructor@example.com",
+    "name": "Instructor User",
+    "password": "password123",
+    "role": "tutor",
+    "is_active": true
+  },
+  {
+    "_id": "5f8d0d55b54764421b7156c3",
+    "email": "student@example.com",
+    "name": "Student User",
+    "password": "password123",
+    "role": "student",
+    "is_active": true
+  }
+]

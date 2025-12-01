@@ -9,6 +9,8 @@ from .course_categories import router as course_categories_router
 from .job_roles import router as job_roles_router
 from .ping import router as ping_router
 from .submissions import router as submissions_router
+from .schedules import router as schedules_router
+from .enrollments import router as enrollments_router
 from .users import router as users_router
 from .vendors import router as vendors_router
 
@@ -48,6 +50,8 @@ def get_v1_router() -> APIRouter:
     router.include_router(courses_router)
     router.include_router(assignments_router)
     router.include_router(submissions_router)
+    router.include_router(schedules_router)
+    router.include_router(enrollments_router)
 
     # Admin & Analytics
     router.include_router(users_router)

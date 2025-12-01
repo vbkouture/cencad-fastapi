@@ -25,7 +25,7 @@ make run
 
 You can run tests using `pytest` directly or via `make` commands.
 
-**1. Run All Tests**
+**1. Run All Tests**  
 ```bash
 # Run all tests (asyncio mode)
 pytest tests/ -p no:trio -v
@@ -209,6 +209,8 @@ DEBUG=false
 -   **Job Roles**: Link courses to career paths.
 -   **Vendors**: Course providers.
 -   **Assignments & Submissions**: Education flow.
+-   **Schedules**: Course sessions with tutors, dates, and times.
+-   **Enrollments**: Student enrollments in specific schedules, tracking progress and payments.
 
 ### Deployment
 -   **Docker**: Includes `Dockerfile` and `docker-compose.yml`.
