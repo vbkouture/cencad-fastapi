@@ -41,6 +41,10 @@ dev = [  # "dev" extra: development-only packages for formatting, linting, testi
 requires = ["setuptools>=68", "wheel"]  # Build-time requirements (setuptools and wheel)
 build-backend = "setuptools.build_meta"  # Build backend entrypoint used by pip/build tools
 
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app", "seed"]
+
 [tool.black]  # Configuration for the Black code formatter
 line-length = 100  # Maximum line length Black will wrap to (overrides default 88)
 target-version = ["py312"]  # Target Python version(s) for formatting decisions (3.12)
