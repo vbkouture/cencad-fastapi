@@ -2,22 +2,23 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, HTTPException, status, Depends, Query
-from typing import Optional
+from typing import Any
+
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi.security import HTTPBearer
 
 from app.api.v1.schemas.course_dto import (
     CourseCreateRequest,
-    CourseUpdateRequest,
-    CourseResponse,
     CourseDetailsDTO,
-    SyllabusWeekDTO,
+    CourseResponse,
+    CourseUpdateRequest,
     PaginatedCourseResponse,
+    SyllabusWeekDTO,
 )
 from app.core.dependencies import require_admin
 from app.db import get_database
 from app.db.course_repository import CourseRepository
 from app.domain.courses.course import CourseLevel
-from fastapi.security import HTTPBearer
 
 router = APIRouter(prefix="/courses", tags=["courses"])
 security = HTTPBearer(auto_error=False)
@@ -25,12 +26,16 @@ security = HTTPBearer(auto_error=False)
 
 @router.get("", response_model=PaginatedCourseResponse)
 async def get_courses(
-    category_id: Optional[str] = Query(None, description="Filter by category ID"),
-    level: Optional[str] = Query(None, description="Filter by course level (BEGINNER, INTERMEDIATE, ADVANCED, EXPERT)"),
-    language: Optional[str] = Query(None, description="Filter by language"),
-    certifications: Optional[list[str]] = Query(None, description="Filter by one or more certifications"),
-    job_role_ids: Optional[list[str]] = Query(None, description="Filter by one or more job role IDs"),
-    vendor_ids: Optional[list[str]] = Query(None, description="Filter by one or more vendor IDs"),
+    category_id: str | None = Query(None, description="Filter by category ID"),
+    level: str | None = Query(
+        None, description="Filter by course level (BEGINNER, INTERMEDIATE, ADVANCED, EXPERT)"
+    ),
+    language: str | None = Query(None, description="Filter by language"),
+    certifications: list[str] | None = Query(
+        None, description="Filter by one or more certifications"
+    ),
+    job_role_ids: list[str] | None = Query(None, description="Filter by one or more job role IDs"),
+    vendor_ids: list[str] | None = Query(None, description="Filter by one or more vendor IDs"),
     skip: int = Query(0, ge=0, description="Number of results to skip (pagination)"),
     limit: int = Query(20, ge=1, le=100, description="Number of results to return (max 100)"),
 ) -> PaginatedCourseResponse:
@@ -57,7 +62,7 @@ async def get_courses(
     """
     # Validate level if provided
     if level:
-        valid_levels = {l.value for l in CourseLevel}
+        valid_levels = {lvl.value for lvl in CourseLevel}
         if level not in valid_levels:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -68,7 +73,7 @@ async def get_courses(
     repo = CourseRepository(db)
 
     # Build filter dict based on provided parameters
-    filters = {}
+    filters: dict[str, Any] = {}
     if category_id:
         filters["category_id"] = category_id
     if level:
@@ -88,41 +93,37 @@ async def get_courses(
 
     # Apply filters
     filtered_courses = all_courses
-    
+
     if filters.get("category_id"):
         filtered_courses = [
-            c for c in filtered_courses 
+            c
+            for c in filtered_courses
             if c.get("categoryId") and str(c["categoryId"]) == filters["category_id"]
         ]
-    
+
     if filters.get("level"):
-        filtered_courses = [
-            c for c in filtered_courses 
-            if c.get("level") == filters["level"]
-        ]
-    
+        filtered_courses = [c for c in filtered_courses if c.get("level") == filters["level"]]
+
     if filters.get("language"):
-        filtered_courses = [
-            c for c in filtered_courses 
-            if c.get("language") == filters["language"]
-        ]
-    
+        filtered_courses = [c for c in filtered_courses if c.get("language") == filters["language"]]
+
     if filters.get("certifications"):
         filtered_courses = [
-            c for c in filtered_courses 
+            c
+            for c in filtered_courses
             if any(cert in c.get("certifications", []) for cert in filters["certifications"])
         ]
-    
+
     if filters.get("job_role_ids"):
         filtered_courses = [
-            c for c in filtered_courses 
+            c
+            for c in filtered_courses
             if any(jid in c.get("jobRoleIds", []) for jid in filters["job_role_ids"])
         ]
-    
+
     if filters.get("vendor_ids"):
         filtered_courses = [
-            c for c in filtered_courses 
-            if c.get("vendorId") in filters["vendor_ids"]
+            c for c in filtered_courses if c.get("vendorId") in filters["vendor_ids"]
         ]
 
     # Apply pagination
@@ -192,7 +193,7 @@ async def create_course(
         HTTPException: If title already exists or validation fails.
     """
     # Validate level
-    valid_levels = {l.value for l in CourseLevel}
+    valid_levels = {lvl.value for lvl in CourseLevel}
     if request.level not in valid_levels:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -258,7 +259,7 @@ async def update_course(
     """
     # Validate level if provided
     if request.level:
-        valid_levels = {l.value for l in CourseLevel}
+        valid_levels = {lvl.value for lvl in CourseLevel}
         if request.level not in valid_levels:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -270,9 +271,7 @@ async def update_course(
 
     try:
         course_details_dict = (
-            request.course_details.model_dump()
-            if request.course_details
-            else None
+            request.course_details.model_dump() if request.course_details else None
         )
         updated_course = await repo.update_course(
             course_id=course_id,
@@ -340,7 +339,7 @@ async def delete_course(
         )
 
 
-def _course_doc_to_response(course_doc: dict[str, any]) -> CourseResponse:  # type: ignore[name-defined]
+def _course_doc_to_response(course_doc: dict[str, Any]) -> CourseResponse:
     """Convert a course document from DB to CourseResponse DTO."""
     # job_role_ids are already strings in the database
     job_role_ids = course_doc.get("jobRoleIds") or []
@@ -349,11 +348,7 @@ def _course_doc_to_response(course_doc: dict[str, any]) -> CourseResponse:  # ty
     course_details_data = course_doc.get("courseDetails", {})
     syllabus_weeks = []
     for w in course_details_data.get("syllabus", []):
-        syllabus_weeks.append(
-            SyllabusWeekDTO(
-                week=w["week"], title=w["title"], topics=w["topics"]
-            )
-        )
+        syllabus_weeks.append(SyllabusWeekDTO(week=w["week"], title=w["title"], topics=w["topics"]))
 
     course_details = CourseDetailsDTO(
         overview=course_details_data.get("overview", ""),
@@ -375,9 +370,7 @@ def _course_doc_to_response(course_doc: dict[str, any]) -> CourseResponse:  # ty
         students=course_doc.get("students"),
         certifications=course_doc.get("certifications") or [],
         cost=course_doc.get("cost"),
-        category_id=str(course_doc["categoryId"])
-        if course_doc.get("categoryId")
-        else None,
+        category_id=str(course_doc["categoryId"]) if course_doc.get("categoryId") else None,
         vendor_id=str(course_doc["vendorId"]) if course_doc.get("vendorId") else None,
         job_role_ids=job_role_ids,
         course_details=course_details,

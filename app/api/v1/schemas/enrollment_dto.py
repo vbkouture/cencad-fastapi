@@ -23,15 +23,11 @@ class EnrollmentUpdateRequest(BaseModel):
     status: str | None = Field(
         None, description="Enrollment status (ENROLLED, IN_PROGRESS, COMPLETED, DROPPED)"
     )
-    payment_status: str | None = Field(
-        None, description="Payment status (PENDING, PAID, REFUNDED)"
-    )
+    payment_status: str | None = Field(None, description="Payment status (PENDING, PAID, REFUNDED)")
     completed_at: datetime | None = Field(None, description="Completion date")
     grade: float | None = Field(None, ge=0, le=100, description="Grade")
     certificate_url: str | None = Field(None, description="Certificate URL")
-    instructor_notes: list[dict[str, Any]] | None = Field(
-        None, description="Instructor notes"
-    )
+    instructor_notes: list[dict[str, Any]] | None = Field(None, description="Instructor notes")
 
 
 class EnrollmentResponse(BaseModel):

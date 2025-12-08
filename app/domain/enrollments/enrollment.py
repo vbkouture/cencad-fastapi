@@ -53,10 +53,10 @@ class Enrollment(BaseModel):
         """Convert MongoDB document to Enrollment model."""
         if not data:
             raise ValueError("Data is empty")
-        
+
         id_val = str(data["_id"])
         return cls(
-            _id=id_val,
+            id=id_val,
             user_id=str(data["user_id"]),
             schedule_id=str(data["schedule_id"]),
             course_id=str(data["course_id"]),

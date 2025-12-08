@@ -1,16 +1,19 @@
 """Tests for job roles endpoints."""
 
+from collections.abc import AsyncGenerator
+
 import pytest
 from fastapi import status
 from httpx import AsyncClient
-from typing import AsyncGenerator
 
 from app.db import get_database
 from app.db.job_role_repository import JobRoleRepository
 
 
 @pytest.fixture
-async def job_role_repo(setup_db: AsyncGenerator[None, None]) -> AsyncGenerator[JobRoleRepository, None]:
+async def job_role_repo(
+    setup_db: AsyncGenerator[None, None]
+) -> AsyncGenerator[JobRoleRepository, None]:
     """Get job role repository with setup."""
     db = get_database()
     repo = JobRoleRepository(db)
@@ -24,9 +27,7 @@ async def admin_token() -> str:
     from app.core.security import create_access_token
     from app.domain.users.value_objects import UserRole
 
-    token = create_access_token(
-        data={"sub": "test_admin_id", "role": UserRole.ADMIN}
-    )
+    token = create_access_token(data={"sub": "test_admin_id", "role": UserRole.ADMIN})
     return token
 
 
@@ -36,9 +37,7 @@ async def student_token() -> str:
     from app.core.security import create_access_token
     from app.domain.users.value_objects import UserRole
 
-    token = create_access_token(
-        data={"sub": "test_student_id", "role": UserRole.STUDENT}
-    )
+    token = create_access_token(data={"sub": "test_student_id", "role": UserRole.STUDENT})
     return token
 
 
@@ -58,7 +57,9 @@ class TestGetAllJobRoles:
     """Tests for GET /job-roles endpoint."""
 
     @pytest.mark.anyio
-    async def test_get_empty_list(self, client: AsyncClient, cleanup_job_roles: AsyncGenerator[None, None]) -> None:
+    async def test_get_empty_list(
+        self, client: AsyncClient, cleanup_job_roles: AsyncGenerator[None, None]
+    ) -> None:
         """Test getting job roles when none exist."""
         response = await client.get("/api/v1/job-roles")
         assert response.status_code == status.HTTP_200_OK
@@ -66,15 +67,16 @@ class TestGetAllJobRoles:
 
     @pytest.mark.anyio
     async def test_get_all_job_roles_success(
-        self, client: AsyncClient, job_role_repo: JobRoleRepository, cleanup_job_roles: AsyncGenerator[None, None]
+        self,
+        client: AsyncClient,
+        job_role_repo: JobRoleRepository,
+        cleanup_job_roles: AsyncGenerator[None, None],
     ) -> None:
         """Test getting all job roles successfully."""
         await job_role_repo.create_job_role(
             name="Software Engineer", description="Develop software"
         )
-        await job_role_repo.create_job_role(
-            name="Data Scientist", description="Analyze data"
-        )
+        await job_role_repo.create_job_role(name="Data Scientist", description="Analyze data")
         response = await client.get("/api/v1/job-roles")
         assert response.status_code == status.HTTP_200_OK
         data = response.json()
@@ -82,13 +84,14 @@ class TestGetAllJobRoles:
 
     @pytest.mark.anyio
     async def test_get_all_job_roles_multiple(
-        self, client: AsyncClient, job_role_repo: JobRoleRepository, cleanup_job_roles: AsyncGenerator[None, None]
+        self,
+        client: AsyncClient,
+        job_role_repo: JobRoleRepository,
+        cleanup_job_roles: AsyncGenerator[None, None],
     ) -> None:
         """Test getting many job roles."""
         for i in range(10):
-            await job_role_repo.create_job_role(
-                name=f"Role {i}", description=f"Description {i}"
-            )
+            await job_role_repo.create_job_role(name=f"Role {i}", description=f"Description {i}")
         response = await client.get("/api/v1/job-roles")
         assert response.status_code == status.HTTP_200_OK
         assert len(response.json()) == 10
@@ -99,15 +102,16 @@ class TestGetSingleJobRole:
 
     @pytest.mark.anyio
     async def test_get_job_role_by_id_success(
-        self, client: AsyncClient, job_role_repo: JobRoleRepository, cleanup_job_roles: AsyncGenerator[None, None]
+        self,
+        client: AsyncClient,
+        job_role_repo: JobRoleRepository,
+        cleanup_job_roles: AsyncGenerator[None, None],
     ) -> None:
         """Test getting a job role by valid ID."""
         job_role = await job_role_repo.create_job_role(
             name="Product Manager", description="Manage product roadmap"
         )
-        response = await client.get(
-            f"/api/v1/job-roles/{str(job_role['_id'])}"
-        )
+        response = await client.get(f"/api/v1/job-roles/{str(job_role['_id'])}")
         assert response.status_code == status.HTTP_200_OK
         data = response.json()
         assert data["name"] == "Product Manager"
@@ -142,9 +146,7 @@ class TestCreateJobRole:
             "description": "Manage infrastructure and deployments",
         }
         headers = {"Authorization": f"Bearer {admin_token}"}
-        response = await client.post(
-            "/api/v1/job-roles", json=payload, headers=headers
-        )
+        response = await client.post("/api/v1/job-roles", json=payload, headers=headers)
         assert response.status_code == status.HTTP_201_CREATED
         data = response.json()
         assert data["name"] == "DevOps Engineer"
@@ -165,24 +167,22 @@ class TestCreateJobRole:
         """Test creating job role with student token (non-admin)."""
         payload = {"name": "Role", "description": "Description"}
         headers = {"Authorization": f"Bearer {student_token}"}
-        response = await client.post(
-            "/api/v1/job-roles", json=payload, headers=headers
-        )
+        response = await client.post("/api/v1/job-roles", json=payload, headers=headers)
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     @pytest.mark.anyio
     async def test_create_job_role_duplicate_name(
-        self, client: AsyncClient, admin_token: str, job_role_repo: JobRoleRepository, cleanup_job_roles: AsyncGenerator[None, None]
+        self,
+        client: AsyncClient,
+        admin_token: str,
+        job_role_repo: JobRoleRepository,
+        cleanup_job_roles: AsyncGenerator[None, None],
     ) -> None:
         """Test creating job role with duplicate name."""
-        await job_role_repo.create_job_role(
-            name="Duplicate Name", description="First description"
-        )
+        await job_role_repo.create_job_role(name="Duplicate Name", description="First description")
         payload = {"name": "Duplicate Name", "description": "Second description"}
         headers = {"Authorization": f"Bearer {admin_token}"}
-        response = await client.post(
-            "/api/v1/job-roles", json=payload, headers=headers
-        )
+        response = await client.post("/api/v1/job-roles", json=payload, headers=headers)
         assert response.status_code == status.HTTP_409_CONFLICT
 
     @pytest.mark.anyio
@@ -192,9 +192,7 @@ class TestCreateJobRole:
         """Test creating job role with empty name."""
         payload = {"name": "", "description": "Description"}
         headers = {"Authorization": f"Bearer {admin_token}"}
-        response = await client.post(
-            "/api/v1/job-roles", json=payload, headers=headers
-        )
+        response = await client.post("/api/v1/job-roles", json=payload, headers=headers)
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
     @pytest.mark.anyio
@@ -204,9 +202,7 @@ class TestCreateJobRole:
         """Test creating job role with name exceeding max length."""
         payload = {"name": "a" * 201, "description": "Description"}
         headers = {"Authorization": f"Bearer {admin_token}"}
-        response = await client.post(
-            "/api/v1/job-roles", json=payload, headers=headers
-        )
+        response = await client.post("/api/v1/job-roles", json=payload, headers=headers)
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
     @pytest.mark.anyio
@@ -216,9 +212,7 @@ class TestCreateJobRole:
         """Test creating job role with empty description."""
         payload = {"name": "Role", "description": ""}
         headers = {"Authorization": f"Bearer {admin_token}"}
-        response = await client.post(
-            "/api/v1/job-roles", json=payload, headers=headers
-        )
+        response = await client.post("/api/v1/job-roles", json=payload, headers=headers)
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
     @pytest.mark.anyio
@@ -228,9 +222,7 @@ class TestCreateJobRole:
         """Test creating job role without name field."""
         payload = {"description": "Description"}
         headers = {"Authorization": f"Bearer {admin_token}"}
-        response = await client.post(
-            "/api/v1/job-roles", json=payload, headers=headers
-        )
+        response = await client.post("/api/v1/job-roles", json=payload, headers=headers)
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
     @pytest.mark.anyio
@@ -240,9 +232,7 @@ class TestCreateJobRole:
         """Test creating job role without description field."""
         payload = {"name": "Role"}
         headers = {"Authorization": f"Bearer {admin_token}"}
-        response = await client.post(
-            "/api/v1/job-roles", json=payload, headers=headers
-        )
+        response = await client.post("/api/v1/job-roles", json=payload, headers=headers)
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
     @pytest.mark.anyio
@@ -252,9 +242,7 @@ class TestCreateJobRole:
         """Test creating job role with maximum valid name length."""
         payload = {"name": "a" * 200, "description": "Description"}
         headers = {"Authorization": f"Bearer {admin_token}"}
-        response = await client.post(
-            "/api/v1/job-roles", json=payload, headers=headers
-        )
+        response = await client.post("/api/v1/job-roles", json=payload, headers=headers)
         assert response.status_code == status.HTTP_201_CREATED
 
     @pytest.mark.anyio
@@ -264,9 +252,7 @@ class TestCreateJobRole:
         """Test creating job role with maximum valid description length."""
         payload = {"name": "Role", "description": "a" * 1000}
         headers = {"Authorization": f"Bearer {admin_token}"}
-        response = await client.post(
-            "/api/v1/job-roles", json=payload, headers=headers
-        )
+        response = await client.post("/api/v1/job-roles", json=payload, headers=headers)
         assert response.status_code == status.HTTP_201_CREATED
 
     @pytest.mark.anyio
@@ -279,9 +265,7 @@ class TestCreateJobRole:
             "description": "Build amazing 产品 and 技术 🚀",
         }
         headers = {"Authorization": f"Bearer {admin_token}"}
-        response = await client.post(
-            "/api/v1/job-roles", json=payload, headers=headers
-        )
+        response = await client.post("/api/v1/job-roles", json=payload, headers=headers)
         assert response.status_code == status.HTTP_201_CREATED
 
 
@@ -295,7 +279,11 @@ class TestUpdateJobRole:
 
     @pytest.mark.anyio
     async def test_update_job_role_both_fields(
-        self, client: AsyncClient, admin_token: str, job_role_repo: JobRoleRepository, cleanup_job_roles: AsyncGenerator[None, None]
+        self,
+        client: AsyncClient,
+        admin_token: str,
+        job_role_repo: JobRoleRepository,
+        cleanup_job_roles: AsyncGenerator[None, None],
     ) -> None:
         """Test updating job role with both name and description."""
         job_role = await job_role_repo.create_job_role(
@@ -315,7 +303,11 @@ class TestUpdateJobRole:
 
     @pytest.mark.anyio
     async def test_update_job_role_name_only(
-        self, client: AsyncClient, admin_token: str, job_role_repo: JobRoleRepository, cleanup_job_roles: AsyncGenerator[None, None]
+        self,
+        client: AsyncClient,
+        admin_token: str,
+        job_role_repo: JobRoleRepository,
+        cleanup_job_roles: AsyncGenerator[None, None],
     ) -> None:
         """Test updating only the job role name."""
         job_role = await job_role_repo.create_job_role(
@@ -352,15 +344,15 @@ class TestUpdateJobRole:
 
     @pytest.mark.anyio
     async def test_update_job_role_duplicate_name(
-        self, client: AsyncClient, admin_token: str, job_role_repo: JobRoleRepository, cleanup_job_roles: AsyncGenerator[None, None]
+        self,
+        client: AsyncClient,
+        admin_token: str,
+        job_role_repo: JobRoleRepository,
+        cleanup_job_roles: AsyncGenerator[None, None],
     ) -> None:
         """Test updating job role to a name that already exists."""
-        await job_role_repo.create_job_role(
-            name="Role 1", description="Description 1"
-        )
-        role2 = await job_role_repo.create_job_role(
-            name="Role 2", description="Description 2"
-        )
+        await job_role_repo.create_job_role(name="Role 1", description="Description 1")
+        role2 = await job_role_repo.create_job_role(name="Role 2", description="Description 2")
         payload = {"name": "Role 1"}
         headers = {"Authorization": f"Bearer {admin_token}"}
         response = await client.put(
@@ -372,26 +364,27 @@ class TestUpdateJobRole:
 
     @pytest.mark.anyio
     async def test_update_job_role_missing_auth(
-        self, client: AsyncClient, job_role_repo: JobRoleRepository, cleanup_job_roles: AsyncGenerator[None, None]
+        self,
+        client: AsyncClient,
+        job_role_repo: JobRoleRepository,
+        cleanup_job_roles: AsyncGenerator[None, None],
     ) -> None:
         """Test updating job role without authentication."""
-        job_role = await job_role_repo.create_job_role(
-            name="Name", description="Description"
-        )
+        job_role = await job_role_repo.create_job_role(name="Name", description="Description")
         payload = {"name": "New Name"}
-        response = await client.put(
-            f"/api/v1/job-roles/{str(job_role['_id'])}", json=payload
-        )
+        response = await client.put(f"/api/v1/job-roles/{str(job_role['_id'])}", json=payload)
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     @pytest.mark.anyio
     async def test_update_job_role_student_token(
-        self, client: AsyncClient, student_token: str, job_role_repo: JobRoleRepository, cleanup_job_roles: AsyncGenerator[None, None]
+        self,
+        client: AsyncClient,
+        student_token: str,
+        job_role_repo: JobRoleRepository,
+        cleanup_job_roles: AsyncGenerator[None, None],
     ) -> None:
         """Test updating job role with student token."""
-        job_role = await job_role_repo.create_job_role(
-            name="Name", description="Description"
-        )
+        job_role = await job_role_repo.create_job_role(name="Name", description="Description")
         payload = {"name": "New Name"}
         headers = {"Authorization": f"Bearer {student_token}"}
         response = await client.put(
@@ -412,16 +405,18 @@ class TestDeleteJobRole:
 
     @pytest.mark.anyio
     async def test_delete_job_role_success(
-        self, client: AsyncClient, admin_token: str, job_role_repo: JobRoleRepository, cleanup_job_roles: AsyncGenerator[None, None]
+        self,
+        client: AsyncClient,
+        admin_token: str,
+        job_role_repo: JobRoleRepository,
+        cleanup_job_roles: AsyncGenerator[None, None],
     ) -> None:
         """Test successfully deleting a job role."""
         job_role = await job_role_repo.create_job_role(
             name="Role to Delete", description="This will be deleted"
         )
         headers = {"Authorization": f"Bearer {admin_token}"}
-        response = await client.delete(
-            f"/api/v1/job-roles/{str(job_role['_id'])}", headers=headers
-        )
+        response = await client.delete(f"/api/v1/job-roles/{str(job_role['_id'])}", headers=headers)
         assert response.status_code == status.HTTP_200_OK
         deleted_role = await job_role_repo.find_by_id(str(job_role["_id"]))
         assert deleted_role is None
@@ -435,36 +430,33 @@ class TestDeleteJobRole:
 
         invalid_id = str(ObjectId())
         headers = {"Authorization": f"Bearer {admin_token}"}
-        response = await client.delete(
-            f"/api/v1/job-roles/{invalid_id}", headers=headers
-        )
+        response = await client.delete(f"/api/v1/job-roles/{invalid_id}", headers=headers)
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
     @pytest.mark.anyio
     async def test_delete_job_role_missing_auth(
-        self, client: AsyncClient, job_role_repo: JobRoleRepository, cleanup_job_roles: AsyncGenerator[None, None]
+        self,
+        client: AsyncClient,
+        job_role_repo: JobRoleRepository,
+        cleanup_job_roles: AsyncGenerator[None, None],
     ) -> None:
         """Test deleting job role without authentication."""
-        job_role = await job_role_repo.create_job_role(
-            name="Role", description="Description"
-        )
-        response = await client.delete(
-            f"/api/v1/job-roles/{str(job_role['_id'])}"
-        )
+        job_role = await job_role_repo.create_job_role(name="Role", description="Description")
+        response = await client.delete(f"/api/v1/job-roles/{str(job_role['_id'])}")
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     @pytest.mark.anyio
     async def test_delete_job_role_student_token(
-        self, client: AsyncClient, student_token: str, job_role_repo: JobRoleRepository, cleanup_job_roles: AsyncGenerator[None, None]
+        self,
+        client: AsyncClient,
+        student_token: str,
+        job_role_repo: JobRoleRepository,
+        cleanup_job_roles: AsyncGenerator[None, None],
     ) -> None:
         """Test deleting job role with student token."""
-        job_role = await job_role_repo.create_job_role(
-            name="Role", description="Description"
-        )
+        job_role = await job_role_repo.create_job_role(name="Role", description="Description")
         headers = {"Authorization": f"Bearer {student_token}"}
-        response = await client.delete(
-            f"/api/v1/job-roles/{str(job_role['_id'])}", headers=headers
-        )
+        response = await client.delete(f"/api/v1/job-roles/{str(job_role['_id'])}", headers=headers)
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
@@ -482,7 +474,7 @@ class TestJobRoleIntegration:
     ) -> None:
         """Test complete CRUD workflow."""
         headers = {"Authorization": f"Bearer {admin_token}"}
-        
+
         # CREATE
         create_payload = {
             "name": "Full Stack Developer",
@@ -509,9 +501,7 @@ class TestJobRoleIntegration:
         assert update_response.status_code == status.HTTP_200_OK
 
         # DELETE
-        delete_response = await client.delete(
-            f"/api/v1/job-roles/{role_id}", headers=headers
-        )
+        delete_response = await client.delete(f"/api/v1/job-roles/{role_id}", headers=headers)
         assert delete_response.status_code == status.HTTP_200_OK
 
         # Verify deleted
@@ -525,9 +515,7 @@ class TestJobRoleIntegration:
         """Test that public read works after admin creates."""
         headers = {"Authorization": f"Bearer {admin_token}"}
         payload = {"name": "Public Test", "description": "Test"}
-        response = await client.post(
-            "/api/v1/job-roles", json=payload, headers=headers
-        )
+        response = await client.post("/api/v1/job-roles", json=payload, headers=headers)
         role_id = response.json()["id"]
 
         # Public read without auth
@@ -537,17 +525,19 @@ class TestJobRoleIntegration:
 
     @pytest.mark.anyio
     async def test_student_cannot_create_but_can_read(
-        self, client: AsyncClient, admin_token: str, student_token: str, cleanup_job_roles: AsyncGenerator[None, None]
+        self,
+        client: AsyncClient,
+        admin_token: str,
+        student_token: str,
+        cleanup_job_roles: AsyncGenerator[None, None],
     ) -> None:
         """Test that students can read but cannot create."""
         headers_admin = {"Authorization": f"Bearer {admin_token}"}
         headers_student = {"Authorization": f"Bearer {student_token}"}
-        
+
         # Admin creates
         payload = {"name": "Test Role", "description": "Test"}
-        response = await client.post(
-            "/api/v1/job-roles", json=payload, headers=headers_admin
-        )
+        response = await client.post("/api/v1/job-roles", json=payload, headers=headers_admin)
         assert response.status_code == status.HTTP_201_CREATED
         role_id = response.json()["id"]
 

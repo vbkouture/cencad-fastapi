@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 
-import mailtrap as mt
+import mailtrap as mt  # type: ignore[import-untyped]
 
 from app.core.config import settings
 
@@ -329,4 +329,3 @@ async def send_password_reset_email(
     except Exception as e:
         logger.error(f"Exception while sending password reset email: {e}")
         return False
-

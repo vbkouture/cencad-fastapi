@@ -1,19 +1,19 @@
 """Pytest configuration and fixtures for all tests."""
 
+from collections.abc import AsyncGenerator
+from typing import Any
+
 import pytest
-from typing import AsyncGenerator, Any
+from httpx import ASGITransport, AsyncClient
 
-from httpx import AsyncClient, ASGITransport
-
-from app.db import connect_to_mongodb, close_mongodb_connection, get_database
+from app.db import close_mongodb_connection, connect_to_mongodb, get_database
 from app.main import create_app
-
 
 
 @pytest.fixture
 def anyio_backend():
     """Force anyio to use asyncio backend."""
-    return 'asyncio'
+    return "asyncio"
 
 
 @pytest.fixture
@@ -23,16 +23,18 @@ async def setup_db() -> AsyncGenerator[None, None]:
     # Ensure clean slate
     db = get_database()  # type: ignore[assignment]
     await db.client.drop_database(db.name)  # type: ignore[attr-defined]
-    
+
     yield
-    
+
     # Cleanup: drop test database
     await db.client.drop_database(db.name)  # type: ignore[attr-defined]
     await close_mongodb_connection()
 
 
 @pytest.fixture
-async def client(setup_db: AsyncGenerator[None, None]) -> AsyncGenerator[AsyncClient, None]:  # noqa: ARG001
+async def client(
+    setup_db: AsyncGenerator[None, None]
+) -> AsyncGenerator[AsyncClient, None]:  # noqa: ARG001
     """Provide an async HTTP client for testing."""
     app = create_app()
     transport = ASGITransport(app=app)

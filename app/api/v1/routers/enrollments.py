@@ -43,18 +43,18 @@ async def create_enrollment(
     # Ensure user is enrolling themselves or is admin (logic can be expanded)
     # For now, we trust the request body or override with current_user if needed
     # But usually, a student enrolls themselves.
-    
+
     # If request.user_id is different from current_user_id, we might want to check permissions
     # For simplicity, we'll allow it if the user is authenticated, assuming frontend handles logic
     # OR we force user_id to be current_user_id for students.
-    
+
     enrollment_doc = await repo.create_enrollment(
         user_id=request.user_id,
         schedule_id=request.schedule_id,
         course_id=request.course_id,
         payment_transaction_id=request.payment_transaction_id,
     )
-    return Enrollment.from_mongo(enrollment_doc).model_dump()
+    return EnrollmentResponse.model_validate(Enrollment.from_mongo(enrollment_doc).model_dump())
 
 
 @router.get(
@@ -68,7 +68,9 @@ async def get_my_enrollments(
 ) -> list[EnrollmentResponse]:
     """Get all enrollments for the current user."""
     docs = await repo.get_enrollments_by_student(current_user_id)
-    return [Enrollment.from_mongo(doc).model_dump() for doc in docs]
+    return [
+        EnrollmentResponse.model_validate(Enrollment.from_mongo(doc).model_dump()) for doc in docs
+    ]
 
 
 @router.get(
@@ -83,11 +85,13 @@ async def get_enrollments_by_schedule(
 ) -> list[EnrollmentResponse]:
     """
     Get all enrollments for a specific schedule.
-    
+
     **Tutor or Admin only**.
     """
     docs = await repo.get_enrollments_by_schedule(schedule_id)
-    return [Enrollment.from_mongo(doc).model_dump() for doc in docs]
+    return [
+        EnrollmentResponse.model_validate(Enrollment.from_mongo(doc).model_dump()) for doc in docs
+    ]
 
 
 @router.get(
@@ -103,15 +107,13 @@ async def get_enrollment(
 ) -> EnrollmentResponse:
     """
     Get an enrollment by ID.
-    
+
     **Restricted**: Users can only view their own enrollments. Tutors/Admins can view all.
     """
     doc = await repo.find_by_id(enrollment_id)
     if not doc:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Enrollment not found"
-        )
-    
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Enrollment not found")
+
     # Check permissions
     if str(doc["user_id"]) != current_user_id and current_role not in (
         UserRole.TUTOR,
@@ -122,7 +124,7 @@ async def get_enrollment(
             detail="Not authorized to view this enrollment",
         )
 
-    return Enrollment.from_mongo(doc).model_dump()
+    return EnrollmentResponse.model_validate(Enrollment.from_mongo(doc).model_dump())
 
 
 @router.put(
@@ -138,7 +140,7 @@ async def update_enrollment(
 ) -> EnrollmentResponse:
     """
     Update an enrollment.
-    
+
     **Tutor or Admin only**.
     """
     updated_doc = await repo.update_enrollment(
@@ -151,7 +153,5 @@ async def update_enrollment(
         instructor_notes=request.instructor_notes,
     )
     if not updated_doc:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Enrollment not found"
-        )
-    return Enrollment.from_mongo(updated_doc).model_dump()
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Enrollment not found")
+    return EnrollmentResponse.model_validate(Enrollment.from_mongo(updated_doc).model_dump())

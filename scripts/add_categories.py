@@ -8,7 +8,7 @@ Usage:
 import asyncio
 import sys
 from argparse import ArgumentParser
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from uuid import uuid4
 
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -18,7 +18,7 @@ from app.core.config import settings
 
 def utcnow() -> datetime:
     """Get current UTC time."""
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 # Default categories to seed
@@ -50,11 +50,9 @@ DEFAULT_CATEGORIES = [
 ]
 
 
-async def add_category(
-    name: str, description: str, mongodb_url: str, db_name: str
-) -> str:
+async def add_category(name: str, description: str, mongodb_url: str, db_name: str) -> str:
     """Add a course category to the database."""
-    client = AsyncIOMotorClient(mongodb_url)
+    client = AsyncIOMotorClient(mongodb_url)  # type: ignore[var-annotated]
     db = client[db_name]
 
     try:

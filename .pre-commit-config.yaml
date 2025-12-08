@@ -1,0 +1,45 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+
+  - repo: local
+    hooks:
+      - id: black
+        name: black
+        entry: python -m black
+        language: system
+        types: [python]
+        require_serial: true
+
+      - id: ruff
+        name: ruff
+        entry: python -m ruff check --fix
+        language: system
+        types: [python]
+        require_serial: true
+
+      - id: mypy
+        name: mypy
+        entry: python -m mypy
+        language: system
+        types: [python]
+        pass_filenames: true
+
+      # - id: bandit
+      #   name: bandit
+      #   entry: python -m bandit
+      #   args: ["-c", "pyproject.toml", "-r"]
+      #   language: system
+      #   types: [python]
+
+      # - id: pip-audit
+      #   name: pip-audit
+      #   entry: python -m pip_audit
+      #   language: system
+      #   types: [python]
+      #   pass_filenames: false

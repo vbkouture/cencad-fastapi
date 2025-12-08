@@ -5,15 +5,15 @@ from __future__ import annotations
 from typing import Any
 
 from bson import ObjectId
-from motor.motor_asyncio import AsyncIOMotorCollection, AsyncIOMotorDatabase  # type: ignore[import-untyped]
+from motor.motor_asyncio import AsyncIOMotorCollection, AsyncIOMotorDatabase
 
 
 class ScheduleRepository:
     """Repository for Schedule aggregate using MongoDB."""
 
-    def __init__(self, db: AsyncIOMotorDatabase) -> None:  # type: ignore[name-defined]
+    def __init__(self, db: AsyncIOMotorDatabase[Any]) -> None:
         """Initialize with MongoDB database instance."""
-        self.collection: AsyncIOMotorCollection[dict[str, Any]] = db["schedules"]  # type: ignore[index,assignment]
+        self.collection: AsyncIOMotorCollection[dict[str, Any]] = db["schedules"]
 
     async def create_schedule(
         self,
@@ -53,20 +53,22 @@ class ScheduleRepository:
     async def get_schedules_by_course(self, course_id: str) -> list[dict[str, Any]]:
         """Get all schedules for a course."""
         try:
-            return await self.collection.find({"course_id": ObjectId(course_id)}).to_list(length=None)  # type: ignore[return-value]
+            return await self.collection.find({"course_id": ObjectId(course_id)}).to_list(
+                length=None
+            )
         except Exception:
             return []
 
     async def get_schedules_by_tutor(self, tutor_id: str) -> list[dict[str, Any]]:
         """Get all schedules for a tutor."""
         try:
-            return await self.collection.find({"tutor_id": ObjectId(tutor_id)}).to_list(length=None)  # type: ignore[return-value]
+            return await self.collection.find({"tutor_id": ObjectId(tutor_id)}).to_list(length=None)
         except Exception:
             return []
 
     async def get_all_schedules(self) -> list[dict[str, Any]]:
         """Get all schedules."""
-        return await self.collection.find().to_list(length=None)  # type: ignore[return-value]
+        return await self.collection.find().to_list(length=None)
 
     async def update_schedule(
         self,

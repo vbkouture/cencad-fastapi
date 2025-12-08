@@ -52,15 +52,15 @@ class Schedule(BaseModel):
         """Convert MongoDB document to Schedule model."""
         if not data:
             raise ValueError("Data is empty")
-        
+
         id_val = str(data["_id"])
-        
+
         # Handle sessions
         sessions_data = data.get("sessions", [])
         sessions = [Session(**s) for s in sessions_data]
 
         return cls(
-            _id=id_val,
+            id=id_val,
             course_id=str(data["course_id"]),
             tutor_id=str(data["tutor_id"]),
             sessions=sessions,

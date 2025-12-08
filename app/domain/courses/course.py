@@ -99,9 +99,7 @@ class CourseDetails:
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> CourseDetails:
         """Create from dictionary representation."""
-        syllabus = [
-            SyllabusWeek.from_dict(week) for week in data.get("syllabus", [])
-        ]
+        syllabus = [SyllabusWeek.from_dict(week) for week in data.get("syllabus", [])]
         return cls(
             overview=data["overview"],
             objectives=data["objectives"],
@@ -211,7 +209,6 @@ class Course:
             "certifications": self.certifications,
             "cost": self.cost,
             "categoryId": self.category_id,
-            "vendorId": self.vendor_id,
             "vendorId": self.vendor_id,
             "jobRoleIds": self.job_role_ids,
             "resources": self.resources,

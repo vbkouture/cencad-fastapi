@@ -1,10 +1,14 @@
-from fastapi import APIRouter
 from typing import TypedDict
+
+from fastapi import APIRouter
+
 router = APIRouter(tags=["meta"])
+
 
 class PingOut(TypedDict):
     ok: bool
     service: str
+
 
 @router.get("/ping", summary="Liveness ping")
 async def ping() -> PingOut:

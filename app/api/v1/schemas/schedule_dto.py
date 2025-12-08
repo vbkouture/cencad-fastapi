@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field
 
 class SessionDTO(BaseModel):
     """DTO for a single session."""
-    
+
     date: datetime = Field(description="Session date")
     start_time: str = Field(description="Start time (e.g., '18:00')")
     end_time: str = Field(description="End time (e.g., '20:00')")

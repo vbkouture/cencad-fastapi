@@ -5,15 +5,15 @@ from __future__ import annotations
 from typing import Any
 
 from bson import ObjectId
-from motor.motor_asyncio import AsyncIOMotorCollection, AsyncIOMotorDatabase  # type: ignore[import-untyped]
+from motor.motor_asyncio import AsyncIOMotorCollection, AsyncIOMotorDatabase
 
 
 class CourseRepository:
     """Repository for Course aggregate using MongoDB."""
 
-    def __init__(self, db: AsyncIOMotorDatabase) -> None:  # type: ignore[name-defined]
+    def __init__(self, db: AsyncIOMotorDatabase[Any]) -> None:
         """Initialize with MongoDB database instance."""
-        self.collection: AsyncIOMotorCollection[dict[str, Any]] = db["courses"]  # type: ignore[index,assignment]
+        self.collection: AsyncIOMotorCollection[dict[str, Any]] = db["courses"]
 
     async def create_course(
         self,
@@ -116,7 +116,7 @@ class CourseRepository:
             result = await self.collection.find_one({"_id": course_id})
             if result:
                 return result
-            
+
             # If not found, try as ObjectId in case of mixed format
             try:
                 return await self.collection.find_one({"_id": ObjectId(course_id)})
@@ -139,7 +139,7 @@ class CourseRepository:
 
     async def get_all_courses(self) -> list[dict[str, Any]]:
         """Get all courses from database."""
-        return await self.collection.find().to_list(length=None)  # type: ignore[return-value]
+        return await self.collection.find().to_list(length=None)
 
     async def get_courses_by_level(self, level: str) -> list[dict[str, Any]]:
         """
@@ -151,7 +151,7 @@ class CourseRepository:
         Returns:
             List of courses matching the level
         """
-        return await self.collection.find({"level": level}).to_list(length=None)  # type: ignore[return-value]
+        return await self.collection.find({"level": level}).to_list(length=None)
 
     async def get_courses_by_category(self, category_id: str) -> list[dict[str, Any]]:
         """
@@ -164,7 +164,9 @@ class CourseRepository:
             List of courses in this category
         """
         try:
-            return await self.collection.find({"categoryId": ObjectId(category_id)}).to_list(length=None)  # type: ignore[return-value]
+            return await self.collection.find({"categoryId": ObjectId(category_id)}).to_list(
+                length=None
+            )
         except Exception:
             return []
 
@@ -179,7 +181,9 @@ class CourseRepository:
             List of courses from this vendor
         """
         try:
-            return await self.collection.find({"vendorId": ObjectId(vendor_id)}).to_list(length=None)  # type: ignore[return-value]
+            return await self.collection.find({"vendorId": ObjectId(vendor_id)}).to_list(
+                length=None
+            )
         except Exception:
             return []
 
@@ -194,7 +198,7 @@ class CourseRepository:
             List of courses related to this job role
         """
         try:
-            return await self.collection.find({"jobRoleIds": job_role_id}).to_list(length=None)  # type: ignore[return-value]
+            return await self.collection.find({"jobRoleIds": job_role_id}).to_list(length=None)
         except Exception:
             return []
 
@@ -251,7 +255,7 @@ class CourseRepository:
         """
         try:
             update_data: dict[str, Any] = {}
-            
+
             if title is not None:
                 # Check if new title already exists
                 existing = await self.collection.find_one(

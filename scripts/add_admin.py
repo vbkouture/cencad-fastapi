@@ -19,7 +19,7 @@ from app.domain.users.value_objects import UserRole
 
 async def add_admin(email: str, name: str, password: str, mongodb_url: str, db_name: str) -> None:
     """Add an admin user to the database."""
-    client = AsyncIOMotorClient(mongodb_url)
+    client = AsyncIOMotorClient(mongodb_url)  # type: ignore[var-annotated]
     db = client[db_name]
 
     try:
@@ -45,7 +45,7 @@ async def add_admin(email: str, name: str, password: str, mongodb_url: str, db_n
 
         # Insert user
         await db.users.insert_one(admin_user)
-        print(f"✅ Admin user created successfully!")
+        print("✅ Admin user created successfully!")
         print(f"   ID: {user_id}")
         print(f"   Email: {email}")
         print(f"   Name: {name}")

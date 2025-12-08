@@ -11,18 +11,14 @@ class VendorCreateRequest(BaseModel):
     """Request DTO for creating a vendor."""
 
     name: str = Field(min_length=1, max_length=200, description="Vendor name")
-    description: str = Field(
-        min_length=1, max_length=1000, description="Vendor description"
-    )
+    description: str = Field(min_length=1, max_length=1000, description="Vendor description")
     logo: str | None = Field(None, description="Optional vendor logo URL")
 
 
 class VendorUpdateRequest(BaseModel):
     """Request DTO for updating a vendor."""
 
-    name: str | None = Field(
-        None, min_length=1, max_length=200, description="Vendor name"
-    )
+    name: str | None = Field(None, min_length=1, max_length=200, description="Vendor name")
     description: str | None = Field(
         None, min_length=1, max_length=1000, description="Vendor description"
     )

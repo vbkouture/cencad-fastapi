@@ -11,7 +11,7 @@ import asyncio
 import json
 import sys
 from argparse import ArgumentParser
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from bson import ObjectId
@@ -23,7 +23,7 @@ from app.domain.courses.course import CourseLevel, CourseStatus
 
 def utcnow() -> datetime:
     """Get current UTC time."""
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 def parse_course_level(level_str: str | None) -> str:
@@ -78,7 +78,7 @@ async def add_course(
     skip_errors: bool = False,
 ) -> tuple[bool, str]:
     """Add a single course to the database."""
-    client = AsyncIOMotorClient(mongodb_url)
+    client = AsyncIOMotorClient(mongodb_url)  # type: ignore[var-annotated]
     db = client[db_name]
 
     try:
@@ -152,7 +152,7 @@ async def add_courses_from_json(
 ) -> None:
     """Add courses from a JSON file."""
     try:
-        with open(json_file, "r", encoding="utf-8") as f:
+        with open(json_file, encoding="utf-8") as f:
             data = json.load(f)
     except FileNotFoundError:
         print(f"❌ Error: File '{json_file}' not found")
@@ -209,7 +209,7 @@ async def add_courses_from_json(
                 print(f"\n❌ Failed at course {idx}. Use --skip-errors to continue.")
                 sys.exit(1)
 
-    print(f"\n✨ Summary:")
+    print("\n✨ Summary:")
     print(f"   ✅ Added: {successful}")
     print(f"   ⏭️  Skipped: {skipped}")
     print(f"   ❌ Failed: {failed}")
@@ -221,9 +221,7 @@ async def add_courses_from_json(
 
 def main() -> None:
     """Main entry point."""
-    parser = ArgumentParser(
-        description="Add courses to the database from a JSON file"
-    )
+    parser = ArgumentParser(description="Add courses to the database from a JSON file")
     parser.add_argument(
         "--file",
         type=str,

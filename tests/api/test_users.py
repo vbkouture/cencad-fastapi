@@ -30,7 +30,7 @@ async def admin_token(client: AsyncClient) -> str:
             "password": "adminpass123",
         },
     )
-    return response.json()["access_token"]
+    return str(response.json()["access_token"])
 
 
 @pytest.fixture
@@ -45,7 +45,7 @@ async def student_token(client: AsyncClient) -> str:
             "name": "Student User",
         },
     )
-    return response.json()["access_token"]
+    return str(response.json()["access_token"])
 
 
 @pytest.mark.anyio
@@ -99,9 +99,7 @@ async def test_create_tutor_requires_auth(client: AsyncClient) -> None:
 
 
 @pytest.mark.anyio
-async def test_create_tutor_rejects_duplicate_email(
-    client: AsyncClient, admin_token: str
-) -> None:
+async def test_create_tutor_rejects_duplicate_email(client: AsyncClient, admin_token: str) -> None:
     """Test that creating tutor rejects duplicate emails."""
     # Create first tutor
     await client.post(

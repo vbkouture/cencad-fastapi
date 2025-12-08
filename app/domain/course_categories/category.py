@@ -5,7 +5,7 @@ Represents a course category in the system.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from pydantic import BaseModel, Field
 from pydantic.config import ConfigDict
@@ -13,7 +13,7 @@ from pydantic.config import ConfigDict
 
 def utcnow() -> datetime:
     """Get current UTC time."""
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 class CourseCategory(BaseModel):

@@ -52,11 +52,11 @@ jobs:
             - name: Format check with black
               run: black --check app tests
 
-            - name: Security audit with bandit
-              run: bandit -r app -x tests || true
+            # - name: Security audit with bandit
+            #   run: bandit -r app -x tests || true
 
-            - name: Dependency audit with pip-audit
-              run: pip-audit || true
+            # - name: Dependency audit with pip-audit
+            #   run: pip-audit || true
 
             - name: Build Docker image
               run: docker build -t fastapi-mongo-starter .

@@ -2,18 +2,19 @@
 
 from __future__ import annotations
 
+from datetime import UTC
 from typing import Any
 
 from bson import ObjectId
-from motor.motor_asyncio import AsyncIOMotorCollection, AsyncIOMotorDatabase  # type: ignore[import-untyped]
+from motor.motor_asyncio import AsyncIOMotorCollection, AsyncIOMotorDatabase
 
 
 class ContactFormRepository:
     """Repository for ContactForm aggregate using MongoDB."""
 
-    def __init__(self, db: AsyncIOMotorDatabase) -> None:  # type: ignore[name-defined]
+    def __init__(self, db: AsyncIOMotorDatabase[Any]) -> None:
         """Initialize with MongoDB database instance."""
-        self.collection: AsyncIOMotorCollection[dict[str, Any]] = db["contact-forms"]  # type: ignore[index,assignment]
+        self.collection: AsyncIOMotorCollection[dict[str, Any]] = db["contact-forms"]
 
     async def create(
         self,
@@ -34,14 +35,14 @@ class ContactFormRepository:
         Returns:
             Created contact form document with _id
         """
-        from datetime import datetime, timezone
+        from datetime import datetime
 
         contact_form_doc: dict[str, Any] = {
             "name": name,
             "email": email.lower(),
             "subject": subject,
             "message": message,
-            "created_at": datetime.now(timezone.utc),
+            "created_at": datetime.now(UTC),
         }
 
         result = await self.collection.insert_one(contact_form_doc)
@@ -66,7 +67,7 @@ class ContactFormRepository:
 
     async def get_all(self) -> list[dict[str, Any]]:
         """Get all contact form submissions from database."""
-        return await self.collection.find().sort("created_at", -1).to_list(length=None)  # type: ignore[return-value]
+        return await self.collection.find().sort("created_at", -1).to_list(length=None)
 
     async def delete(self, form_id: str) -> bool:
         """

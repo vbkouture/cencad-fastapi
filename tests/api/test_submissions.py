@@ -2,7 +2,6 @@
 
 import pytest
 from httpx import AsyncClient
-from typing import AsyncGenerator
 
 from app.db import get_database
 
@@ -11,7 +10,7 @@ from app.db import get_database
 async def tutor_token(client: AsyncClient) -> str:
     """Create a tutor user and return their JWT token."""
     from app.core.security import hash_password
-    from app.db import UserRepository, get_database
+    from app.db import UserRepository
     from app.domain.users.value_objects import UserRole
 
     db = get_database()
@@ -31,7 +30,7 @@ async def tutor_token(client: AsyncClient) -> str:
             "password": "tutorpass123",
         },
     )
-    return response.json()["access_token"]
+    return str(response.json()["access_token"])
 
 
 @pytest.fixture
@@ -45,7 +44,7 @@ async def student_token(client: AsyncClient) -> str:
             "name": "Student User",
         },
     )
-    return response.json()["access_token"]
+    return str(response.json()["access_token"])
 
 
 class TestGetSubmissions:

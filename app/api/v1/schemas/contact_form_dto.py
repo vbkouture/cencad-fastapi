@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Any
 
 from pydantic import BaseModel, EmailStr, Field
 from pydantic.config import ConfigDict
@@ -32,7 +33,7 @@ class ContactFormResponse(BaseModel):
     created_at: datetime = Field(description="Submission timestamp")
 
     @classmethod
-    def from_document(cls, doc: dict[str, any]) -> ContactFormResponse:  # type: ignore[name-defined]
+    def from_document(cls, doc: dict[str, Any]) -> ContactFormResponse:
         """Convert MongoDB document to response model."""
         return cls(
             id=str(doc["_id"]),

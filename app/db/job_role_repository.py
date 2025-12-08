@@ -5,15 +5,15 @@ from __future__ import annotations
 from typing import Any
 
 from bson import ObjectId
-from motor.motor_asyncio import AsyncIOMotorCollection, AsyncIOMotorDatabase  # type: ignore[import-untyped]
+from motor.motor_asyncio import AsyncIOMotorCollection, AsyncIOMotorDatabase
 
 
 class JobRoleRepository:
     """Repository for JobRole aggregate using MongoDB."""
 
-    def __init__(self, db: AsyncIOMotorDatabase) -> None:  # type: ignore[name-defined]
+    def __init__(self, db: AsyncIOMotorDatabase[Any]) -> None:
         """Initialize with MongoDB database instance."""
-        self.collection: AsyncIOMotorCollection[dict[str, Any]] = db["job_roles"]  # type: ignore[index,assignment]
+        self.collection: AsyncIOMotorCollection[dict[str, Any]] = db["job_roles"]
 
     async def create_job_role(
         self,
@@ -79,7 +79,7 @@ class JobRoleRepository:
 
     async def get_all_job_roles(self) -> list[dict[str, Any]]:
         """Get all job roles from database."""
-        return await self.collection.find().to_list(length=None)  # type: ignore[return-value]
+        return await self.collection.find().to_list(length=None)
 
     async def update_job_role(
         self,

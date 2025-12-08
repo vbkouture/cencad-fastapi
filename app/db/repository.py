@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
+from datetime import UTC
 from typing import Any
 
 from bson import ObjectId
-from motor.motor_asyncio import AsyncIOMotorCollection, AsyncIOMotorDatabase  # type: ignore[import-untyped]
+from motor.motor_asyncio import AsyncIOMotorCollection, AsyncIOMotorDatabase
 
 from app.domain.users.value_objects import UserRole
 
@@ -13,9 +14,9 @@ from app.domain.users.value_objects import UserRole
 class UserRepository:
     """Repository for User aggregate using MongoDB."""
 
-    def __init__(self, db: AsyncIOMotorDatabase) -> None:  # type: ignore[name-defined]
+    def __init__(self, db: AsyncIOMotorDatabase[Any]) -> None:
         """Initialize with MongoDB database instance."""
-        self.collection: AsyncIOMotorCollection[dict[str, Any]] = db["users"]  # type: ignore[index,assignment]
+        self.collection: AsyncIOMotorCollection[dict[str, Any]] = db["users"]
 
     async def create_user(
         self,
@@ -86,7 +87,7 @@ class UserRepository:
 
     async def get_all_users(self) -> list[dict[str, Any]]:
         """Get all users from database."""
-        return await self.collection.find().to_list(length=None)  # type: ignore[return-value]
+        return await self.collection.find().to_list(length=None)
 
     async def find_users_by_role(self, role: UserRole) -> list[dict[str, Any]]:
         """
@@ -98,7 +99,7 @@ class UserRepository:
         Returns:
             List of user documents with the specified role
         """
-        return await self.collection.find({"role": role}).to_list(length=None)  # type: ignore[return-value]
+        return await self.collection.find({"role": role}).to_list(length=None)
 
     async def update_user_role(self, user_id: str, new_role: UserRole) -> bool:
         """
@@ -224,18 +225,22 @@ class UserRepository:
         """
         try:
             # Get password_reset_tokens collection
-            reset_collection: AsyncIOMotorCollection[dict[str, Any]] = self.collection.database["password_reset_tokens"]  # type: ignore[index,assignment]
-            
+            reset_collection: AsyncIOMotorCollection[dict[str, Any]] = self.collection.database[
+                "password_reset_tokens"
+            ]
+
             # Delete any existing tokens for this user
             await reset_collection.delete_many({"user_id": user_id})
-            
+
             # Create new token
-            await reset_collection.insert_one({
-                "user_id": user_id,
-                "token": token,
-                "expires_at": expires_at,
-                "used": False,
-            })
+            await reset_collection.insert_one(
+                {
+                    "user_id": user_id,
+                    "token": token,
+                    "expires_at": expires_at,
+                    "used": False,
+                }
+            )
             return True
         except Exception:
             return False
@@ -251,15 +256,19 @@ class UserRepository:
             Token document if found and valid, None otherwise
         """
         try:
-            from datetime import datetime, timezone
-            
-            reset_collection: AsyncIOMotorCollection[dict[str, Any]] = self.collection.database["password_reset_tokens"]  # type: ignore[index,assignment]
-            
-            token_doc = await reset_collection.find_one({
-                "token": token,
-                "used": False,
-                "expires_at": {"$gt": datetime.now(timezone.utc)},
-            })
+            from datetime import datetime
+
+            reset_collection: AsyncIOMotorCollection[dict[str, Any]] = self.collection.database[
+                "password_reset_tokens"
+            ]
+
+            token_doc = await reset_collection.find_one(
+                {
+                    "token": token,
+                    "used": False,
+                    "expires_at": {"$gt": datetime.now(UTC)},
+                }
+            )
             return token_doc
         except Exception:
             return None
@@ -275,8 +284,10 @@ class UserRepository:
             True if marked successfully
         """
         try:
-            reset_collection: AsyncIOMotorCollection[dict[str, Any]] = self.collection.database["password_reset_tokens"]  # type: ignore[index,assignment]
-            
+            reset_collection: AsyncIOMotorCollection[dict[str, Any]] = self.collection.database[
+                "password_reset_tokens"
+            ]
+
             result = await reset_collection.update_one(
                 {"token": token},
                 {"$set": {"used": True}},
@@ -288,16 +299,17 @@ class UserRepository:
     async def create_password_reset_indexes(self) -> None:
         """Create indexes for password reset tokens collection."""
         try:
-            reset_collection: AsyncIOMotorCollection[dict[str, Any]] = self.collection.database["password_reset_tokens"]  # type: ignore[index,assignment]
-            
+            reset_collection: AsyncIOMotorCollection[dict[str, Any]] = self.collection.database[
+                "password_reset_tokens"
+            ]
+
             # Create TTL index to automatically delete expired tokens
             await reset_collection.create_index("expires_at", expireAfterSeconds=0)
-            
+
             # Create index on token for fast lookups
             await reset_collection.create_index("token")
-            
+
             # Create index on user_id
             await reset_collection.create_index("user_id")
         except Exception:
             pass
-

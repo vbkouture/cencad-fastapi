@@ -1,16 +1,20 @@
 """Tests for courses endpoints."""
 
+from collections.abc import AsyncGenerator
+from typing import Any
+
 import pytest
 from fastapi import status
 from httpx import AsyncClient
-from typing import AsyncGenerator
 
 from app.db import get_database
 from app.db.course_repository import CourseRepository
 
 
 @pytest.fixture
-async def course_repo(setup_db: AsyncGenerator[None, None]) -> AsyncGenerator[CourseRepository, None]:
+async def course_repo(
+    setup_db: AsyncGenerator[None, None]
+) -> AsyncGenerator[CourseRepository, None]:
     """Get course repository with setup."""
     db = get_database()
     repo = CourseRepository(db)
@@ -24,9 +28,7 @@ async def admin_token() -> str:
     from app.core.security import create_access_token
     from app.domain.users.value_objects import UserRole
 
-    token = create_access_token(
-        data={"sub": "test_admin_id", "role": UserRole.ADMIN}
-    )
+    token = create_access_token(data={"sub": "test_admin_id", "role": UserRole.ADMIN})
     return token
 
 
@@ -36,9 +38,7 @@ async def student_token() -> str:
     from app.core.security import create_access_token
     from app.domain.users.value_objects import UserRole
 
-    token = create_access_token(
-        data={"sub": "test_student_id", "role": UserRole.STUDENT}
-    )
+    token = create_access_token(data={"sub": "test_student_id", "role": UserRole.STUDENT})
     return token
 
 
@@ -49,7 +49,7 @@ async def cleanup_courses(course_repo: CourseRepository) -> AsyncGenerator[None,
     await course_repo.collection.delete_many({})  # type: ignore
 
 
-def _create_valid_course_payload() -> dict[str, any]:  # type: ignore[name-defined]
+def _create_valid_course_payload() -> dict[str, Any]:
     """Create a valid course creation payload."""
     return {
         "title": "Python Basics",
@@ -61,30 +61,28 @@ def _create_valid_course_payload() -> dict[str, any]:  # type: ignore[name-defin
             "objectives": [
                 "Understand Python basics",
                 "Write simple programs",
-                "Use functions effectively"
+                "Use functions effectively",
             ],
-            "prerequisites": [
-                "Basic computer knowledge"
-            ],
+            "prerequisites": ["Basic computer knowledge"],
             "syllabus": [
                 {
                     "week": "Week 1",
                     "title": "Introduction to Python",
-                    "topics": ["Installation", "Basic syntax", "Variables"]
+                    "topics": ["Installation", "Basic syntax", "Variables"],
                 },
                 {
                     "week": "Week 2",
                     "title": "Data Types",
-                    "topics": ["Strings", "Numbers", "Lists"]
-                }
-            ]
+                    "topics": ["Strings", "Numbers", "Lists"],
+                },
+            ],
         },
         "language": "English",
         "certifications": [],
         "resources": [{"title": "Book", "url": "http://example.com"}],
         "notice": "Important notice",
         "tags": ["python", "basics"],
-        "status": "DRAFT"
+        "status": "DRAFT",
     }
 
 
@@ -97,7 +95,9 @@ class TestGetAllCourses:
     """Tests for GET /courses endpoint."""
 
     @pytest.mark.anyio
-    async def test_get_empty_list(self, client: AsyncClient, cleanup_courses: AsyncGenerator[None, None]) -> None:
+    async def test_get_empty_list(
+        self, client: AsyncClient, cleanup_courses: AsyncGenerator[None, None]
+    ) -> None:
         """Test getting courses when none exist."""
         response = await client.get("/api/v1/courses")
         assert response.status_code == status.HTTP_200_OK
@@ -105,7 +105,10 @@ class TestGetAllCourses:
 
     @pytest.mark.anyio
     async def test_get_all_courses_success(
-        self, client: AsyncClient, course_repo: CourseRepository, cleanup_courses: AsyncGenerator[None, None]
+        self,
+        client: AsyncClient,
+        course_repo: CourseRepository,
+        cleanup_courses: AsyncGenerator[None, None],
     ) -> None:
         """Test getting all courses successfully."""
         await course_repo.create_course(
@@ -117,8 +120,8 @@ class TestGetAllCourses:
                 "overview": "Introduction to Python programming basics",
                 "objectives": ["Learn"],
                 "prerequisites": [],
-                "syllabus": [{"week": "1", "title": "Intro", "topics": ["Python"]}]
-            }
+                "syllabus": [{"week": "1", "title": "Intro", "topics": ["Python"]}],
+            },
         )
         response = await client.get("/api/v1/courses")
         assert response.status_code == status.HTTP_200_OK
@@ -126,7 +129,10 @@ class TestGetAllCourses:
 
     @pytest.mark.anyio
     async def test_get_all_courses_multiple(
-        self, client: AsyncClient, course_repo: CourseRepository, cleanup_courses: AsyncGenerator[None, None]
+        self,
+        client: AsyncClient,
+        course_repo: CourseRepository,
+        cleanup_courses: AsyncGenerator[None, None],
     ) -> None:
         """Test getting multiple courses."""
         for i in range(5):
@@ -139,8 +145,8 @@ class TestGetAllCourses:
                     "overview": "Comprehensive course overview for learning",
                     "objectives": ["Learn"],
                     "prerequisites": [],
-                    "syllabus": [{"week": "1", "title": "Week 1", "topics": ["Topic1"]}]
-                }
+                    "syllabus": [{"week": "1", "title": "Week 1", "topics": ["Topic1"]}],
+                },
             )
         response = await client.get("/api/v1/courses")
         assert response.status_code == status.HTTP_200_OK
@@ -152,7 +158,10 @@ class TestGetSingleCourse:
 
     @pytest.mark.anyio
     async def test_get_course_by_id_success(
-        self, client: AsyncClient, course_repo: CourseRepository, cleanup_courses: AsyncGenerator[None, None]
+        self,
+        client: AsyncClient,
+        course_repo: CourseRepository,
+        cleanup_courses: AsyncGenerator[None, None],
     ) -> None:
         """Test getting a course by valid ID."""
         course = await course_repo.create_course(
@@ -164,8 +173,8 @@ class TestGetSingleCourse:
                 "overview": "Advanced Python concepts",
                 "objectives": ["Master", "Expert"],
                 "prerequisites": ["Basics"],
-                "syllabus": [{"week": "1", "title": "Advanced", "topics": ["Decorators"]}]
-            }
+                "syllabus": [{"week": "1", "title": "Advanced", "topics": ["Decorators"]}],
+            },
         )
         response = await client.get(f"/api/v1/courses/{str(course['_id'])}")
         assert response.status_code == status.HTTP_200_OK
@@ -231,7 +240,11 @@ class TestCreateCourse:
 
     @pytest.mark.anyio
     async def test_create_course_duplicate_title(
-        self, client: AsyncClient, admin_token: str, course_repo: CourseRepository, cleanup_courses: AsyncGenerator[None, None]
+        self,
+        client: AsyncClient,
+        admin_token: str,
+        course_repo: CourseRepository,
+        cleanup_courses: AsyncGenerator[None, None],
     ) -> None:
         """Test creating course with duplicate title."""
         await course_repo.create_course(
@@ -243,8 +256,8 @@ class TestCreateCourse:
                 "overview": "Test",
                 "objectives": ["Learn"],
                 "prerequisites": [],
-                "syllabus": [{"week": "1", "title": "W1", "topics": ["T1"]}]
-            }
+                "syllabus": [{"week": "1", "title": "W1", "topics": ["T1"]}],
+            },
         )
         payload = _create_valid_course_payload()
         payload["title"] = "Duplicate"
@@ -291,6 +304,7 @@ class TestCreateCourse:
     ) -> None:
         """Test creating course with vendor and category IDs."""
         from bson import ObjectId
+
         payload = _create_valid_course_payload()
         payload["vendor_id"] = str(ObjectId())
         payload["category_id"] = str(ObjectId())
@@ -318,7 +332,7 @@ class TestCreateCourse:
         """Test creating courses with all valid levels."""
         headers = {"Authorization": f"Bearer {admin_token}"}
         levels = ["BEGINNER", "INTERMEDIATE", "ADVANCED", "EXPERT"]
-        
+
         for level in levels:
             payload = _create_valid_course_payload()
             payload["title"] = f"Course {level}"
@@ -339,7 +353,11 @@ class TestUpdateCourse:
 
     @pytest.mark.anyio
     async def test_update_course_title_only(
-        self, client: AsyncClient, admin_token: str, course_repo: CourseRepository, cleanup_courses: AsyncGenerator[None, None]
+        self,
+        client: AsyncClient,
+        admin_token: str,
+        course_repo: CourseRepository,
+        cleanup_courses: AsyncGenerator[None, None],
     ) -> None:
         """Test updating only course title."""
         course = await course_repo.create_course(
@@ -351,8 +369,8 @@ class TestUpdateCourse:
                 "overview": "Test overview",
                 "objectives": ["Learn"],
                 "prerequisites": [],
-                "syllabus": [{"week": "1", "title": "W1", "topics": ["T1"]}]
-            }
+                "syllabus": [{"week": "1", "title": "W1", "topics": ["T1"]}],
+            },
         )
         payload = {"title": "New Title"}
         headers = {"Authorization": f"Bearer {admin_token}"}
@@ -384,7 +402,10 @@ class TestUpdateCourse:
 
     @pytest.mark.anyio
     async def test_update_course_missing_auth(
-        self, client: AsyncClient, course_repo: CourseRepository, cleanup_courses: AsyncGenerator[None, None]
+        self,
+        client: AsyncClient,
+        course_repo: CourseRepository,
+        cleanup_courses: AsyncGenerator[None, None],
     ) -> None:
         """Test updating course without authentication."""
         course = await course_repo.create_course(
@@ -396,18 +417,20 @@ class TestUpdateCourse:
                 "overview": "Test",
                 "objectives": ["Learn"],
                 "prerequisites": [],
-                "syllabus": [{"week": "1", "title": "W1", "topics": ["T1"]}]
-            }
+                "syllabus": [{"week": "1", "title": "W1", "topics": ["T1"]}],
+            },
         )
         payload = {"title": "New Title"}
-        response = await client.put(
-            f"/api/v1/courses/{str(course['_id'])}", json=payload
-        )
+        response = await client.put(f"/api/v1/courses/{str(course['_id'])}", json=payload)
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     @pytest.mark.anyio
     async def test_update_course_student_token(
-        self, client: AsyncClient, student_token: str, course_repo: CourseRepository, cleanup_courses: AsyncGenerator[None, None]
+        self,
+        client: AsyncClient,
+        student_token: str,
+        course_repo: CourseRepository,
+        cleanup_courses: AsyncGenerator[None, None],
     ) -> None:
         """Test updating course with student token."""
         course = await course_repo.create_course(
@@ -419,8 +442,8 @@ class TestUpdateCourse:
                 "overview": "Test",
                 "objectives": ["Learn"],
                 "prerequisites": [],
-                "syllabus": [{"week": "1", "title": "W1", "topics": ["T1"]}]
-            }
+                "syllabus": [{"week": "1", "title": "W1", "topics": ["T1"]}],
+            },
         )
         payload = {"title": "New Title"}
         headers = {"Authorization": f"Bearer {student_token}"}
@@ -442,7 +465,11 @@ class TestDeleteCourse:
 
     @pytest.mark.anyio
     async def test_delete_course_success(
-        self, client: AsyncClient, admin_token: str, course_repo: CourseRepository, cleanup_courses: AsyncGenerator[None, None]
+        self,
+        client: AsyncClient,
+        admin_token: str,
+        course_repo: CourseRepository,
+        cleanup_courses: AsyncGenerator[None, None],
     ) -> None:
         """Test successfully deleting a course."""
         course = await course_repo.create_course(
@@ -454,13 +481,11 @@ class TestDeleteCourse:
                 "overview": "Test",
                 "objectives": ["Learn"],
                 "prerequisites": [],
-                "syllabus": [{"week": "1", "title": "W1", "topics": ["T1"]}]
-            }
+                "syllabus": [{"week": "1", "title": "W1", "topics": ["T1"]}],
+            },
         )
         headers = {"Authorization": f"Bearer {admin_token}"}
-        response = await client.delete(
-            f"/api/v1/courses/{str(course['_id'])}", headers=headers
-        )
+        response = await client.delete(f"/api/v1/courses/{str(course['_id'])}", headers=headers)
         assert response.status_code == status.HTTP_200_OK
         deleted = await course_repo.find_by_id(str(course["_id"]))
         assert deleted is None
@@ -474,14 +499,15 @@ class TestDeleteCourse:
 
         invalid_id = str(ObjectId())
         headers = {"Authorization": f"Bearer {admin_token}"}
-        response = await client.delete(
-            f"/api/v1/courses/{invalid_id}", headers=headers
-        )
+        response = await client.delete(f"/api/v1/courses/{invalid_id}", headers=headers)
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
     @pytest.mark.anyio
     async def test_delete_course_missing_auth(
-        self, client: AsyncClient, course_repo: CourseRepository, cleanup_courses: AsyncGenerator[None, None]
+        self,
+        client: AsyncClient,
+        course_repo: CourseRepository,
+        cleanup_courses: AsyncGenerator[None, None],
     ) -> None:
         """Test deleting course without authentication."""
         course = await course_repo.create_course(
@@ -493,17 +519,19 @@ class TestDeleteCourse:
                 "overview": "Test",
                 "objectives": ["Learn"],
                 "prerequisites": [],
-                "syllabus": [{"week": "1", "title": "W1", "topics": ["T1"]}]
-            }
+                "syllabus": [{"week": "1", "title": "W1", "topics": ["T1"]}],
+            },
         )
-        response = await client.delete(
-            f"/api/v1/courses/{str(course['_id'])}"
-        )
+        response = await client.delete(f"/api/v1/courses/{str(course['_id'])}")
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     @pytest.mark.anyio
     async def test_delete_course_student_token(
-        self, client: AsyncClient, student_token: str, course_repo: CourseRepository, cleanup_courses: AsyncGenerator[None, None]
+        self,
+        client: AsyncClient,
+        student_token: str,
+        course_repo: CourseRepository,
+        cleanup_courses: AsyncGenerator[None, None],
     ) -> None:
         """Test deleting course with student token."""
         course = await course_repo.create_course(
@@ -515,13 +543,11 @@ class TestDeleteCourse:
                 "overview": "Test",
                 "objectives": ["Learn"],
                 "prerequisites": [],
-                "syllabus": [{"week": "1", "title": "W1", "topics": ["T1"]}]
-            }
+                "syllabus": [{"week": "1", "title": "W1", "topics": ["T1"]}],
+            },
         )
         headers = {"Authorization": f"Bearer {student_token}"}
-        response = await client.delete(
-            f"/api/v1/courses/{str(course['_id'])}", headers=headers
-        )
+        response = await client.delete(f"/api/v1/courses/{str(course['_id'])}", headers=headers)
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
@@ -539,12 +565,10 @@ class TestCourseIntegration:
     ) -> None:
         """Test complete CRUD workflow."""
         headers = {"Authorization": f"Bearer {admin_token}"}
-        
+
         # CREATE
         create_payload = _create_valid_course_payload()
-        create_response = await client.post(
-            "/api/v1/courses", json=create_payload, headers=headers
-        )
+        create_response = await client.post("/api/v1/courses", json=create_payload, headers=headers)
         assert create_response.status_code == status.HTTP_201_CREATED
         course_id = create_response.json()["id"]
 
@@ -563,9 +587,7 @@ class TestCourseIntegration:
         assert update_response.status_code == status.HTTP_200_OK
 
         # DELETE
-        delete_response = await client.delete(
-            f"/api/v1/courses/{course_id}", headers=headers
-        )
+        delete_response = await client.delete(f"/api/v1/courses/{course_id}", headers=headers)
         assert delete_response.status_code == status.HTTP_200_OK
 
         # Verify deleted
@@ -579,9 +601,7 @@ class TestCourseIntegration:
         """Test that public can read after admin creates."""
         headers = {"Authorization": f"Bearer {admin_token}"}
         payload = _create_valid_course_payload()
-        response = await client.post(
-            "/api/v1/courses", json=payload, headers=headers
-        )
+        response = await client.post("/api/v1/courses", json=payload, headers=headers)
         assert response.status_code == status.HTTP_201_CREATED
         course_id = response.json()["id"]
 
@@ -592,17 +612,19 @@ class TestCourseIntegration:
 
     @pytest.mark.anyio
     async def test_student_cannot_create_but_can_read(
-        self, client: AsyncClient, admin_token: str, student_token: str, cleanup_courses: AsyncGenerator[None, None]
+        self,
+        client: AsyncClient,
+        admin_token: str,
+        student_token: str,
+        cleanup_courses: AsyncGenerator[None, None],
     ) -> None:
         """Test that students can read but cannot create."""
         headers_admin = {"Authorization": f"Bearer {admin_token}"}
         headers_student = {"Authorization": f"Bearer {student_token}"}
-        
+
         # Admin creates
         payload = _create_valid_course_payload()
-        response = await client.post(
-            "/api/v1/courses", json=payload, headers=headers_admin
-        )
+        response = await client.post("/api/v1/courses", json=payload, headers=headers_admin)
         assert response.status_code == status.HTTP_201_CREATED
         course_id = response.json()["id"]
 
@@ -623,7 +645,10 @@ class TestCourseFiltering:
 
     @pytest.mark.anyio
     async def test_filter_by_level(
-        self, client: AsyncClient, course_repo: CourseRepository, cleanup_courses: AsyncGenerator[None, None]
+        self,
+        client: AsyncClient,
+        course_repo: CourseRepository,
+        cleanup_courses: AsyncGenerator[None, None],
     ) -> None:
         """Test filtering courses by level."""
         # Create courses with different levels
@@ -637,10 +662,10 @@ class TestCourseFiltering:
                     "overview": "This is a comprehensive course overview with sufficient length",
                     "objectives": ["Learn"],
                     "prerequisites": [],
-                    "syllabus": [{"week": "1", "title": "Week 1", "topics": ["Topic1"]}]
-                }
+                    "syllabus": [{"week": "1", "title": "Week 1", "topics": ["Topic1"]}],
+                },
             )
-        
+
         # Filter by BEGINNER level
         response = await client.get("/api/v1/courses?level=BEGINNER")
         assert response.status_code == status.HTTP_200_OK
@@ -650,7 +675,10 @@ class TestCourseFiltering:
 
     @pytest.mark.anyio
     async def test_filter_by_language(
-        self, client: AsyncClient, course_repo: CourseRepository, cleanup_courses: AsyncGenerator[None, None]
+        self,
+        client: AsyncClient,
+        course_repo: CourseRepository,
+        cleanup_courses: AsyncGenerator[None, None],
     ) -> None:
         """Test filtering courses by language."""
         # Create courses with different languages
@@ -665,10 +693,10 @@ class TestCourseFiltering:
                     "overview": "This is a comprehensive course overview with sufficient length",
                     "objectives": ["Learn"],
                     "prerequisites": [],
-                    "syllabus": [{"week": "1", "title": "Week 1", "topics": ["Topic1"]}]
-                }
+                    "syllabus": [{"week": "1", "title": "Week 1", "topics": ["Topic1"]}],
+                },
             )
-        
+
         # Filter by English
         response = await client.get("/api/v1/courses?language=English")
         assert response.status_code == status.HTTP_200_OK
@@ -678,7 +706,10 @@ class TestCourseFiltering:
 
     @pytest.mark.anyio
     async def test_filter_by_certifications(
-        self, client: AsyncClient, course_repo: CourseRepository, cleanup_courses: AsyncGenerator[None, None]
+        self,
+        client: AsyncClient,
+        course_repo: CourseRepository,
+        cleanup_courses: AsyncGenerator[None, None],
     ) -> None:
         """Test filtering courses by certifications."""
         # Create courses with different certifications
@@ -687,7 +718,7 @@ class TestCourseFiltering:
             ["Azure", "Java"],
             ["AWS"],
         ]
-        
+
         for i, certs in enumerate(certs_data):
             await course_repo.create_course(
                 title=f"Course {i}",
@@ -699,10 +730,10 @@ class TestCourseFiltering:
                     "overview": "This is a comprehensive course overview with sufficient length",
                     "objectives": ["Learn"],
                     "prerequisites": [],
-                    "syllabus": [{"week": "1", "title": "Week 1", "topics": ["Topic1"]}]
-                }
+                    "syllabus": [{"week": "1", "title": "Week 1", "topics": ["Topic1"]}],
+                },
             )
-        
+
         # Filter by AWS certification
         response = await client.get("/api/v1/courses?certifications=AWS")
         assert response.status_code == status.HTTP_200_OK
@@ -711,7 +742,10 @@ class TestCourseFiltering:
 
     @pytest.mark.anyio
     async def test_pagination(
-        self, client: AsyncClient, course_repo: CourseRepository, cleanup_courses: AsyncGenerator[None, None]
+        self,
+        client: AsyncClient,
+        course_repo: CourseRepository,
+        cleanup_courses: AsyncGenerator[None, None],
     ) -> None:
         """Test pagination with skip and limit."""
         # Create 10 courses
@@ -725,36 +759,37 @@ class TestCourseFiltering:
                     "overview": "This is a comprehensive course overview with sufficient length",
                     "objectives": ["Learn"],
                     "prerequisites": [],
-                    "syllabus": [{"week": "1", "title": "Week 1", "topics": ["Topic1"]}]
-                }
+                    "syllabus": [{"week": "1", "title": "Week 1", "topics": ["Topic1"]}],
+                },
             )
-        
+
         # Get first 5
         response1 = await client.get("/api/v1/courses?limit=5")
         assert response1.status_code == status.HTTP_200_OK
         assert len(response1.json()["data"]) == 5
-        
+
         # Get next 5 with skip
         response2 = await client.get("/api/v1/courses?skip=5&limit=5")
         assert response2.status_code == status.HTTP_200_OK
         assert len(response2.json()["data"]) == 5
-        
+
         # Verify different courses
         courses1 = response1.json()["data"]
         courses2 = response2.json()["data"]
         assert courses1[0]["id"] != courses2[0]["id"]
 
     @pytest.mark.anyio
-    async def test_invalid_level_filter(
-        self, client: AsyncClient
-    ) -> None:
+    async def test_invalid_level_filter(self, client: AsyncClient) -> None:
         """Test filtering with invalid level."""
         response = await client.get("/api/v1/courses?level=INVALID")
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     @pytest.mark.anyio
     async def test_multiple_filters_combined(
-        self, client: AsyncClient, course_repo: CourseRepository, cleanup_courses: AsyncGenerator[None, None]
+        self,
+        client: AsyncClient,
+        course_repo: CourseRepository,
+        cleanup_courses: AsyncGenerator[None, None],
     ) -> None:
         """Test combining multiple filters."""
         # Create test course
@@ -769,10 +804,10 @@ class TestCourseFiltering:
                 "overview": "This is a comprehensive course overview with sufficient length",
                 "objectives": ["Learn"],
                 "prerequisites": [],
-                "syllabus": [{"week": "1", "title": "Week 1", "topics": ["Topic1"]}]
-            }
+                "syllabus": [{"week": "1", "title": "Week 1", "topics": ["Topic1"]}],
+            },
         )
-        
+
         # Create non-matching course
         await course_repo.create_course(
             title="Beginner Python Course",
@@ -784,14 +819,13 @@ class TestCourseFiltering:
                 "overview": "This is a comprehensive course overview with sufficient length",
                 "objectives": ["Learn"],
                 "prerequisites": [],
-                "syllabus": [{"week": "1", "title": "Week 1", "topics": ["Topic1"]}]
-            }
+                "syllabus": [{"week": "1", "title": "Week 1", "topics": ["Topic1"]}],
+            },
         )
-        
+
         # Filter by level AND language
         response = await client.get("/api/v1/courses?level=ADVANCED&language=English")
         assert response.status_code == status.HTTP_200_OK
         courses = response.json()["data"]
         assert len(courses) == 1
         assert courses[0]["title"] == "Advanced AWS Course"
-

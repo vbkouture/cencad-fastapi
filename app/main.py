@@ -12,7 +12,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.routers import get_v1_router
-from app.db import connect_to_mongodb, close_mongodb_connection
+from app.db import close_mongodb_connection, connect_to_mongodb
 
 
 @asynccontextmanager

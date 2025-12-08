@@ -2,17 +2,17 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import HTTPBearer
 
 from app.api.v1.schemas.vendor_dto import (
     VendorCreateRequest,
-    VendorUpdateRequest,
     VendorResponse,
+    VendorUpdateRequest,
 )
 from app.core.dependencies import require_admin
 from app.db import get_database
 from app.db.vendor_repository import VendorRepository
-from fastapi.security import HTTPBearer
 
 router = APIRouter(prefix="/vendors", tags=["vendors"])
 security = HTTPBearer(auto_error=False)

@@ -2,17 +2,17 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import HTTPBearer
 
 from app.api.v1.schemas.job_role_dto import (
     JobRoleCreateRequest,
-    JobRoleUpdateRequest,
     JobRoleResponse,
+    JobRoleUpdateRequest,
 )
 from app.core.dependencies import require_admin
 from app.db import get_database
 from app.db.job_role_repository import JobRoleRepository
-from fastapi.security import HTTPBearer
 
 router = APIRouter(prefix="/job-roles", tags=["job-roles"])
 security = HTTPBearer(auto_error=False)

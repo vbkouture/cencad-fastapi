@@ -10,7 +10,7 @@ import asyncio
 import json
 import sys
 from argparse import ArgumentParser
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from motor.motor_asyncio import AsyncIOMotorClient
 
@@ -19,7 +19,7 @@ from app.core.config import settings
 
 def utcnow() -> datetime:
     """Get current UTC time."""
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 async def add_vendor(
@@ -31,7 +31,7 @@ async def add_vendor(
     db_name: str,
 ) -> str:
     """Add a vendor to the database with a specific ID."""
-    client = AsyncIOMotorClient(mongodb_url)
+    client = AsyncIOMotorClient(mongodb_url)  # type: ignore[var-annotated]
     db = client[db_name]
 
     try:
@@ -63,7 +63,7 @@ async def add_vendor(
 async def add_vendors_from_json(json_file: str, mongodb_url: str, db_name: str) -> None:
     """Add vendors from a JSON file."""
     try:
-        with open(json_file, "r") as f:
+        with open(json_file) as f:
             data = json.load(f)
     except FileNotFoundError:
         print(f"❌ Error: File '{json_file}' not found")

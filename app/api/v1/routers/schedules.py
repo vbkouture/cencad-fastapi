@@ -48,7 +48,7 @@ async def create_schedule(
         meeting_url=request.meeting_url,
         timezone=request.timezone,
     )
-    return Schedule.from_mongo(schedule_doc).model_dump()
+    return ScheduleResponse.model_validate(Schedule.from_mongo(schedule_doc).model_dump())
 
 
 @router.get(
@@ -63,10 +63,8 @@ async def get_schedule(
     """Get a schedule by ID."""
     schedule_doc = await repo.find_by_id(schedule_id)
     if not schedule_doc:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Schedule not found"
-        )
-    return Schedule.from_mongo(schedule_doc).model_dump()
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Schedule not found")
+    return ScheduleResponse.model_validate(Schedule.from_mongo(schedule_doc).model_dump())
 
 
 @router.get(
@@ -88,7 +86,7 @@ async def get_schedules(
         # Return all schedules if no filter provided
         docs = await repo.get_all_schedules()
 
-    return [Schedule.from_mongo(doc).model_dump() for doc in docs]
+    return [ScheduleResponse.model_validate(Schedule.from_mongo(doc).model_dump()) for doc in docs]
 
 
 @router.put(
@@ -117,10 +115,8 @@ async def update_schedule(
         timezone=request.timezone,
     )
     if not updated_doc:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Schedule not found"
-        )
-    return Schedule.from_mongo(updated_doc).model_dump()
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Schedule not found")
+    return ScheduleResponse.model_validate(Schedule.from_mongo(updated_doc).model_dump())
 
 
 @router.delete(
@@ -140,6 +136,4 @@ async def delete_schedule(
     """
     deleted = await repo.delete_schedule(schedule_id)
     if not deleted:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Schedule not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Schedule not found")

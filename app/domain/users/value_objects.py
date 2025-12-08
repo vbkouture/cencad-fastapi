@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 from typing import NewType
 
@@ -30,10 +30,10 @@ class EmailAddress(BaseModel):
         return str(self.value)
 
     @classmethod
-    def normalize(cls, email: str) -> "EmailAddress":
+    def normalize(cls, email: str) -> EmailAddress:
         # EmailStr validates; we then lowercase for canonical form
         return cls(email=email.lower())
 
 
 def utcnow() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)

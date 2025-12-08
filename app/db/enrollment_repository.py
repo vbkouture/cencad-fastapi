@@ -5,15 +5,15 @@ from __future__ import annotations
 from typing import Any
 
 from bson import ObjectId
-from motor.motor_asyncio import AsyncIOMotorCollection, AsyncIOMotorDatabase  # type: ignore[import-untyped]
+from motor.motor_asyncio import AsyncIOMotorCollection, AsyncIOMotorDatabase
 
 
 class EnrollmentRepository:
     """Repository for Enrollment aggregate using MongoDB."""
 
-    def __init__(self, db: AsyncIOMotorDatabase) -> None:  # type: ignore[name-defined]
+    def __init__(self, db: AsyncIOMotorDatabase[Any]) -> None:
         """Initialize with MongoDB database instance."""
-        self.collection: AsyncIOMotorCollection[dict[str, Any]] = db["enrollments"]  # type: ignore[index,assignment]
+        self.collection: AsyncIOMotorCollection[dict[str, Any]] = db["enrollments"]
 
     async def create_enrollment(
         self,
@@ -49,14 +49,16 @@ class EnrollmentRepository:
     async def get_enrollments_by_student(self, user_id: str) -> list[dict[str, Any]]:
         """Get all enrollments for a student."""
         try:
-            return await self.collection.find({"user_id": ObjectId(user_id)}).to_list(length=None)  # type: ignore[return-value]
+            return await self.collection.find({"user_id": ObjectId(user_id)}).to_list(length=None)
         except Exception:
             return []
 
     async def get_enrollments_by_schedule(self, schedule_id: str) -> list[dict[str, Any]]:
         """Get all enrollments for a schedule."""
         try:
-            return await self.collection.find({"schedule_id": ObjectId(schedule_id)}).to_list(length=None)  # type: ignore[return-value]
+            return await self.collection.find({"schedule_id": ObjectId(schedule_id)}).to_list(
+                length=None
+            )
         except Exception:
             return []
 
@@ -113,6 +115,4 @@ class EnrollmentRepository:
         await self.collection.create_index("schedule_id")
         await self.collection.create_index("course_id")
         # Compound index for unique enrollment per student per schedule
-        await self.collection.create_index(
-            [("user_id", 1), ("schedule_id", 1)], unique=True
-        )
+        await self.collection.create_index([("user_id", 1), ("schedule_id", 1)], unique=True)

@@ -1,6 +1,6 @@
 """Security utilities for password hashing and JWT token management."""
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 from jose import JWTError, jwt
@@ -35,15 +35,11 @@ def create_access_token(data: dict[str, Any], expires_delta: timedelta | None = 
     """
     to_encode = data.copy()
     if expires_delta:
-        expire = datetime.now(timezone.utc) + expires_delta
+        expire = datetime.now(UTC) + expires_delta
     else:
-        expire = datetime.now(timezone.utc) + timedelta(
-            hours=settings.jwt_expiration_hours
-        )
+        expire = datetime.now(UTC) + timedelta(hours=settings.jwt_expiration_hours)
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(
-        to_encode, settings.jwt_secret_key, algorithm=settings.jwt_algorithm
-    )
+    encoded_jwt = jwt.encode(to_encode, settings.jwt_secret_key, algorithm=settings.jwt_algorithm)
     return encoded_jwt
 
 
@@ -58,9 +54,7 @@ def decode_access_token(token: str) -> dict[str, Any] | None:
         Token claims as a dictionary, or None if token is invalid/expired.
     """
     try:
-        payload = jwt.decode(
-            token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm]
-        )
+        payload = jwt.decode(token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm])
         return payload
     except JWTError:
         return None
@@ -74,6 +68,7 @@ def generate_reset_token() -> str:
         A 32-character hexadecimal token.
     """
     import secrets
+
     return secrets.token_hex(32)
 
 
@@ -87,4 +82,4 @@ def create_reset_token_expiry(hours: int = 1) -> datetime:
     Returns:
         Expiration datetime in UTC.
     """
-    return datetime.now(timezone.utc) + timedelta(hours=hours)
+    return datetime.now(UTC) + timedelta(hours=hours)

@@ -26,9 +26,7 @@ class SyllabusWeekDTO(BaseModel):
 class CourseDetailsDTO(BaseModel):
     """DTO for detailed course information."""
 
-    overview: str = Field(
-        default="", max_length=10000, description="Course overview"
-    )
+    overview: str = Field(default="", max_length=10000, description="Course overview")
     objectives: list[str] = Field(
         default_factory=list,
         description="Learning objectives (optional)",
@@ -78,18 +76,12 @@ class CourseCreateRequest(BaseModel):
     """Request DTO for creating a course."""
 
     title: str = Field(min_length=1, max_length=500, description="Course title")
-    description: str = Field(
-        min_length=10, max_length=5000, description="Course description"
-    )
+    description: str = Field(min_length=10, max_length=5000, description="Course description")
     duration: str = Field(
         min_length=1, max_length=100, description="Course duration (e.g., '8 Weeks')"
     )
-    level: str = Field(
-        description="Course level (BEGINNER, INTERMEDIATE, ADVANCED, EXPERT)"
-    )
-    course_details: CourseDetailsDTO = Field(
-        description="Detailed course information"
-    )
+    level: str = Field(description="Course level (BEGINNER, INTERMEDIATE, ADVANCED, EXPERT)")
+    course_details: CourseDetailsDTO = Field(description="Detailed course information")
     url: str | None = Field(None, description="Optional course URL")
     language: str | None = Field(None, max_length=50, description="Course language")
     image: str | None = Field(None, max_length=2048, description="Course image URL")
@@ -102,15 +94,11 @@ class CourseCreateRequest(BaseModel):
     cost: float | None = Field(None, ge=0, description="Course cost/price")
     category_id: str | None = Field(None, description="Optional category ID")
     vendor_id: str | None = Field(None, description="Optional vendor ID")
-    job_role_ids: list[str] = Field(
-        default_factory=list, description="Related job role IDs"
-    )
+    job_role_ids: list[str] = Field(default_factory=list, description="Related job role IDs")
     resources: list[ResourceDTO] | None = Field(None, description="Course resources")
     notice: str | None = Field(None, max_length=2000, description="Important notice")
     tags: list[str] | None = Field(None, description="Search tags")
-    status: str | None = Field(
-        None, description="Course status (DRAFT, PUBLISHED, ARCHIVED)"
-    )
+    status: str | None = Field(None, description="Course status (DRAFT, PUBLISHED, ARCHIVED)")
 
     @field_validator("certifications")
     @classmethod
@@ -124,29 +112,21 @@ class CourseCreateRequest(BaseModel):
 class CourseUpdateRequest(BaseModel):
     """Request DTO for updating a course."""
 
-    title: str | None = Field(
-        None, min_length=1, max_length=500, description="Course title"
-    )
+    title: str | None = Field(None, min_length=1, max_length=500, description="Course title")
     description: str | None = Field(
         None, min_length=10, max_length=5000, description="Course description"
     )
-    duration: str | None = Field(
-        None, min_length=1, max_length=100, description="Course duration"
-    )
+    duration: str | None = Field(None, min_length=1, max_length=100, description="Course duration")
     level: str | None = Field(
         None, description="Course level (BEGINNER, INTERMEDIATE, ADVANCED, EXPERT)"
     )
-    course_details: CourseDetailsDTO | None = Field(
-        None, description="Detailed course information"
-    )
+    course_details: CourseDetailsDTO | None = Field(None, description="Detailed course information")
     url: str | None = Field(None, description="Course URL")
     language: str | None = Field(None, max_length=50, description="Course language")
     image: str | None = Field(None, max_length=2048, description="Course image URL")
     rating: float | None = Field(None, ge=0, le=5, description="Course rating")
     students: int | None = Field(None, ge=0, description="Number of students")
-    certifications: list[str] | None = Field(
-        None, description="Associated certifications"
-    )
+    certifications: list[str] | None = Field(None, description="Associated certifications")
     cost: float | None = Field(None, ge=0, description="Course cost/price")
     category_id: str | None = Field(None, description="Category ID")
     vendor_id: str | None = Field(None, description="Vendor ID")
@@ -154,9 +134,7 @@ class CourseUpdateRequest(BaseModel):
     resources: list[ResourceDTO] | None = Field(None, description="Course resources")
     notice: str | None = Field(None, max_length=2000, description="Important notice")
     tags: list[str] | None = Field(None, description="Search tags")
-    status: str | None = Field(
-        None, description="Course status (DRAFT, PUBLISHED, ARCHIVED)"
-    )
+    status: str | None = Field(None, description="Course status (DRAFT, PUBLISHED, ARCHIVED)")
 
 
 class CourseResponse(BaseModel):
@@ -172,18 +150,12 @@ class CourseResponse(BaseModel):
     image: str | None = Field(description="Course image URL")
     rating: float | None = Field(description="Course rating")
     students: int | None = Field(description="Number of students")
-    certifications: list[str] = Field(
-        default_factory=list, description="Associated certifications"
-    )
+    certifications: list[str] = Field(default_factory=list, description="Associated certifications")
     cost: float | None = Field(description="Course cost/price")
     category_id: str | None = Field(description="Category ID")
     vendor_id: str | None = Field(description="Vendor ID")
-    job_role_ids: list[str] = Field(
-        default_factory=list, description="Related job role IDs"
-    )
-    resources: list[ResourceDTO] = Field(
-        default_factory=list, description="Course resources"
-    )
+    job_role_ids: list[str] = Field(default_factory=list, description="Related job role IDs")
+    resources: list[ResourceDTO] = Field(default_factory=list, description="Course resources")
     notice: str | None = Field(description="Important notice")
     tags: list[str] = Field(default_factory=list, description="Search tags")
     status: str = Field(description="Course status")

@@ -25,7 +25,7 @@ make run
 
 You can run tests using `pytest` directly or via `make` commands.
 
-**1. Run All Tests**  
+**1. Run All Tests**
 ```bash
 # Run all tests (asyncio mode)
 pytest tests/ -p no:trio -v

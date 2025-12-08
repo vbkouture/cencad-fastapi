@@ -2,27 +2,27 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.api.v1.schemas.auth_dto import (
+    ChangePasswordRequest,
+    ForgotPasswordRequest,
     LoginRequest,
     LoginResponse,
-    SignupRequest,
-    ChangePasswordRequest,
-    UpdateProfileRequest,
-    ForgotPasswordRequest,
-    ResetPasswordRequest,
     MessageResponse,
+    ResetPasswordRequest,
+    SignupRequest,
+    UpdateProfileRequest,
 )
+from app.core.dependencies import get_current_user_id
+from app.core.email_service import send_password_reset_email
 from app.core.security import (
     create_access_token,
+    create_reset_token_expiry,
+    generate_reset_token,
     hash_password,
     verify_password,
-    generate_reset_token,
-    create_reset_token_expiry,
 )
-from app.core.email_service import send_password_reset_email
-from app.core.dependencies import get_current_user_id
 from app.db import UserRepository, get_database
 from app.domain.users.value_objects import UserRole
 
@@ -227,9 +227,7 @@ async def forgot_password(request: ForgotPasswordRequest) -> MessageResponse:
             reset_token=reset_token,
         )
 
-    return MessageResponse(
-        message="If the email exists, a password reset link has been sent"
-    )
+    return MessageResponse(message="If the email exists, a password reset link has been sent")
 
 
 @router.post("/reset-password", response_model=MessageResponse)
@@ -271,4 +269,3 @@ async def reset_password(request: ResetPasswordRequest) -> MessageResponse:
     await user_repo.delete_password_reset_token(request.token)
 
     return MessageResponse(message="Password reset successfully")
-

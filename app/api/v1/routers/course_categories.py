@@ -2,16 +2,16 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import HTTPBearer
 
 from app.api.v1.schemas.course_category_dto import (
     CourseCategoryCreateRequest,
-    CourseCategoryUpdateRequest,
     CourseCategoryResponse,
+    CourseCategoryUpdateRequest,
 )
 from app.core.dependencies import require_admin
 from app.db import CourseCategoryRepository, get_database
-from fastapi.security import HTTPBearer
 
 router = APIRouter(prefix="/course-categories", tags=["course-categories"])
 security = HTTPBearer(auto_error=False)

@@ -11,17 +11,13 @@ class CourseCategoryCreateRequest(BaseModel):
     """Request DTO for creating a course category."""
 
     name: str = Field(min_length=1, max_length=200, description="Category name")
-    description: str = Field(
-        min_length=1, max_length=1000, description="Category description"
-    )
+    description: str = Field(min_length=1, max_length=1000, description="Category description")
 
 
 class CourseCategoryUpdateRequest(BaseModel):
     """Request DTO for updating a course category."""
 
-    name: str | None = Field(
-        None, min_length=1, max_length=200, description="Category name"
-    )
+    name: str | None = Field(None, min_length=1, max_length=200, description="Category name")
     description: str | None = Field(
         None, min_length=1, max_length=1000, description="Category description"
     )

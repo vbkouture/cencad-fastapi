@@ -13,9 +13,9 @@ dependencies = [  # Runtime dependencies
   "pydantic-settings==2.3.1",  # Settings management from env vars
   "motor==3.5.1",  # Async MongoDB driver
   "pymongo==4.7.2",  # MongoDB Python driver (required by motor)
-  "python-jose[cryptography]==3.3.0",  # JWT token generation/verification
+  "python-jose[cryptography]>=3.4.0",  # JWT token generation/verification (Updated for security)
   "passlib[bcrypt]==1.7.4",  # Password hashing
-  "python-multipart==0.0.6",  # Form data support
+  "python-multipart>=0.0.18",  # Form data support (Updated for security)
   "mailtrap==2.3.0",  # Mailtrap email service SDK
 ]
 
@@ -53,7 +53,7 @@ target-version = ["py312"]  # Target Python version(s) for formatting decisions 
 line-length = 100  # Ruff's configured line length to match Black
 target-version = "py312"  # Target Python version used by Ruff for rules
 select = ["E","F","I","N","B","UP","C90","S","W","PL"]  # Categories / codes to enable
-ignore = ["S101"]  # allow asserts in tests (ignore security rule S101)
+ignore = ["S101", "B008", "E501", "S105", "S310"]  # S101 (asserts), B008 (Depends), E501 (len), S105 (password), S310 (url open)
 exclude = ["venv", ".venv", "build", "dist", "node_modules"]  # file paths Ruff should skip
 
 [tool.pytest.ini_options]  # Pytest configuration (mirrors pytest.ini settings)

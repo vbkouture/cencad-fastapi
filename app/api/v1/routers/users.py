@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.api.v1.schemas.user_dto import CreateTutorRequest, TutorResponse
 from app.core.dependencies import get_current_user_id, require_admin
-from app.core.security import  hash_password
+from app.core.security import hash_password
 from app.db import UserRepository, get_database
 from app.domain.users.value_objects import UserRole
 

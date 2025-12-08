@@ -105,4 +105,7 @@ async def export_report(
 
     Requires admin role.
     """
-    return {"message": f"Report generated: {report_type}", "download_url": "/api/v1/downloads/report.csv"}
+    return {
+        "message": f"Report generated: {report_type}",
+        "download_url": "/api/v1/downloads/report.csv",
+    }

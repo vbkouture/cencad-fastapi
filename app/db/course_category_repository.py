@@ -5,15 +5,15 @@ from __future__ import annotations
 from typing import Any
 
 from bson import ObjectId
-from motor.motor_asyncio import AsyncIOMotorDatabase  # type: ignore[import-untyped]
+from motor.motor_asyncio import AsyncIOMotorDatabase
 
 
 class CourseCategoryRepository:
     """Repository for CourseCategory aggregate using MongoDB."""
 
-    def __init__(self, db: AsyncIOMotorDatabase) -> None:  # type: ignore[name-defined]
+    def __init__(self, db: AsyncIOMotorDatabase[Any]) -> None:
         """Initialize with MongoDB database instance."""
-        self.collection = db["course_categories"]  # type: ignore[index]
+        self.collection = db["course_categories"]
 
     async def create_category(
         self,
@@ -123,7 +123,7 @@ class CourseCategoryRepository:
                 {"$set": update_data},
                 return_document=True,
             )
-            return result
+            return result  # type: ignore[no-any-return]
         except ValueError:
             raise
         except Exception:
