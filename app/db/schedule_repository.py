@@ -64,6 +64,10 @@ class ScheduleRepository:
         except Exception:
             return []
 
+    async def get_all_schedules(self) -> list[dict[str, Any]]:
+        """Get all schedules."""
+        return await self.collection.find().to_list(length=None)  # type: ignore[return-value]
+
     async def update_schedule(
         self,
         schedule_id: str,

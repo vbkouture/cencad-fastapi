@@ -216,3 +216,117 @@ async def send_admin_notification_email(
     except Exception as e:
         logger.error(f"Exception while sending admin notification email: {e}")
         return False
+
+
+async def send_password_reset_email(
+    recipient_email: str,
+    recipient_name: str,
+    reset_token: str,
+) -> bool:
+    """
+    Send password reset email to user.
+
+    Args:
+        recipient_email: Email of the user requesting password reset
+        recipient_name: Name of the user
+        reset_token: Password reset token
+
+    Returns:
+        True if email sent successfully, False otherwise
+    """
+    try:
+        client = mt.MailtrapClient(
+            token=settings.mailtrap_api_token,
+            sandbox=settings.mailtrap_use_sandbox,
+            inbox_id=settings.mailtrap_inbox_id,
+        )
+
+        # Construct reset URL from environment configuration
+        reset_url = f"{settings.frontend_url}/reset-password?token={reset_token}"
+
+        html_body = f"""
+        <!DOCTYPE html>
+        <html>
+            <head>
+                <meta charset="UTF-8">
+                <style>
+                    body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+                    .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+                    .header {{ background-color: #f4f4f4; padding: 20px; border-radius: 5px; margin-bottom: 20px; }}
+                    .content {{ margin-bottom: 20px; }}
+                    .button {{ display: inline-block; padding: 12px 24px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px; margin: 20px 0; }}
+                    .footer {{ border-top: 1px solid #ddd; padding-top: 20px; font-size: 12px; color: #666; }}
+                    .warning {{ background-color: #fff3cd; padding: 10px; border-left: 4px solid #ffc107; margin: 20px 0; }}
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h2>Password Reset Request</h2>
+                    </div>
+                    <div class="content">
+                        <p>Hello {recipient_name},</p>
+                        <p>We received a request to reset your password. Click the button below to reset your password:</p>
+                        <a href="{reset_url}" class="button">Reset Password</a>
+                        <p>Or copy and paste this link into your browser:</p>
+                        <p style="background-color: #f9f9f9; padding: 10px; word-break: break-all;">{reset_url}</p>
+                        <div class="warning">
+                            <strong>⚠️ Security Notice:</strong>
+                            <ul>
+                                <li>This link will expire in 1 hour</li>
+                                <li>If you didn't request this password reset, please ignore this email</li>
+                                <li>Your password will not change until you access the link above and create a new one</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <p>© 2025 Our Company. All rights reserved.</p>
+                    </div>
+                </div>
+            </body>
+        </html>
+        """
+
+        text_body = f"""
+        Password Reset Request
+
+        Hello {recipient_name},
+
+        We received a request to reset your password. Copy and paste this link into your browser to reset your password:
+
+        {reset_url}
+
+        This link will expire in 1 hour.
+
+        If you didn't request this password reset, please ignore this email.
+        Your password will not change until you access the link above and create a new one.
+
+        Best regards,
+        {settings.mailtrap_sender_name}
+        """
+
+        mail = mt.Mail(
+            sender=mt.Address(
+                email=settings.mailtrap_sender_email,
+                name=settings.mailtrap_sender_name,
+            ),
+            to=[mt.Address(email=recipient_email, name=recipient_name)],
+            subject="Password Reset Request",
+            text=text_body,
+            html=html_body,
+            category="password-reset",
+        )
+
+        response = client.send(mail)
+
+        if response and response.get("success"):
+            logger.info(f"Password reset email sent to {recipient_email}")
+            return True
+        else:
+            logger.error(f"Failed to send password reset email to {recipient_email}: {response}")
+            return False
+
+    except Exception as e:
+        logger.error(f"Exception while sending password reset email: {e}")
+        return False
+

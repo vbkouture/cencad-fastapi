@@ -31,6 +31,7 @@ class Settings(BaseSettings):
 
     # App settings
     debug: bool = False
+    frontend_url: str = "http://localhost:3000"
 
 
 settings = Settings()

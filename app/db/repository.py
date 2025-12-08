@@ -88,6 +88,18 @@ class UserRepository:
         """Get all users from database."""
         return await self.collection.find().to_list(length=None)  # type: ignore[return-value]
 
+    async def find_users_by_role(self, role: UserRole) -> list[dict[str, Any]]:
+        """
+        Find all users with a specific role.
+
+        Args:
+            role: User role to filter by
+
+        Returns:
+            List of user documents with the specified role
+        """
+        return await self.collection.find({"role": role}).to_list(length=None)  # type: ignore[return-value]
+
     async def update_user_role(self, user_id: str, new_role: UserRole) -> bool:
         """
         Update a user's role.
@@ -152,3 +164,140 @@ class UserRepository:
         # Create indexes for common queries
         await self.collection.create_index("role")
         await self.collection.create_index("is_active")
+
+    async def update_password(self, user_id: str, hashed_password: str) -> bool:
+        """
+        Update a user's password.
+
+        Args:
+            user_id: MongoDB ObjectId as string
+            hashed_password: New hashed password
+
+        Returns:
+            True if updated, False if user not found
+        """
+        try:
+            result = await self.collection.update_one(
+                {"_id": ObjectId(user_id)},
+                {"$set": {"hashed_password": hashed_password}},
+            )
+            return result.modified_count > 0
+        except Exception:
+            return False
+
+    async def update_name(self, user_id: str, name: str) -> bool:
+        """
+        Update a user's name.
+
+        Args:
+            user_id: MongoDB ObjectId as string
+            name: New name for the user
+
+        Returns:
+            True if updated, False if user not found
+        """
+        try:
+            result = await self.collection.update_one(
+                {"_id": ObjectId(user_id)},
+                {"$set": {"name": name}},
+            )
+            return result.modified_count > 0
+        except Exception:
+            return False
+
+    async def create_password_reset_token(
+        self,
+        user_id: str,
+        token: str,
+        expires_at: Any,
+    ) -> bool:
+        """
+        Create a password reset token.
+
+        Args:
+            user_id: MongoDB ObjectId as string
+            token: Reset token
+            expires_at: Token expiration datetime
+
+        Returns:
+            True if created successfully
+        """
+        try:
+            # Get password_reset_tokens collection
+            reset_collection: AsyncIOMotorCollection[dict[str, Any]] = self.collection.database["password_reset_tokens"]  # type: ignore[index,assignment]
+            
+            # Delete any existing tokens for this user
+            await reset_collection.delete_many({"user_id": user_id})
+            
+            # Create new token
+            await reset_collection.insert_one({
+                "user_id": user_id,
+                "token": token,
+                "expires_at": expires_at,
+                "used": False,
+            })
+            return True
+        except Exception:
+            return False
+
+    async def find_password_reset_token(self, token: str) -> dict[str, Any] | None:
+        """
+        Find a valid password reset token.
+
+        Args:
+            token: Reset token to find
+
+        Returns:
+            Token document if found and valid, None otherwise
+        """
+        try:
+            from datetime import datetime, timezone
+            
+            reset_collection: AsyncIOMotorCollection[dict[str, Any]] = self.collection.database["password_reset_tokens"]  # type: ignore[index,assignment]
+            
+            token_doc = await reset_collection.find_one({
+                "token": token,
+                "used": False,
+                "expires_at": {"$gt": datetime.now(timezone.utc)},
+            })
+            return token_doc
+        except Exception:
+            return None
+
+    async def delete_password_reset_token(self, token: str) -> bool:
+        """
+        Mark a password reset token as used.
+
+        Args:
+            token: Reset token to mark as used
+
+        Returns:
+            True if marked successfully
+        """
+        try:
+            reset_collection: AsyncIOMotorCollection[dict[str, Any]] = self.collection.database["password_reset_tokens"]  # type: ignore[index,assignment]
+            
+            result = await reset_collection.update_one(
+                {"token": token},
+                {"$set": {"used": True}},
+            )
+            return result.modified_count > 0
+        except Exception:
+            return False
+
+    async def create_password_reset_indexes(self) -> None:
+        """Create indexes for password reset tokens collection."""
+        try:
+            reset_collection: AsyncIOMotorCollection[dict[str, Any]] = self.collection.database["password_reset_tokens"]  # type: ignore[index,assignment]
+            
+            # Create TTL index to automatically delete expired tokens
+            await reset_collection.create_index("expires_at", expireAfterSeconds=0)
+            
+            # Create index on token for fast lookups
+            await reset_collection.create_index("token")
+            
+            # Create index on user_id
+            await reset_collection.create_index("user_id")
+        except Exception:
+            pass
+

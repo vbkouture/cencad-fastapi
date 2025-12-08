@@ -85,9 +85,8 @@ async def get_schedules(
     elif tutor_id:
         docs = await repo.get_schedules_by_tutor(tutor_id)
     else:
-        # For now, return empty list if no filter provided to avoid dumping all schedules
-        # Or implement get_all_schedules in repo if needed
-        return []
+        # Return all schedules if no filter provided
+        docs = await repo.get_all_schedules()
 
     return [Schedule.from_mongo(doc).model_dump() for doc in docs]
 

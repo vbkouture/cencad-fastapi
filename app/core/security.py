@@ -64,3 +64,27 @@ def decode_access_token(token: str) -> dict[str, Any] | None:
         return payload
     except JWTError:
         return None
+
+
+def generate_reset_token() -> str:
+    """
+    Generate a secure random token for password reset.
+
+    Returns:
+        A 32-character hexadecimal token.
+    """
+    import secrets
+    return secrets.token_hex(32)
+
+
+def create_reset_token_expiry(hours: int = 1) -> datetime:
+    """
+    Calculate expiration time for password reset token.
+
+    Args:
+        hours: Number of hours until token expires (default: 1)
+
+    Returns:
+        Expiration datetime in UTC.
+    """
+    return datetime.now(timezone.utc) + timedelta(hours=hours)

@@ -11,7 +11,7 @@ from pathlib import Path
 from fastapi import FastAPI
 
 # Add the project root to the python path
-sys.path.append(str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from app.main import create_app
 from app.api.v1.routers import (

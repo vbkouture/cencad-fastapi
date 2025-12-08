@@ -25,6 +25,37 @@ async def list_users(
     return {"users": []}
 
 
+@router.get("/tutors", response_model=list[TutorResponse])
+async def list_tutors(
+    _: UserRole = Depends(require_admin),
+) -> list[TutorResponse]:
+    """
+    List all tutors in the system.
+
+    Admin only.
+
+    Returns a list of all tutor accounts.
+    """
+    db = get_database()
+    user_repo = UserRepository(db)
+
+    # Get all users with tutor role
+    tutor_docs = await user_repo.find_users_by_role(UserRole.TUTOR)
+
+    # Convert to response models
+    tutors = [
+        TutorResponse(
+            user_id=str(doc["_id"]),
+            email=doc["email"],
+            name=doc["name"],
+            role=UserRole.TUTOR,
+        )
+        for doc in tutor_docs
+    ]
+
+    return tutors
+
+
 @router.post("/tutors", response_model=TutorResponse, status_code=status.HTTP_201_CREATED)
 async def create_tutor(
     request: CreateTutorRequest,

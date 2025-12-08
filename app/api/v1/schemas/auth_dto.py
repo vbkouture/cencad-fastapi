@@ -31,3 +31,35 @@ class LoginResponse(BaseModel):
     email: str = Field(...)
     name: str = Field(...)
     role: UserRole = Field(...)
+
+
+class ChangePasswordRequest(BaseModel):
+    """Request to change user password."""
+
+    current_password: str = Field(..., description="Current password for verification")
+    new_password: str = Field(min_length=8, max_length=100, description="New password")
+
+
+class UpdateProfileRequest(BaseModel):
+    """Request to update user profile information."""
+
+    name: str = Field(min_length=1, max_length=200, description="Updated user name")
+
+
+class ForgotPasswordRequest(BaseModel):
+    """Request to initiate password reset flow."""
+
+    email: EmailStr = Field(..., description="Email address to send reset link")
+
+
+class ResetPasswordRequest(BaseModel):
+    """Request to reset password with token."""
+
+    token: str = Field(..., description="Password reset token from email")
+    new_password: str = Field(min_length=8, max_length=100, description="New password")
+
+
+class MessageResponse(BaseModel):
+    """Generic message response."""
+
+    message: str = Field(..., description="Response message")
