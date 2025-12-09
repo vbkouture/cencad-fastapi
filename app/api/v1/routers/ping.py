@@ -15,4 +15,4 @@ async def ping() -> PingOut:
     A simple read-only endpoint to verify the app is alive.
     Returns a tiny JSON document; safe to call without auth.
     """
-    return PingOut(ok=True, service="fastapi-mongo-starter")
+    return PingOut(ok=True, service="cencad-backend")

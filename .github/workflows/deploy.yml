@@ -1,0 +1,39 @@
+name: Deploy to DigitalOcean
+
+on:
+  push:
+    branches: [ main ]  # Triggers on push to main branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DROPLET_HOST }}
+          username: ${{ secrets.DROPLET_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            # 1. Go to the app folder
+            cd /root/cencad-fastapi  # <--- MAKE SURE THIS PATH IS CORRECT
+
+            # 2. Pull the latest changes from GitHub
+            git pull origin main
+
+            # 3. Rebuild the Docker Image
+            docker build -t cencad_app .
+
+            # 4. Stop and remove the old container
+            docker rm -f cencad_app || true
+
+            # 5. Run the new container (Behind Caddy on port 8080)
+            docker run -d \
+              --name cencad_app \
+              --restart always \
+              --env-file .env \
+              -p 8080:8080 \
+              cencad_app
+
+            # 6. Cleanup unused images to save space
+            docker image prune -f
