@@ -16,11 +16,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first for better caching
-COPY pyproject.toml .
+COPY requirements.txt .
 
 # Install dependencies
 RUN pip install --upgrade pip setuptools wheel && \
-    pip install -e .
+    pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
 COPY app ./app

@@ -4,8 +4,7 @@ services:
       github:
           branch: main
           repo: sayedsamin/cencad-fastapi
-      build_command: ""
-      run_command: uvicorn app.main:app --host 0.0.0.0 --port 8080
+      dockerfile_path: Dockerfile
       envs:
           - key: DEBUG
             scope: RUN_AND_BUILD_TIME
@@ -32,20 +31,13 @@ services:
             scope: RUN_AND_BUILD_TIME
             value: ${MONGODB_PASSWORD}
       http_port: 8080
-      instance_count: 2
+      instance_count: 1
       instance_size_slug: basic-xs
       log_destinations:
           - name: api_logs
             papertrail:
                 token: ${PAPERTRAIL_TOKEN}
       source_dir: /
-databases:
-    - engine: MONGODB
-      name: prod-mongodb
-      version: "7.0"
-      production: true
-      envs:
-          - key: MONGODB_URL
-            value: mongodb+srv://${db-user}:${db-password}@${db-host}
+
 static_sites: []
 jobs: []
