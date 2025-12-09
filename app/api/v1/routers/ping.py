@@ -1,6 +1,5 @@
-from typing import TypedDict
-
 from fastapi import APIRouter
+from typing_extensions import TypedDict
 
 router = APIRouter(tags=["meta"])
 

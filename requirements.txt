@@ -13,3 +13,4 @@ python-multipart>=0.0.18
 mailtrap==2.3.0
 email-validator>=2.0.0
 certifi>=2024.7.4
+typing-extensions>=4.0.0
