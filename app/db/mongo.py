@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
+import certifi
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 
 from app.core.config import settings
@@ -17,7 +18,7 @@ async def connect_to_mongodb() -> None:
     """Initialize MongoDB connection."""
     global _client, _db
 
-    _client = AsyncIOMotorClient(settings.mongodb_url)
+    _client = AsyncIOMotorClient(settings.mongodb_url, tlsCAFile=certifi.where())
     _db = _client[settings.mongodb_db]
 
     # Verify connection
