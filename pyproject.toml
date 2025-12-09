@@ -27,6 +27,7 @@ dev = [  # "dev" extra: development-only packages for formatting, linting, testi
   "mypy==1.11.2",  # Mypy: static type checker pinned version
   "pytest==8.3.2",  # Pytest: test runner pinned version
   "pytest-asyncio==0.23.8",  # Pytest-asyncio: asyncio support for pytest
+  "pytest-cov==4.1.0",  # Pytest-cov: coverage reporting
   "httpx==0.27.2",  # HTTPX: async HTTP client (useful for testing async endpoints)
   # security/tools  # grouping comment for security and auditing tools
   "bandit==1.7.9",  # Bandit: security linter to find common security issues
@@ -58,7 +59,7 @@ exclude = ["venv", ".venv", "build", "dist", "node_modules"]  # file paths Ruff 
 
 [tool.pytest.ini_options]  # Pytest configuration (mirrors pytest.ini settings)
 minversion = "8.0"  # Minimum pytest version required to run tests
-addopts = "-q --asyncio-mode=auto"  # Additional pytest CLI options (quiet output, asyncio mode only)
+addopts = "-q --asyncio-mode=auto --cov=app --cov-report=term-missing --cov-report=html"  # Additional pytest CLI options (quiet output, asyncio mode, coverage)
 testpaths = ["tests"]  # Default directories where pytest will look for tests
 filterwarnings = [
     "ignore::DeprecationWarning:jose.jwt",  # Ignore python-jose deprecation warnings (external library)

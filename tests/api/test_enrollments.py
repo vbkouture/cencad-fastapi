@@ -117,8 +117,18 @@ class TestUpdateEnrollment:
             user_id=str(ObjectId()), schedule_id=str(ObjectId()), course_id=str(ObjectId())
         )
 
+        # Create a tutor token for authorization
+        from app.core.security import create_access_token
+        from app.domain.users.value_objects import UserRole
+
+        tutor_id = str(ObjectId())
+        tutor_token = create_access_token(data={"sub": tutor_id, "role": UserRole.TUTOR})
+
         payload = {"status": "COMPLETED", "grade": 95.5}
-        response = await client.put(f"/api/v1/enrollments/{str(enrollment['_id'])}", json=payload)
+        headers = {"Authorization": f"Bearer {tutor_token}"}
+        response = await client.put(
+            f"/api/v1/enrollments/{str(enrollment['_id'])}", json=payload, headers=headers
+        )
         assert response.status_code == status.HTTP_200_OK
         data = response.json()
         assert data["status"] == "COMPLETED"
