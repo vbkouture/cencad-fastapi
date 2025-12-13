@@ -14,6 +14,7 @@ from app.api.v1.schemas.course_dto import (
     CourseResponse,
     CourseUpdateRequest,
     PaginatedCourseResponse,
+    ResourceDTO,
     SyllabusWeekDTO,
 )
 from app.core.dependencies import require_admin
@@ -99,7 +100,7 @@ async def get_courses(
         filtered_courses = [
             c
             for c in filtered_courses
-            if c.get("categoryId") and str(c["categoryId"]) == filters["category_id"]
+            if c.get("category_id") and str(c["category_id"]) == filters["category_id"]
         ]
 
     if filters.get("level"):
@@ -119,12 +120,12 @@ async def get_courses(
         filtered_courses = [
             c
             for c in filtered_courses
-            if any(jid in c.get("jobRoleIds", []) for jid in filters["job_role_ids"])
+            if any(jid in c.get("job_role_ids", []) for jid in filters["job_role_ids"])
         ]
 
     if filters.get("vendor_ids"):
         filtered_courses = [
-            c for c in filtered_courses if c.get("vendorId") in filters["vendor_ids"]
+            c for c in filtered_courses if c.get("vendor_id") in filters["vendor_ids"]
         ]
 
     # Apply pagination
@@ -343,10 +344,10 @@ async def delete_course(
 def _course_doc_to_response(course_doc: dict[str, Any]) -> CourseResponse:
     """Convert a course document from DB to CourseResponse DTO."""
     # job_role_ids are already strings in the database
-    job_role_ids = course_doc.get("jobRoleIds") or []
+    job_role_ids = course_doc.get("job_role_ids") or []
 
     # Build CourseDetailsDTO
-    course_details_data = course_doc.get("courseDetails", {})
+    course_details_data = course_doc.get("course_details", {})
     syllabus_weeks = []
     for w in course_details_data.get("syllabus", []):
         syllabus_weeks.append(
@@ -381,16 +382,18 @@ def _course_doc_to_response(course_doc: dict[str, Any]) -> CourseResponse:
         image=course_doc.get("image"),
         rating=course_doc.get("rating"),
         students=course_doc.get("students"),
-        certifications=course_doc.get("certifications") or [],
+        certifications=course_doc.get("certifications", []),
         cost=course_doc.get("cost"),
-        category_id=str(course_doc["categoryId"]) if course_doc.get("categoryId") else None,
-        vendor_id=str(course_doc["vendorId"]) if course_doc.get("vendorId") else None,
+        category_id=str(course_doc.get("category_id")) if course_doc.get("category_id") else None,
+        vendor_id=str(course_doc.get("vendor_id")) if course_doc.get("vendor_id") else None,
         job_role_ids=job_role_ids,
+        resources=[
+            ResourceDTO(**r) for r in course_doc.get("resources", [])
+        ],
+        notice=course_doc.get("notice"),
+        tags=course_doc.get("tags", []),
+        status=course_doc.get("status", "DRAFT"),
         course_details=course_details,
         created_at=created_at,
         updated_at=updated_at,
-        resources=course_doc.get("resources") or [],
-        notice=course_doc.get("notice"),
-        tags=course_doc.get("tags") or [],
-        status=course_doc.get("status", "DRAFT"),
     )

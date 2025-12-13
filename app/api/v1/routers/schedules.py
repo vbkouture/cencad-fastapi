@@ -8,6 +8,9 @@ from app.api.v1.schemas.schedule_dto import (
     ScheduleCreateRequest,
     ScheduleResponse,
     ScheduleUpdateRequest,
+    PublicScheduleResponse,
+    SessionDTO
+
 )
 from app.core.dependencies import require_admin
 from app.db.schedule_repository import ScheduleRepository
@@ -52,6 +55,42 @@ async def create_schedule(
 
 
 @router.get(
+    "/upcoming-schedule",
+    response_model=list[PublicScheduleResponse],
+    summary="Get upcoming schedules",
+)
+async def get_upcoming_schedules(
+    repo: Annotated[ScheduleRepository, Depends(get_schedule_repository)],
+    course_id: str | None = Query(None, description="Filter by course ID"),
+    tutor_id: str | None = Query(None, description="Filter by tutor ID"),
+) -> list[PublicScheduleResponse]:
+    """
+    Get upcoming schedules.
+    
+    Public endpoint.
+    Only returns UPCOMING sessions.
+    """
+    docs = await repo.get_upcoming_schedules(course_id=course_id, tutor_id=tutor_id)
+    
+    # helper to map doc to PublicScheduleResponse
+    # helper to map doc to PublicScheduleResponse
+    results = []
+    for doc in docs:
+        schedule = Schedule.from_mongo(doc)
+        results.append(
+            PublicScheduleResponse(
+                id=schedule.id,
+                course_id=schedule.course_id,
+                sessions=[SessionDTO.model_validate(s.model_dump()) for s in schedule.sessions],
+                capacity=schedule.capacity,
+                timezone=schedule.timezone,
+            )
+        )
+            
+    return results
+
+
+@router.get(
     "/{schedule_id}",
     response_model=ScheduleResponse,
     summary="Get schedule by ID",
@@ -74,6 +113,7 @@ async def get_schedule(
 )
 async def get_schedules(
     repo: Annotated[ScheduleRepository, Depends(get_schedule_repository)],
+    _: UserRole = Depends(require_admin),
     course_id: str | None = Query(None, description="Filter by course ID"),
     tutor_id: str | None = Query(None, description="Filter by tutor ID"),
 ) -> list[ScheduleResponse]:
@@ -87,6 +127,9 @@ async def get_schedules(
         docs = await repo.get_all_schedules()
 
     return [ScheduleResponse.model_validate(Schedule.from_mongo(doc).model_dump()) for doc in docs]
+
+
+
 
 
 @router.put(

@@ -77,7 +77,7 @@ class CourseRepository:
             "description": description,
             "duration": duration,
             "level": level,
-            "courseDetails": course_details,
+            "course_details": course_details,
             "url": url,
             "language": language,
             "image": image,
@@ -85,9 +85,9 @@ class CourseRepository:
             "students": students,
             "certifications": certifications,
             "cost": cost,
-            "categoryId": ObjectId(category_id) if category_id else None,
-            "vendorId": ObjectId(vendor_id) if vendor_id else None,
-            "jobRoleIds": job_role_ids,
+            "category_id": ObjectId(category_id) if category_id else None,
+            "vendor_id": ObjectId(vendor_id) if vendor_id else None,
+            "job_role_ids": job_role_ids,
             "resources": resources,
             "notice": notice,
             "tags": tags,
@@ -164,7 +164,7 @@ class CourseRepository:
             List of courses in this category
         """
         try:
-            return await self.collection.find({"categoryId": ObjectId(category_id)}).to_list(
+            return await self.collection.find({"category_id": ObjectId(category_id)}).to_list(
                 length=None
             )
         except Exception:
@@ -181,7 +181,7 @@ class CourseRepository:
             List of courses from this vendor
         """
         try:
-            return await self.collection.find({"vendorId": ObjectId(vendor_id)}).to_list(
+            return await self.collection.find({"vendor_id": ObjectId(vendor_id)}).to_list(
                 length=None
             )
         except Exception:
@@ -198,7 +198,7 @@ class CourseRepository:
             List of courses related to this job role
         """
         try:
-            return await self.collection.find({"jobRoleIds": job_role_id}).to_list(length=None)
+            return await self.collection.find({"job_role_ids": job_role_id}).to_list(length=None)
         except Exception:
             return []
 
@@ -275,7 +275,7 @@ class CourseRepository:
                 update_data["level"] = level
 
             if course_details is not None:
-                update_data["courseDetails"] = course_details
+                update_data["course_details"] = course_details
 
             if url is not None:
                 update_data["url"] = url
@@ -299,13 +299,13 @@ class CourseRepository:
                 update_data["cost"] = cost
 
             if category_id is not None:
-                update_data["categoryId"] = ObjectId(category_id) if category_id else None
+                update_data["category_id"] = ObjectId(category_id) if category_id else None
 
             if vendor_id is not None:
-                update_data["vendorId"] = ObjectId(vendor_id) if vendor_id else None
+                update_data["vendor_id"] = ObjectId(vendor_id) if vendor_id else None
 
             if job_role_ids is not None:
-                update_data["jobRoleIds"] = job_role_ids
+                update_data["job_role_ids"] = job_role_ids
 
             if resources is not None:
                 update_data["resources"] = resources
@@ -358,12 +358,12 @@ class CourseRepository:
         await self.collection.create_index("title", unique=True)
         # Index on level for filtering
         await self.collection.create_index("level")
-        # Index on categoryId for joins
-        await self.collection.create_index("categoryId")
-        # Index on vendorId for joins
-        await self.collection.create_index("vendorId")
-        # Index on jobRoleIds for many-to-many queries
-        await self.collection.create_index("jobRoleIds")
+        # Index on category_id for joins
+        await self.collection.create_index("category_id")
+        # Index on vendor_id for joins
+        await self.collection.create_index("vendor_id")
+        # Index on job_role_ids for many-to-many queries
+        await self.collection.create_index("job_role_ids")
         # Index on tags for search
         await self.collection.create_index("tags")
         # Index on status for filtering

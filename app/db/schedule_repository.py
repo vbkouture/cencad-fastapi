@@ -66,6 +66,31 @@ class ScheduleRepository:
         except Exception:
             return []
 
+    async def get_upcoming_schedules(
+        self, course_id: str | None = None, tutor_id: str | None = None
+    ) -> list[dict[str, Any]]:
+        """
+        Get upcoming schedules with optional filters.
+        
+        Args:
+            course_id: Optional course ID filter
+            tutor_id: Optional tutor ID filter
+            
+        Returns:
+            List of upcoming schedules
+        """
+        try:
+            query: dict[str, Any] = {"status": "UPCOMING"}
+            
+            if course_id:
+                query["course_id"] = ObjectId(course_id)
+            if tutor_id:
+                query["tutor_id"] = ObjectId(tutor_id)
+                
+            return await self.collection.find(query).to_list(length=None)
+        except Exception:
+            return []
+
     async def get_all_schedules(self) -> list[dict[str, Any]]:
         """Get all schedules."""
         return await self.collection.find().to_list(length=None)

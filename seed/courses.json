@@ -5,7 +5,7 @@
     "description": "Learn Python from scratch to advanced concepts.",
     "duration": "20 hours",
     "level": "BEGINNER",
-    "courseDetails": {
+    "course_details": {
       "overview": "This course covers everything you need to know about Python.",
       "objectives": ["Learn syntax", "Build apps", "Data analysis"],
       "prerequisites": ["None"],
@@ -16,11 +16,11 @@
     "image": "https://example.com/images/python.jpg",
     "rating": 4.8,
     "students": 1500,
-    "certification": ["Python Institute"],
+    "certifications": ["Python Institute"],
     "cost": 49.99,
-    "vendorId": "5f8d0d55b54764421b7156d1",
-    "categoryId": "5f8d0d55b54764421b7156f1",
-    "jobRoles": ["5f8d0d55b54764421b7156e1"],
+    "vendor_id": "5f8d0d55b54764421b7156d1",
+    "category_id": "5f8d0d55b54764421b7156f1",
+    "job_role_ids": ["5f8d0d55b54764421b7156e1"],
     "resources": [
       {"title": "FastAPI Documentation", "url": "https://fastapi.tiangolo.com/"}
     ],
@@ -34,7 +34,7 @@
     "description": "Master React with advanced patterns and performance optimization.",
     "duration": "15 hours",
     "level": "ADVANCED",
-    "courseDetails": {
+    "course_details": {
       "overview": "Deep dive into React internals.",
       "objectives": ["Hooks", "Context", "Performance"],
       "prerequisites": ["Basic React"],
@@ -45,11 +45,11 @@
     "image": "https://example.com/images/react.jpg",
     "rating": 4.9,
     "students": 800,
-    "certification": [],
+    "certifications": [],
     "cost": 79.99,
-    "vendorId": "5f8d0d55b54764421b7156d2",
-    "categoryId": "5f8d0d55b54764421b7156f1",
-    "jobRoles": ["5f8d0d55b54764421b7156e2"],
+    "vendor_id": "5f8d0d55b54764421b7156d2",
+    "category_id": "5f8d0d55b54764421b7156f1",
+    "job_role_ids": ["5f8d0d55b54764421b7156e2"],
     "resources": [],
     "notice": null,
     "tags": ["react", "frontend", "javascript"],
@@ -61,7 +61,7 @@
     "description": "Introduction to Data Science using Python and Pandas.",
     "duration": "25 hours",
     "level": "BEGINNER",
-    "courseDetails": {
+    "course_details": {
       "overview": "Start your data science journey.",
       "objectives": ["Pandas", "NumPy", "Matplotlib"],
       "prerequisites": ["Basic Python"],
@@ -72,11 +72,11 @@
     "image": "https://example.com/images/ds.jpg",
     "rating": 4.7,
     "students": 1200,
-    "certification": ["Data Science Council"],
+    "certifications": ["Data Science Council"],
     "cost": 59.99,
-    "vendorId": "5f8d0d55b54764421b7156d3",
-    "categoryId": "5f8d0d55b54764421b7156f2",
-    "jobRoles": ["5f8d0d55b54764421b7156e3"],
+    "vendor_id": "5f8d0d55b54764421b7156d3",
+    "category_id": "5f8d0d55b54764421b7156f2",
+    "job_role_ids": ["5f8d0d55b54764421b7156e3"],
     "resources": [
         {"title": "Kaggle", "url": "https://www.kaggle.com/"}
     ],
@@ -90,7 +90,7 @@
     "description": "Comprehensive preparation for the SAA-C03 exam.",
     "duration": "40 hours",
     "level": "INTERMEDIATE",
-    "courseDetails": {
+    "course_details": {
       "overview": "Master the art of designing resilient, high-performing, secure, and cost-optimized architectures on AWS.",
       "objectives": ["Design Resilient Architectures", "Design High-Performing Architectures", "Design Secure Applications"],
       "prerequisites": ["AWS Cloud Practitioner"],
@@ -108,11 +108,11 @@
     "image": "https://d1.awsstatic.com/training-and-certification/certification-badges/AWS-Certified-Solutions-Architect-Associate_badge.634f8a2f-ee73-4319-9430-804d43657739.png",
     "rating": 4.9,
     "students": 5000,
-    "certification": ["AWS Certified Solutions Architect – Associate"],
+    "certifications": ["AWS Certified Solutions Architect – Associate"],
     "cost": 149.99,
-    "vendorId": "5f8d0d55b54764421b7156d4",
-    "categoryId": "5f8d0d55b54764421b7156f3",
-    "jobRoles": ["5f8d0d55b54764421b7156e4"],
+    "vendor_id": "5f8d0d55b54764421b7156d4",
+    "category_id": "5f8d0d55b54764421b7156f3",
+    "job_role_ids": ["5f8d0d55b54764421b7156e4"],
     "resources": [
         {"title": "AWS Whitepapers", "url": "https://aws.amazon.com/whitepapers/"}
     ],
@@ -126,7 +126,7 @@
     "description": "Understand the capabilities of Google Cloud products and services.",
     "duration": "10 hours",
     "level": "BEGINNER",
-    "courseDetails": {
+    "course_details": {
       "overview": "Distinguish and evaluate the various capabilities of Google Cloud core products and services.",
       "objectives": ["Cloud Concepts", "Google Cloud Products", "Security and Compliance"],
       "prerequisites": ["None"],
@@ -141,11 +141,11 @@
     "image": "https://lh3.googleusercontent.com/K_2G-R3rXbYV7W7vN5R6yQ8kF3zP9o2jL4m6nB8xT5vD1cE7sH9aO0w4uI3gJ2lL6kM=s0",
     "rating": 4.6,
     "students": 2500,
-    "certification": ["Google Cloud Digital Leader"],
+    "certifications": ["Google Cloud Digital Leader"],
     "cost": 99.99,
-    "vendorId": "5f8d0d55b54764421b7156d5",
-    "categoryId": "5f8d0d55b54764421b7156f3",
-    "jobRoles": ["5f8d0d55b54764421b7156e5"],
+    "vendor_id": "5f8d0d55b54764421b7156d5",
+    "category_id": "5f8d0d55b54764421b7156f3",
+    "job_role_ids": ["5f8d0d55b54764421b7156e5"],
     "resources": [],
     "notice": null,
     "tags": ["gcp", "cloud", "digital-leader"],
@@ -157,7 +157,7 @@
     "description": "Fast-track your path to Azure certification.",
     "duration": "12 hours",
     "level": "BEGINNER",
-    "courseDetails": {
+    "course_details": {
       "overview": "Learn cloud concepts, Azure architecture, and services.",
       "objectives": ["Describe Cloud Concepts", "Describe Azure Architecture", "Describe Azure Management"],
       "prerequisites": ["None"],
@@ -172,11 +172,11 @@
     "image": "https://learn.microsoft.com/en-us/credentials/certifications/media/microsoft-certified-azure-fundamentals-badge.svg",
     "rating": 4.7,
     "students": 3200,
-    "certification": ["Microsoft Certified: Azure Fundamentals (AZ-900)"],
+    "certifications": ["Microsoft Certified: Azure Fundamentals (AZ-900)"],
     "cost": 89.99,
-    "vendorId": "5f8d0d55b54764421b7156d6",
-    "categoryId": "5f8d0d55b54764421b7156f3",
-    "jobRoles": ["5f8d0d55b54764421b7156e4"],
+    "vendor_id": "5f8d0d55b54764421b7156d6",
+    "category_id": "5f8d0d55b54764421b7156f3",
+    "job_role_ids": ["5f8d0d55b54764421b7156e4"],
     "resources": [
         {"title": "Azure Pricing Calculator", "url": "https://azure.microsoft.com/en-us/pricing/calculator/"}
     ],

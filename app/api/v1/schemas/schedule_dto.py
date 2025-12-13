@@ -53,3 +53,14 @@ class ScheduleResponse(BaseModel):
     timezone: str = Field(description="Timezone")
     created_at: datetime = Field(description="Creation timestamp")
     updated_at: datetime = Field(description="Last update timestamp")
+
+
+class PublicScheduleResponse(BaseModel):
+    """Public response DTO for upcoming schedules."""
+
+    id: str = Field(description="Schedule ID")
+    course_id: str = Field(description="Course ID")
+    sessions: list[SessionDTO] = Field(description="List of sessions")
+    capacity: int = Field(description="Maximum capacity")
+    timezone: str = Field(description="Timezone")
+
