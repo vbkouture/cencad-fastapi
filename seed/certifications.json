@@ -82,5 +82,47 @@
     "name": "AWS Certified Machine Learning – Specialty",
     "description": "Building, training, tuning, and deploying machine learning models.",
     "url": "https://aws.amazon.com/certification/certified-machine-learning-specialty/"
+  },
+  {
+    "_id": "60a7e1a0b54764421b715813",
+    "vendor_id": "5f8d0d55b54764421b7156d5",
+    "name": "Google Cloud Digital Leader",
+    "description": "Foundational knowledge of Google Cloud services and how they support business.",
+    "url": "https://cloud.google.com/certification/cloud-digital-leader"
+  },
+  {
+    "_id": "60a7e1a0b54764421b715814",
+    "vendor_id": "5f8d0d55b54764421b7156d5",
+    "name": "Google Cloud Associate Cloud Engineer",
+    "description": "Deploys applications, monitors operations, and manages enterprise solutions.",
+    "url": "https://cloud.google.com/certification/cloud-engineer"
+  },
+  {
+    "_id": "60a7e1a0b54764421b715815",
+    "vendor_id": "5f8d0d55b54764421b7156d5",
+    "name": "Google Cloud Professional Cloud Architect",
+    "description": "Enables organizations to leverage Google Cloud technologies.",
+    "url": "https://cloud.google.com/certification/cloud-architect"
+  },
+  {
+    "_id": "60a7e1a0b54764421b715816",
+    "vendor_id": "5f8d0d55b54764421b7156d6",
+    "name": "Microsoft Certified: Azure Fundamentals (AZ-900)",
+    "description": "Foundational knowledge of cloud services and how those services are provided with Microsoft Azure.",
+    "url": "https://learn.microsoft.com/en-us/credentials/certifications/azure-fundamentals/"
+  },
+  {
+    "_id": "60a7e1a0b54764421b715817",
+    "vendor_id": "5f8d0d55b54764421b7156d6",
+    "name": "Microsoft Certified: Azure Administrator Associate (AZ-104)",
+    "description": "Subject matter expertise in implementing, managing, and monitoring an organization's Azure environment.",
+    "url": "https://learn.microsoft.com/en-us/credentials/certifications/azure-administrator/"
+  },
+  {
+    "_id": "60a7e1a0b54764421b715818",
+    "vendor_id": "5f8d0d55b54764421b7156d6",
+    "name": "Microsoft Certified: Azure Solutions Architect Expert (AZ-305)",
+    "description": "Designing cloud and hybrid solutions that run on Microsoft Azure.",
+    "url": "https://learn.microsoft.com/en-us/credentials/certifications/azure-solutions-architect/"
   }
 ]

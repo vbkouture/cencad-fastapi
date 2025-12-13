@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import datetime
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
@@ -348,7 +349,11 @@ def _course_doc_to_response(course_doc: dict[str, Any]) -> CourseResponse:
     course_details_data = course_doc.get("courseDetails", {})
     syllabus_weeks = []
     for w in course_details_data.get("syllabus", []):
-        syllabus_weeks.append(SyllabusWeekDTO(week=w["week"], title=w["title"], topics=w["topics"]))
+        syllabus_weeks.append(
+            SyllabusWeekDTO(
+                week=w.get("week", "1"), title=w.get("title", ""), topics=w.get("topics", [])
+            )
+        )
 
     course_details = CourseDetailsDTO(
         overview=course_details_data.get("overview", ""),
@@ -357,12 +362,20 @@ def _course_doc_to_response(course_doc: dict[str, Any]) -> CourseResponse:
         syllabus=syllabus_weeks,
     )
 
+    created_at = course_doc.get("created_at")
+    if not created_at:
+        created_at = datetime.now()
+
+    updated_at = course_doc.get("updated_at")
+    if not updated_at:
+        updated_at = datetime.now()
+
     return CourseResponse(
-        id=str(course_doc["_id"]),
-        title=course_doc["title"],
-        description=course_doc["description"],
-        duration=course_doc["duration"],
-        level=course_doc["level"],
+        id=str(course_doc.get("_id", "")),
+        title=course_doc.get("title", "Untitled Course"),
+        description=course_doc.get("description", "No description available"),
+        duration=course_doc.get("duration", "N/A"),
+        level=course_doc.get("level", "BEGINNER"),
         url=course_doc.get("url"),
         language=course_doc.get("language"),
         image=course_doc.get("image"),
@@ -374,8 +387,8 @@ def _course_doc_to_response(course_doc: dict[str, Any]) -> CourseResponse:
         vendor_id=str(course_doc["vendorId"]) if course_doc.get("vendorId") else None,
         job_role_ids=job_role_ids,
         course_details=course_details,
-        created_at=course_doc["created_at"],
-        updated_at=course_doc["updated_at"],
+        created_at=created_at,
+        updated_at=updated_at,
         resources=course_doc.get("resources") or [],
         notice=course_doc.get("notice"),
         tags=course_doc.get("tags") or [],

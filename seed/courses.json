@@ -83,5 +83,90 @@
     "notice": "Requires high-performance GPU for deep learning modules.",
     "tags": ["data-science", "python", "ml"],
     "status": "DRAFT"
+  },
+  {
+    "_id": "5f8d0d55b54764421b715704",
+    "title": "AWS Solutions Architect Associate Preparation",
+    "description": "Comprehensive preparation for the SAA-C03 exam.",
+    "duration": "40 hours",
+    "level": "INTERMEDIATE",
+    "courseDetails": {
+      "overview": "Master the art of designing resilient, high-performing, secure, and cost-optimized architectures on AWS.",
+      "objectives": ["Design Resilient Architectures", "Design High-Performing Architectures", "Design Secure Applications"],
+      "prerequisites": ["AWS Cloud Practitioner"],
+      "syllabus": ["IAM", "EC2", "S3", "VPC", "RDS", "DynamoDB"]
+    },
+    "url": "https://aws.amazon.com/training/course/architecting/",
+    "language": "English",
+    "image": "https://d1.awsstatic.com/training-and-certification/certification-badges/AWS-Certified-Solutions-Architect-Associate_badge.634f8a2f-ee73-4319-9430-804d43657739.png",
+    "rating": 4.9,
+    "students": 5000,
+    "certification": ["AWS Certified Solutions Architect – Associate"],
+    "cost": 149.99,
+    "vendorId": "5f8d0d55b54764421b7156d4",
+    "categoryId": "5f8d0d55b54764421b7156f3",
+    "jobRoles": ["5f8d0d55b54764421b7156e4"],
+    "resources": [
+        {"title": "AWS Whitepapers", "url": "https://aws.amazon.com/whitepapers/"}
+    ],
+    "notice": "Exam voucher not included.",
+    "tags": ["aws", "cloud", "architecture"],
+    "status": "PUBLISHED"
+  },
+  {
+    "_id": "5f8d0d55b54764421b715705",
+    "title": "Google Cloud Digital Leader Training",
+    "description": "Understand the capabilities of Google Cloud products and services.",
+    "duration": "10 hours",
+    "level": "BEGINNER",
+    "courseDetails": {
+      "overview": "Distinguish and evaluate the various capabilities of Google Cloud core products and services.",
+      "objectives": ["Cloud Concepts", "Google Cloud Products", "Security and Compliance"],
+      "prerequisites": ["None"],
+      "syllabus": ["Intro to Digital Transformation", "Innovating with Data", "Infrastructure and Application Modernization"]
+    },
+    "url": "https://cloud.google.com/training/digital-leader",
+    "language": "English",
+    "image": "https://lh3.googleusercontent.com/K_2G-R3rXbYV7W7vN5R6yQ8kF3zP9o2jL4m6nB8xT5vD1cE7sH9aO0w4uI3gJ2lL6kM=s0",
+    "rating": 4.6,
+    "students": 2500,
+    "certification": ["Google Cloud Digital Leader"],
+    "cost": 99.99,
+    "vendorId": "5f8d0d55b54764421b7156d5",
+    "categoryId": "5f8d0d55b54764421b7156f3",
+    "jobRoles": ["5f8d0d55b54764421b7156e5"],
+    "resources": [],
+    "notice": null,
+    "tags": ["gcp", "cloud", "digital-leader"],
+    "status": "PUBLISHED"
+  },
+  {
+    "_id": "5f8d0d55b54764421b715706",
+    "title": "Microsoft Azure Fundamentals (AZ-900) Crash Course",
+    "description": "Fast-track your path to Azure certification.",
+    "duration": "12 hours",
+    "level": "BEGINNER",
+    "courseDetails": {
+      "overview": "Learn cloud concepts, Azure architecture, and services.",
+      "objectives": ["Describe Cloud Concepts", "Describe Azure Architecture", "Describe Azure Management"],
+      "prerequisites": ["None"],
+      "syllabus": ["Cloud Concepts", "Core Azure Services", "Security and Network Security"]
+    },
+    "url": "https://learn.microsoft.com/en-us/training/courses/az-900t00",
+    "language": "English",
+    "image": "https://learn.microsoft.com/en-us/credentials/certifications/media/microsoft-certified-azure-fundamentals-badge.svg",
+    "rating": 4.7,
+    "students": 3200,
+    "certification": ["Microsoft Certified: Azure Fundamentals (AZ-900)"],
+    "cost": 89.99,
+    "vendorId": "5f8d0d55b54764421b7156d6",
+    "categoryId": "5f8d0d55b54764421b7156f3",
+    "jobRoles": ["5f8d0d55b54764421b7156e4"],
+    "resources": [
+        {"title": "Azure Pricing Calculator", "url": "https://azure.microsoft.com/en-us/pricing/calculator/"}
+    ],
+    "notice": null,
+    "tags": ["azure", "microsoft", "cloud"],
+    "status": "PUBLISHED"
   }
 ]

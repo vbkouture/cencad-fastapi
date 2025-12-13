@@ -20,7 +20,19 @@
   {
     "_id": "5f8d0d55b54764421b7156d4",
     "name": "Amazon Web Services (AWS)",
-    "description": "World's most comprehensive and broadly adopted cloud.",
+    "description": "World's most comprehensive and broadly adopted cloud platform.",
     "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
+  },
+  {
+    "_id": "5f8d0d55b54764421b7156d5",
+    "name": "Google Cloud",
+    "description": "A suite of cloud computing services offered by Google.",
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/5/51/Google_Cloud_logo.svg"
+  },
+  {
+    "_id": "5f8d0d55b54764421b7156d6",
+    "name": "Microsoft",
+    "description": "Multinational technology corporation producing computer software, consumer electronics, and personal computers.",
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg"
   }
 ]

@@ -2,16 +2,31 @@
   {
     "_id": "5f8d0d55b54764421b7156e1",
     "name": "Backend Developer",
-    "description": "Responsible for server-side web application logic."
+    "description": "Responsible for server-side web application logic and integration."
   },
   {
     "_id": "5f8d0d55b54764421b7156e2",
     "name": "Frontend Developer",
-    "description": "Responsible for implementing visual elements that users see and interact with."
+    "description": "Responsible for implementing visual elements that users see and interact with in a web application."
   },
   {
     "_id": "5f8d0d55b54764421b7156e3",
     "name": "Data Scientist",
     "description": "Analyze and interpret complex data to help organizations make better decisions."
+  },
+  {
+    "_id": "5f8d0d55b54764421b7156e4",
+    "name": "Cloud Architect",
+    "description": "Responsible for managing a company's cloud computing strategy, including cloud adoption plans, cloud application design, and cloud management and monitoring."
+  },
+  {
+    "_id": "5f8d0d55b54764421b7156e5",
+    "name": "DevOps Engineer",
+    "description": "Introduces processes, tools, and methodologies to balance needs throughout the software development life cycle, from coding and deployment, to maintenance and updates."
+  },
+  {
+    "_id": "5f8d0d55b54764421b7156e6",
+    "name": "Machine Learning Engineer",
+    "description": "Researches, builds, and designs self-running artificial intelligence (AI) systems to automate predictive models."
   }
 ]

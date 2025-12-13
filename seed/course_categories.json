@@ -12,6 +12,16 @@
   {
     "_id": "5f8d0d55b54764421b7156f3",
     "name": "Cloud Computing",
-    "description": "Courses related to cloud platforms and services."
+    "description": "Courses related to cloud platforms, infrastructure, and services."
+  },
+  {
+    "_id": "5f8d0d55b54764421b7156f4",
+    "name": "DevOps",
+    "description": "Courses focused on practices that combine software development and IT operations."
+  },
+  {
+    "_id": "5f8d0d55b54764421b7156f5",
+    "name": "Cybersecurity",
+    "description": "Courses dedicated to protecting computer systems, networks, and data."
   }
 ]
