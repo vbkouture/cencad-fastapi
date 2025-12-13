@@ -94,7 +94,14 @@
       "overview": "Master the art of designing resilient, high-performing, secure, and cost-optimized architectures on AWS.",
       "objectives": ["Design Resilient Architectures", "Design High-Performing Architectures", "Design Secure Applications"],
       "prerequisites": ["AWS Cloud Practitioner"],
-      "syllabus": ["IAM", "EC2", "S3", "VPC", "RDS", "DynamoDB"]
+      "syllabus": [
+         {"week": "1", "title": "IAM", "topics": []},
+         {"week": "2", "title": "EC2", "topics": []},
+         {"week": "3", "title": "S3", "topics": []},
+         {"week": "4", "title": "VPC", "topics": []},
+         {"week": "5", "title": "RDS", "topics": []},
+         {"week": "6", "title": "DynamoDB", "topics": []}
+      ]
     },
     "url": "https://aws.amazon.com/training/course/architecting/",
     "language": "English",
@@ -123,7 +130,11 @@
       "overview": "Distinguish and evaluate the various capabilities of Google Cloud core products and services.",
       "objectives": ["Cloud Concepts", "Google Cloud Products", "Security and Compliance"],
       "prerequisites": ["None"],
-      "syllabus": ["Intro to Digital Transformation", "Innovating with Data", "Infrastructure and Application Modernization"]
+      "syllabus": [
+        {"week": "1", "title": "Intro to Digital Transformation", "topics": []},
+        {"week": "2", "title": "Innovating with Data", "topics": []},
+        {"week": "3", "title": "Infrastructure and Application Modernization", "topics": []}
+      ]
     },
     "url": "https://cloud.google.com/training/digital-leader",
     "language": "English",
@@ -150,7 +161,11 @@
       "overview": "Learn cloud concepts, Azure architecture, and services.",
       "objectives": ["Describe Cloud Concepts", "Describe Azure Architecture", "Describe Azure Management"],
       "prerequisites": ["None"],
-      "syllabus": ["Cloud Concepts", "Core Azure Services", "Security and Network Security"]
+      "syllabus": [
+         {"week": "1", "title": "Cloud Concepts", "topics": []},
+         {"week": "2", "title": "Core Azure Services", "topics": []},
+         {"week": "3", "title": "Security and Network Security", "topics": []}
+      ]
     },
     "url": "https://learn.microsoft.com/en-us/training/courses/az-900t00",
     "language": "English",

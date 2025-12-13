@@ -18,8 +18,8 @@ class SyllabusWeekDTO(BaseModel):
     @classmethod
     def validate_topics(cls, v: list[str]) -> list[str]:
         """Validate topics list."""
-        if not v or len(v) > 50:
-            raise ValueError("Topics must have 1-50 items")
+        if len(v) > 50:
+            raise ValueError("Topics must have 0-50 items")
         return v
 
 

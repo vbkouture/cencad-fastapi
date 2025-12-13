@@ -77,6 +77,10 @@ async def seed_collection(db: AsyncIOMotorDatabase[Any], collection_info: dict[s
 
     print(f"🌱 Seeding {collection_name} from {file_name}...")
 
+    # Clear collection first
+    print(f"   🧹 Clearing existing data from {collection_name}...")
+    await collection.delete_many({})
+
     for item in data:
         # Convert _id to ObjectId if present
         if "_id" in item:
