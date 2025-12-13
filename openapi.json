@@ -841,6 +841,223 @@
         }
       }
     },
+    "/api/v1/certifications": {
+      "get": {
+        "tags": [
+          "certifications"
+        ],
+        "summary": "Get All Certifications",
+        "description": "Get all certifications.",
+        "operationId": "get_all_certifications_api_v1_certifications_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CertificationResponse"
+                  },
+                  "type": "array",
+                  "title": "Response Get All Certifications Api V1 Certifications Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "certifications"
+        ],
+        "summary": "Create Certification",
+        "description": "Create a new certification.\n\n**Admin only**",
+        "operationId": "create_certification_api_v1_certifications_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CertificationCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CertificationResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/certifications/{cert_id}": {
+      "get": {
+        "tags": [
+          "certifications"
+        ],
+        "summary": "Get Certification",
+        "description": "Get a specific certification by ID.",
+        "operationId": "get_certification_api_v1_certifications__cert_id__get",
+        "parameters": [
+          {
+            "name": "cert_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Cert Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CertificationResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "certifications"
+        ],
+        "summary": "Update Certification",
+        "description": "Update a certification.\n\n**Admin only**",
+        "operationId": "update_certification_api_v1_certifications__cert_id__put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "cert_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Cert Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CertificationUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CertificationResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "certifications"
+        ],
+        "summary": "Delete Certification",
+        "description": "Delete a certification.\n\n**Admin only**",
+        "operationId": "delete_certification_api_v1_certifications__cert_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "cert_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Cert Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "null",
+                  "title": "Response Delete Certification Api V1 Certifications  Cert Id  Delete"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/vendors": {
       "get": {
         "tags": [
@@ -3289,6 +3506,145 @@
   },
   "components": {
     "schemas": {
+      "CertificationCreateRequest": {
+        "properties": {
+          "vendor_id": {
+            "type": "string",
+            "title": "Vendor Id",
+            "description": "ID of the vendor providing this certification"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "Optional description of the certification"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Url",
+            "description": "Optional URL for more info"
+          }
+        },
+        "type": "object",
+        "required": [
+          "vendor_id"
+        ],
+        "title": "CertificationCreateRequest",
+        "description": "Request schema for creating a certification."
+      },
+      "CertificationResponse": {
+        "properties": {
+          "vendor_id": {
+            "type": "string",
+            "title": "Vendor Id",
+            "description": "ID of the vendor providing this certification"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "Optional description of the certification"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Url",
+            "description": "Optional URL for more info"
+          },
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Unique identifier"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "vendor_id",
+          "id",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "CertificationResponse",
+        "description": "Response schema for certification."
+      },
+      "CertificationUpdateRequest": {
+        "properties": {
+          "vendor_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vendor Id",
+            "description": "ID of the vendor providing this certification"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "Optional description of the certification"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Url",
+            "description": "Optional URL for more info"
+          }
+        },
+        "type": "object",
+        "title": "CertificationUpdateRequest",
+        "description": "Request schema for updating a certification."
+      },
       "ChangePasswordRequest": {
         "properties": {
           "current_password": {

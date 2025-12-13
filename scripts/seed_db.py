@@ -25,6 +25,7 @@ from app.core.security import hash_password
 COLLECTIONS = [
     {"name": "users", "file": "users.json", "key": "email"},
     {"name": "vendors", "file": "vendors.json", "key": "name"},
+    {"name": "certifications", "file": "certifications.json", "key": "_id"},
     {"name": "job_roles", "file": "job_roles.json", "key": "name"},
     {"name": "course_categories", "file": "course_categories.json", "key": "name"},
     {"name": "courses", "file": "courses.json", "key": "title"},

@@ -1,0 +1,20 @@
+[
+  {
+    "_id": "60a7e1a0b54764421b715801",
+    "vendor_id": "5f8d0d55b54764421b7156d1",
+    "description": "TechLearning Certified Associate",
+    "url": "https://techlearning.com/cert/associate"
+  },
+  {
+    "_id": "60a7e1a0b54764421b715802",
+    "vendor_id": "5f8d0d55b54764421b7156d2",
+    "description": "CodeMaster Python Expert",
+    "url": "https://codemaster.com/certs/python"
+  },
+  {
+    "_id": "60a7e1a0b54764421b715803",
+    "vendor_id": "5f8d0d55b54764421b7156d3",
+    "description": "DataWizards AI Professional",
+    "url": "https://datawizards.com/ai-pro"
+  }
+]

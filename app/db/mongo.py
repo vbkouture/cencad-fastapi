@@ -18,7 +18,11 @@ async def connect_to_mongodb() -> None:
     """Initialize MongoDB connection."""
     global _client, _db
 
-    _client = AsyncIOMotorClient(settings.mongodb_url, tlsCAFile=certifi.where())
+    client_options = {}
+    if "localhost" not in settings.mongodb_url and "127.0.0.1" not in settings.mongodb_url:
+        client_options["tlsCAFile"] = certifi.where()
+
+    _client = AsyncIOMotorClient(settings.mongodb_url, **client_options)  # type: ignore[arg-type]
     _db = _client[settings.mongodb_db]
 
     # Verify connection

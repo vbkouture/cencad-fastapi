@@ -3,6 +3,7 @@ from fastapi import APIRouter
 from .analytics import router as analytics_router
 from .assignments import router as assignments_router
 from .auth import router as auth_router
+from .certifications import router as certifications_router
 from .contact_forms import router as contact_forms_router
 from .course_categories import router as course_categories_router
 from .courses import router as courses_router
@@ -18,6 +19,7 @@ __all__ = [
     "analytics_router",
     "assignments_router",
     "auth_router",
+    "certifications_router",
     "contact_forms_router",
     "courses_router",
     "course_categories_router",
@@ -62,6 +64,7 @@ def get_v1_router() -> APIRouter:
     # Core features (mixed roles)
     router.include_router(course_categories_router)
     router.include_router(job_roles_router)
+    router.include_router(certifications_router)
     router.include_router(vendors_router)
     router.include_router(courses_router)
     router.include_router(assignments_router)
