@@ -50,14 +50,16 @@ async def test_create_certification(
         "/api/v1/certifications",
         json={
             "vendor_id": vendor["_id"],
-            "description": "Certified Tester",
+            "name": "Certified Tester",
+            "description": "Certified Tester Description",
             "url": "http://test.com",
         },
         headers={"Authorization": f"Bearer {admin_token}"},
     )
     assert response.status_code == 201
     data = response.json()
-    assert data["description"] == "Certified Tester"
+    assert data["name"] == "Certified Tester"
+    assert data["description"] == "Certified Tester Description"
     assert data["vendor_id"] == vendor["_id"]
 
 
@@ -68,6 +70,7 @@ async def test_create_certification_invalid_vendor(client: AsyncClient, admin_to
         "/api/v1/certifications",
         json={
             "vendor_id": "000000000000000000000000",
+            "name": "Invalid Vendor Cert",
             "description": "Invalid Vendor",
         },
         headers={"Authorization": f"Bearer {admin_token}"},
@@ -85,7 +88,8 @@ async def test_create_certification_unauthorized(
         "/api/v1/certifications",
         json={
             "vendor_id": vendor["_id"],
-            "description": "Hacker Cert",
+            "name": "Hacker Cert",
+            "description": "Hacker Cert Desc",
         },
         headers={"Authorization": f"Bearer {user_token}"},
     )
@@ -102,7 +106,7 @@ async def test_get_certifications(
     # Create one first
     await client.post(
         "/api/v1/certifications",
-        json={"vendor_id": vendor["_id"], "description": "Cert 1"},
+        json={"vendor_id": vendor["_id"], "name": "Cert 1", "description": "Cert 1 Desc"},
         headers={"Authorization": f"Bearer {admin_token}"},
     )
 
@@ -110,7 +114,7 @@ async def test_get_certifications(
     assert response.status_code == 200
     data = response.json()
     assert len(data) >= 1
-    assert any(d["description"] == "Cert 1" for d in data)
+    assert any(d["name"] == "Cert 1" for d in data)
 
 
 @pytest.mark.anyio
@@ -121,7 +125,7 @@ async def test_update_certification(
     # Create
     create_res = await client.post(
         "/api/v1/certifications",
-        json={"vendor_id": vendor["_id"], "description": "Old Desc"},
+        json={"vendor_id": vendor["_id"], "name": "Old Name", "description": "Old Desc"},
         headers={"Authorization": f"Bearer {admin_token}"},
     )
     cert_id = create_res.json()["id"]
@@ -129,11 +133,12 @@ async def test_update_certification(
     # Update
     response = await client.put(
         f"/api/v1/certifications/{cert_id}",
-        json={"description": "New Desc", "url": "http://new.com"},
+        json={"name": "New Name", "description": "New Desc", "url": "http://new.com"},
         headers={"Authorization": f"Bearer {admin_token}"},
     )
     assert response.status_code == 200
     data = response.json()
+    assert data["name"] == "New Name"
     assert data["description"] == "New Desc"
     assert data["url"] == "http://new.com"
     assert data["vendor_id"] == vendor["_id"]
@@ -147,7 +152,7 @@ async def test_delete_certification(
     # Create
     create_res = await client.post(
         "/api/v1/certifications",
-        json={"vendor_id": vendor["_id"], "description": "To Delete"},
+        json={"vendor_id": vendor["_id"], "name": "To Delete", "description": "To Delete Desc"},
         headers={"Authorization": f"Bearer {admin_token}"},
     )
     cert_id = create_res.json()["id"]

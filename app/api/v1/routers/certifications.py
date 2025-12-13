@@ -32,6 +32,7 @@ async def get_all_certifications() -> list[CertificationResponse]:
         CertificationResponse(
             id=str(cert["_id"]),
             vendor_id=str(cert["vendor_id"]),
+            name=cert["name"],
             description=cert.get("description"),
             url=cert.get("url"),
             created_at=cert["created_at"],
@@ -60,6 +61,7 @@ async def get_certification(cert_id: str) -> CertificationResponse:
     return CertificationResponse(
         id=str(cert["_id"]),
         vendor_id=str(cert["vendor_id"]),
+        name=cert["name"],
         description=cert.get("description"),
         url=cert.get("url"),
         created_at=cert["created_at"],
@@ -87,6 +89,7 @@ async def create_certification(
     try:
         cert = await repo.create_certification(
             vendor_id=request.vendor_id,
+            name=request.name,
             description=request.description,
             url=request.url,
         )
@@ -99,6 +102,7 @@ async def create_certification(
     return CertificationResponse(
         id=str(cert["_id"]),
         vendor_id=str(cert["vendor_id"]),
+        name=cert["name"],
         description=cert.get("description"),
         url=cert.get("url"),
         created_at=cert["created_at"],
@@ -124,6 +128,7 @@ async def update_certification(
         updated_cert = await repo.update_certification(
             cert_id=cert_id,
             vendor_id=request.vendor_id,
+            name=request.name,
             description=request.description,
             url=request.url,
         )
@@ -142,6 +147,7 @@ async def update_certification(
     return CertificationResponse(
         id=str(updated_cert["_id"]),
         vendor_id=str(updated_cert["vendor_id"]),
+        name=updated_cert["name"],
         description=updated_cert.get("description"),
         url=updated_cert.get("url"),
         created_at=updated_cert["created_at"],

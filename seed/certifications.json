@@ -1,20 +1,86 @@
 [
   {
     "_id": "60a7e1a0b54764421b715801",
-    "vendor_id": "5f8d0d55b54764421b7156d1",
-    "description": "TechLearning Certified Associate",
-    "url": "https://techlearning.com/cert/associate"
+    "vendor_id": "5f8d0d55b54764421b7156d4",
+    "name": "AWS Certified Cloud Practitioner",
+    "description": "Foundational understanding of AWS Cloud, services, and terminology.",
+    "url": "https://aws.amazon.com/certification/certified-cloud-practitioner/"
   },
   {
     "_id": "60a7e1a0b54764421b715802",
-    "vendor_id": "5f8d0d55b54764421b7156d2",
-    "description": "CodeMaster Python Expert",
-    "url": "https://codemaster.com/certs/python"
+    "vendor_id": "5f8d0d55b54764421b7156d4",
+    "name": "AWS Certified AI Practitioner",
+    "description": "Foundational understanding of AI and ML concepts on AWS.",
+    "url": "https://aws.amazon.com/certification/certified-ai-practitioner/"
   },
   {
     "_id": "60a7e1a0b54764421b715803",
-    "vendor_id": "5f8d0d55b54764421b7156d3",
-    "description": "DataWizards AI Professional",
-    "url": "https://datawizards.com/ai-pro"
+    "vendor_id": "5f8d0d55b54764421b7156d4",
+    "name": "AWS Certified Solutions Architect – Associate",
+    "description": "Designing distributed systems on AWS.",
+    "url": "https://aws.amazon.com/certification/certified-solutions-architect-associate/"
+  },
+  {
+    "_id": "60a7e1a0b54764421b715804",
+    "vendor_id": "5f8d0d55b54764421b7156d4",
+    "name": "AWS Certified Developer – Associate",
+    "description": "Developing and maintaining applications on AWS.",
+    "url": "https://aws.amazon.com/certification/certified-developer-associate/"
+  },
+  {
+    "_id": "60a7e1a0b54764421b715805",
+    "vendor_id": "5f8d0d55b54764421b7156d4",
+    "name": "AWS Certified SysOps Administrator – Associate",
+    "description": "Deploying, managing, and operating workloads on AWS.",
+    "url": "https://aws.amazon.com/certification/certified-sysops-admin-associate/"
+  },
+  {
+    "_id": "60a7e1a0b54764421b715806",
+    "vendor_id": "5f8d0d55b54764421b7156d4",
+    "name": "AWS Certified Data Engineer – Associate",
+    "description": "Skills in data pipelines, monitoring, and troubleshooting.",
+    "url": "https://aws.amazon.com/certification/certified-data-engineer-associate/"
+  },
+  {
+    "_id": "60a7e1a0b54764421b715807",
+    "vendor_id": "5f8d0d55b54764421b7156d4",
+    "name": "AWS Certified Machine Learning Engineer - Associate",
+    "description": "Building and deploying machine learning models on AWS.",
+    "url": "https://aws.amazon.com/certification/certified-machine-learning-engineer-associate/"
+  },
+  {
+    "_id": "60a7e1a0b54764421b715808",
+    "vendor_id": "5f8d0d55b54764421b7156d4",
+    "name": "AWS Certified Solutions Architect – Professional",
+    "description": "Designing complex and scalable systems on AWS.",
+    "url": "https://aws.amazon.com/certification/certified-solutions-architect-professional/"
+  },
+  {
+    "_id": "60a7e1a0b54764421b715809",
+    "vendor_id": "5f8d0d55b54764421b7156d4",
+    "name": "AWS Certified DevOps Engineer – Professional",
+    "description": "Provisioning, operating, and managing distributed application systems.",
+    "url": "https://aws.amazon.com/certification/certified-devops-engineer-professional/"
+  },
+  {
+    "_id": "60a7e1a0b54764421b715810",
+    "vendor_id": "5f8d0d55b54764421b7156d4",
+    "name": "AWS Certified Advanced Networking – Specialty",
+    "description": "Designing and implementing AWS network architectures.",
+    "url": "https://aws.amazon.com/certification/certified-advanced-networking-specialty/"
+  },
+  {
+    "_id": "60a7e1a0b54764421b715811",
+    "vendor_id": "5f8d0d55b54764421b7156d4",
+    "name": "AWS Certified Security – Specialty",
+    "description": "Securing data and workloads in the AWS Cloud.",
+    "url": "https://aws.amazon.com/certification/certified-security-specialty/"
+  },
+  {
+    "_id": "60a7e1a0b54764421b715812",
+    "vendor_id": "5f8d0d55b54764421b7156d4",
+    "name": "AWS Certified Machine Learning – Specialty",
+    "description": "Building, training, tuning, and deploying machine learning models.",
+    "url": "https://aws.amazon.com/certification/certified-machine-learning-specialty/"
   }
 ]

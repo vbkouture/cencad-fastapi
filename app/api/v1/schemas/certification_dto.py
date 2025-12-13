@@ -11,6 +11,7 @@ class CertificationBase(BaseModel):
     """Base Certification schema."""
 
     vendor_id: str = Field(..., description="ID of the vendor providing this certification")
+    name: str = Field(..., description="Name of the certification")
     description: str | None = Field(None, description="Optional description of the certification")
     url: str | None = Field(None, description="Optional URL for more info")
 
@@ -25,6 +26,7 @@ class CertificationUpdateRequest(BaseModel):
     """Request schema for updating a certification."""
 
     vendor_id: str | None = Field(None, description="ID of the vendor providing this certification")
+    name: str | None = Field(None, description="Name of the certification")
     description: str | None = Field(None, description="Optional description of the certification")
     url: str | None = Field(None, description="Optional URL for more info")
 

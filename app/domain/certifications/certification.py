@@ -17,6 +17,7 @@ class Certification:
         self,
         id: str,
         vendor_id: str,
+        name: str,
         description: str | None,
         url: str | None,
         created_at: datetime,
@@ -28,6 +29,7 @@ class Certification:
         Args:
             id: Unique identifier (MongoDB ObjectId as string)
             vendor_id: Reference to Vendor ID
+            name: Certification name
             description: Optional textual description
             url: Optional URL info
             created_at: Creation timestamp
@@ -35,6 +37,7 @@ class Certification:
         """
         self.id = id
         self.vendor_id = vendor_id
+        self.name = name
         self.description = description
         self.url = url
         self.created_at = created_at
@@ -45,6 +48,7 @@ class Certification:
         return {
             "id": self.id,
             "vendor_id": self.vendor_id,
+            "name": self.name,
             "description": self.description,
             "url": self.url,
             "created_at": self.created_at,

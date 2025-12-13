@@ -16,5 +16,11 @@
     "name": "DataWizards",
     "description": "Data science and AI training specialists.",
     "logo": "https://example.com/logos/datawizards.png"
+  },
+  {
+    "_id": "5f8d0d55b54764421b7156d4",
+    "name": "Amazon Web Services (AWS)",
+    "description": "World's most comprehensive and broadly adopted cloud.",
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
   }
 ]

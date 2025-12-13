@@ -21,6 +21,7 @@ class CertificationRepository:
     async def create_certification(
         self,
         vendor_id: str,
+        name: str,
         description: str | None = None,
         url: str | None = None,
     ) -> dict[str, Any]:
@@ -29,6 +30,7 @@ class CertificationRepository:
 
         Args:
             vendor_id: existing Vendor ObjectId string
+            name: Certification name
             description: Optional description
             url: Optional URL
 
@@ -45,6 +47,7 @@ class CertificationRepository:
 
         cert_doc: dict[str, Any] = {
             "vendor_id": ObjectId(vendor_id),
+            "name": name,
             "description": description,
             "url": url,
             "created_at": ObjectId().generation_time,
@@ -79,6 +82,7 @@ class CertificationRepository:
         self,
         cert_id: str,
         vendor_id: str | None = None,
+        name: str | None = None,
         description: str | None = None,
         url: str | None = None,
     ) -> dict[str, Any] | None:
@@ -88,6 +92,7 @@ class CertificationRepository:
         Args:
             cert_id: MongoDB ObjectId as string
             vendor_id: New vendor ID (optional)
+            name: New name (optional)
             description: New description (optional)
             url: New URL (optional)
 
@@ -102,6 +107,9 @@ class CertificationRepository:
                 if not vendor:
                     raise ValueError(f"Vendor with id '{vendor_id}' does not exist")
                 update_data["vendor_id"] = ObjectId(vendor_id)
+
+            if name is not None:
+                update_data["name"] = name
 
             if description is not None:
                 update_data["description"] = description
