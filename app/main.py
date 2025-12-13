@@ -8,8 +8,11 @@ versioned routers at /api/v1. Exposes a module-level `app` for uvicorn:
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+import logging
+
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from app.api.v1.routers import get_v1_router
 from app.db import close_mongodb_connection, connect_to_mongodb
@@ -72,6 +75,15 @@ def create_app() -> FastAPI:
 
     # Mount v1
     app.include_router(get_v1_router())
+
+    # Global Exception Handler
+    @app.exception_handler(Exception)
+    async def global_exception_handler(request: Request, exc: Exception) -> JSONResponse:
+        logging.error("Unhandled exception occurred:", exc_info=True)
+        return JSONResponse(
+            status_code=500,
+            content={"detail": "Internal Server Error"},
+        )
 
     # Optional: a root redirect/info (kept simple)
     async def root() -> dict[str, str]:

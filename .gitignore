@@ -10,8 +10,8 @@ dist/
 # Envs
 .venv/
 venv/
-.env
-.env.*
+
+
 
 # Tools / caches
 .pytest_cache/
