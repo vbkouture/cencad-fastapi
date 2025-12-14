@@ -9,6 +9,7 @@ from .course_categories import router as course_categories_router
 from .courses import router as courses_router
 from .enrollments import router as enrollments_router
 from .job_roles import router as job_roles_router
+from .payments import router as payments_router
 from .ping import router as ping_router
 from .schedules import router as schedules_router
 from .submissions import router as submissions_router
@@ -28,6 +29,7 @@ __all__ = [
     "submissions_router",
     "schedules_router",
     "enrollments_router",
+    "payments_router",
     "users_router",
     "vendors_router",
 ]
@@ -71,6 +73,7 @@ def get_v1_router() -> APIRouter:
     router.include_router(submissions_router)
     router.include_router(schedules_router)
     router.include_router(enrollments_router)
+    router.include_router(payments_router)
 
     # Admin & Analytics
     router.include_router(users_router)

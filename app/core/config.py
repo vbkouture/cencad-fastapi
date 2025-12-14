@@ -29,6 +29,10 @@ class Settings(BaseSettings):
     mailtrap_use_sandbox: bool = True
     mailtrap_inbox_id: int | None = None
 
+    # Stripe settings
+    stripe_secret_key: str = ""
+    stripe_webhook_secret: str = ""
+
     # App settings
     debug: bool = False
     frontend_url: str = "http://localhost:3000"

@@ -20,3 +20,6 @@ pass- a+RMt.Tes2G_hk!
 
 github
 Sign in with google
+
+# Stripe
+Login with google with cencad2025@gmail.com

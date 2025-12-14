@@ -20,17 +20,28 @@ class EnrollmentRepository:
         user_id: str,
         schedule_id: str,
         course_id: str,
-        payment_transaction_id: str | None = None,
+        amount_total: int | None = None,
+        currency: str = "cad",
+        stripe_payment_intent_id: str | None = None,
+        stripe_checkout_session_id: str | None = None,
+        payment_status: str = "PENDING",
+        **kwargs: Any,
     ) -> dict[str, Any]:
         """Create a new enrollment."""
+        from datetime import datetime
+
         enrollment_doc: dict[str, Any] = {
             "user_id": ObjectId(user_id),
             "schedule_id": ObjectId(schedule_id),
             "course_id": ObjectId(course_id),
             "status": "ENROLLED",
-            "payment_status": "PENDING",
-            "payment_transaction_id": payment_transaction_id,
-            "enrolled_at": ObjectId().generation_time,
+            "payment_status": payment_status,
+            "amount_total": amount_total,
+            "currency": currency,
+            "stripe_payment_intent_id": stripe_payment_intent_id,
+            "stripe_checkout_session_id": stripe_checkout_session_id,
+            "created_at": datetime.utcnow(),
+            "enrolled_at": datetime.utcnow(),  # For backward compat or business logic
             "instructor_notes": [],
         }
 

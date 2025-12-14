@@ -387,9 +387,7 @@ def _course_doc_to_response(course_doc: dict[str, Any]) -> CourseResponse:
         category_id=str(course_doc.get("category_id")) if course_doc.get("category_id") else None,
         vendor_id=str(course_doc.get("vendor_id")) if course_doc.get("vendor_id") else None,
         job_role_ids=job_role_ids,
-        resources=[
-            ResourceDTO(**r) for r in course_doc.get("resources", [])
-        ],
+        resources=[ResourceDTO(**r) for r in course_doc.get("resources", [])],
         notice=course_doc.get("notice"),
         tags=course_doc.get("tags", []),
         status=course_doc.get("status", "DRAFT"),

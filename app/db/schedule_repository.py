@@ -53,7 +53,10 @@ class ScheduleRepository:
     async def get_schedules_by_course(self, course_id: str) -> list[dict[str, Any]]:
         """Get all schedules for a course."""
         try:
-            return await self.collection.find({"course_id": ObjectId(course_id)}).to_list(
+            course_ids: list[Any] = [course_id]
+            if ObjectId.is_valid(course_id):
+                course_ids.append(ObjectId(course_id))
+            return await self.collection.find({"course_id": {"$in": course_ids}}).to_list(
                 length=None
             )
         except Exception:
@@ -62,7 +65,10 @@ class ScheduleRepository:
     async def get_schedules_by_tutor(self, tutor_id: str) -> list[dict[str, Any]]:
         """Get all schedules for a tutor."""
         try:
-            return await self.collection.find({"tutor_id": ObjectId(tutor_id)}).to_list(length=None)
+            tutor_ids: list[Any] = [tutor_id]
+            if ObjectId.is_valid(tutor_id):
+                tutor_ids.append(ObjectId(tutor_id))
+            return await self.collection.find({"tutor_id": {"$in": tutor_ids}}).to_list(length=None)
         except Exception:
             return []
 
@@ -71,22 +77,29 @@ class ScheduleRepository:
     ) -> list[dict[str, Any]]:
         """
         Get upcoming schedules with optional filters.
-        
+
         Args:
             course_id: Optional course ID filter
             tutor_id: Optional tutor ID filter
-            
+
         Returns:
             List of upcoming schedules
         """
         try:
             query: dict[str, Any] = {"status": "UPCOMING"}
-            
+
             if course_id:
-                query["course_id"] = ObjectId(course_id)
+                course_ids: list[Any] = [course_id]
+                if ObjectId.is_valid(course_id):
+                    course_ids.append(ObjectId(course_id))
+                query["course_id"] = {"$in": course_ids}
+
             if tutor_id:
-                query["tutor_id"] = ObjectId(tutor_id)
-                
+                tutor_ids: list[Any] = [tutor_id]
+                if ObjectId.is_valid(tutor_id):
+                    tutor_ids.append(ObjectId(tutor_id))
+                query["tutor_id"] = {"$in": tutor_ids}
+
             return await self.collection.find(query).to_list(length=None)
         except Exception:
             return []

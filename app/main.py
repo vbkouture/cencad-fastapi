@@ -5,10 +5,9 @@ versioned routers at /api/v1. Exposes a module-level `app` for uvicorn:
 `uvicorn app.main:app`.
 """
 
+import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-
-import logging
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware

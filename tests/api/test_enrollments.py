@@ -57,7 +57,8 @@ class TestCreateEnrollment:
             "user_id": str(ObjectId()),
             "schedule_id": str(ObjectId()),
             "course_id": str(ObjectId()),
-            "payment_transaction_id": "tx_test",
+            "stripe_payment_intent_id": "pi_test",
+            "amount_total": 1000,
         }
         headers = {"Authorization": f"Bearer {student_token}"}
         response = await client.post("/api/v1/enrollments/", json=payload, headers=headers)

@@ -63,4 +63,3 @@ class PublicScheduleResponse(BaseModel):
     sessions: list[SessionDTO] = Field(description="List of sessions")
     capacity: int = Field(description="Maximum capacity")
     timezone: str = Field(description="Timezone")
-

@@ -52,7 +52,10 @@ async def create_enrollment(
         user_id=request.user_id,
         schedule_id=request.schedule_id,
         course_id=request.course_id,
-        payment_transaction_id=request.payment_transaction_id,
+        amount_total=request.amount_total,
+        currency=request.currency,
+        stripe_payment_intent_id=request.stripe_payment_intent_id,
+        stripe_checkout_session_id=request.stripe_checkout_session_id,
     )
     return EnrollmentResponse.model_validate(Enrollment.from_mongo(enrollment_doc).model_dump())
 

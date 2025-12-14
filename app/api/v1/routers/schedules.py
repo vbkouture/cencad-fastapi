@@ -5,12 +5,11 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from app.api.v1.schemas.schedule_dto import (
+    PublicScheduleResponse,
     ScheduleCreateRequest,
     ScheduleResponse,
     ScheduleUpdateRequest,
-    PublicScheduleResponse,
-    SessionDTO
-
+    SessionDTO,
 )
 from app.core.dependencies import require_admin
 from app.db.schedule_repository import ScheduleRepository
@@ -66,12 +65,12 @@ async def get_upcoming_schedules(
 ) -> list[PublicScheduleResponse]:
     """
     Get upcoming schedules.
-    
+
     Public endpoint.
     Only returns UPCOMING sessions.
     """
     docs = await repo.get_upcoming_schedules(course_id=course_id, tutor_id=tutor_id)
-    
+
     # helper to map doc to PublicScheduleResponse
     # helper to map doc to PublicScheduleResponse
     results = []
@@ -86,7 +85,7 @@ async def get_upcoming_schedules(
                 timezone=schedule.timezone,
             )
         )
-            
+
     return results
 
 
@@ -127,9 +126,6 @@ async def get_schedules(
         docs = await repo.get_all_schedules()
 
     return [ScheduleResponse.model_validate(Schedule.from_mongo(doc).model_dump()) for doc in docs]
-
-
-
 
 
 @router.put(
