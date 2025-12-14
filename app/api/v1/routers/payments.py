@@ -129,12 +129,17 @@ async def stripe_webhook(
 
     try:
         event = stripe.Webhook.construct_event(payload, sig_header, settings.stripe_webhook_secret)  # type: ignore
-    except ValueError:
+    except ValueError as e:
         # Invalid payload
+        print(f"Webhook error: {e}")
         raise HTTPException(status_code=400, detail="Invalid payload")
-    except stripe.error.SignatureVerificationError:
+    except stripe.error.SignatureVerificationError as e:
         # Invalid signature
+        print(f"Webhook signature error: {e}")
         raise HTTPException(status_code=400, detail="Invalid signature")
+    except Exception as e:
+        print(f"Unexpected webhook error: {e}")
+        raise HTTPException(status_code=400, detail="Webhook processing error")
 
     # Handle the event
     if event["type"] == "checkout.session.completed":

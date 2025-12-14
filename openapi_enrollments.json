@@ -1,0 +1,700 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "FastAPI - enrollments",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/v1/enrollments/": {
+      "post": {
+        "tags": [
+          "enrollments"
+        ],
+        "summary": "Create a new enrollment",
+        "description": "Create a new enrollment.",
+        "operationId": "create_enrollment_api_v1_enrollments__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EnrollmentCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnrollmentResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/enrollments/my-enrollments": {
+      "get": {
+        "tags": [
+          "enrollments"
+        ],
+        "summary": "Get my enrollments",
+        "description": "Get all enrollments for the current user.",
+        "operationId": "get_my_enrollments_api_v1_enrollments_my_enrollments_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/EnrollmentResponse"
+                  },
+                  "type": "array",
+                  "title": "Response Get My Enrollments Api V1 Enrollments My Enrollments Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/enrollments/schedule/{schedule_id}": {
+      "get": {
+        "tags": [
+          "enrollments"
+        ],
+        "summary": "Get enrollments by schedule",
+        "description": "Get all enrollments for a specific schedule.\n\n**Tutor or Admin only**.",
+        "operationId": "get_enrollments_by_schedule_api_v1_enrollments_schedule__schedule_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "schedule_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Schedule Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EnrollmentResponse"
+                  },
+                  "title": "Response Get Enrollments By Schedule Api V1 Enrollments Schedule  Schedule Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/enrollments/{enrollment_id}": {
+      "get": {
+        "tags": [
+          "enrollments"
+        ],
+        "summary": "Get enrollment by ID",
+        "description": "Get an enrollment by ID.\n\n**Restricted**: Users can only view their own enrollments. Tutors/Admins can view all.",
+        "operationId": "get_enrollment_api_v1_enrollments__enrollment_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "enrollment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Enrollment Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnrollmentResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "enrollments"
+        ],
+        "summary": "Update enrollment",
+        "description": "Update an enrollment.\n\n**Tutor or Admin only**.",
+        "operationId": "update_enrollment_api_v1_enrollments__enrollment_id__put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "enrollment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Enrollment Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EnrollmentUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnrollmentResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "EnrollmentCreateRequest": {
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "title": "User Id",
+            "description": "User ID"
+          },
+          "schedule_id": {
+            "type": "string",
+            "title": "Schedule Id",
+            "description": "Schedule ID"
+          },
+          "course_id": {
+            "type": "string",
+            "title": "Course Id",
+            "description": "Course ID"
+          },
+          "amount_total": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Amount Total",
+            "description": "Total amount in cents"
+          },
+          "currency": {
+            "type": "string",
+            "title": "Currency",
+            "description": "Currency code",
+            "default": "cad"
+          },
+          "stripe_payment_intent_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stripe Payment Intent Id",
+            "description": "Stripe Payment Intent ID"
+          },
+          "stripe_checkout_session_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stripe Checkout Session Id",
+            "description": "Stripe Checkout Session ID"
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_id",
+          "schedule_id",
+          "course_id"
+        ],
+        "title": "EnrollmentCreateRequest",
+        "description": "Request DTO for creating an enrollment."
+      },
+      "EnrollmentResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Enrollment ID"
+          },
+          "user_id": {
+            "type": "string",
+            "title": "User Id",
+            "description": "User ID"
+          },
+          "schedule_id": {
+            "type": "string",
+            "title": "Schedule Id",
+            "description": "Schedule ID"
+          },
+          "course_id": {
+            "type": "string",
+            "title": "Course Id",
+            "description": "Course ID"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "Enrollment status"
+          },
+          "amount_total": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Amount Total",
+            "description": "Total amount in cents"
+          },
+          "currency": {
+            "type": "string",
+            "title": "Currency",
+            "description": "Currency code"
+          },
+          "payment_status": {
+            "type": "string",
+            "title": "Payment Status",
+            "description": "Payment status"
+          },
+          "payment_method_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Payment Method Type",
+            "description": "Payment method type"
+          },
+          "receipt_email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Receipt Email",
+            "description": "Receipt email"
+          },
+          "stripe_checkout_session_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stripe Checkout Session Id",
+            "description": "Stripe Checkout Session ID"
+          },
+          "stripe_payment_intent_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stripe Payment Intent Id",
+            "description": "Stripe Payment Intent ID"
+          },
+          "stripe_customer_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stripe Customer Id",
+            "description": "Stripe Customer ID"
+          },
+          "stripe_charge_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stripe Charge Id",
+            "description": "Stripe Charge ID"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At",
+            "description": "Creation date"
+          },
+          "paid_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Paid At",
+            "description": "Payment date"
+          },
+          "enrolled_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Enrolled At",
+            "description": "Enrollment date"
+          },
+          "completed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completed At",
+            "description": "Completion date"
+          },
+          "grade": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Grade",
+            "description": "Grade"
+          },
+          "certificate_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Certificate Url",
+            "description": "Certificate URL"
+          },
+          "instructor_notes": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Instructor Notes",
+            "description": "Instructor notes"
+          },
+          "failure_message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Failure Message",
+            "description": "Payment failure message"
+          },
+          "amount_refunded": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Amount Refunded",
+            "description": "Amount refunded in cents"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "user_id",
+          "schedule_id",
+          "course_id",
+          "status",
+          "amount_total",
+          "currency",
+          "payment_status",
+          "payment_method_type",
+          "receipt_email",
+          "stripe_checkout_session_id",
+          "stripe_payment_intent_id",
+          "stripe_customer_id",
+          "stripe_charge_id",
+          "created_at",
+          "paid_at",
+          "enrolled_at",
+          "completed_at",
+          "grade",
+          "certificate_url",
+          "instructor_notes",
+          "failure_message",
+          "amount_refunded"
+        ],
+        "title": "EnrollmentResponse",
+        "description": "Response DTO for enrollment."
+      },
+      "EnrollmentUpdateRequest": {
+        "properties": {
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status",
+            "description": "Enrollment status (ENROLLED, IN_PROGRESS, COMPLETED, DROPPED)"
+          },
+          "payment_status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Payment Status",
+            "description": "Payment status (PENDING, PAID, REFUNDED)"
+          },
+          "completed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completed At",
+            "description": "Completion date"
+          },
+          "grade": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 100.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Grade",
+            "description": "Grade"
+          },
+          "certificate_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Certificate Url",
+            "description": "Certificate URL"
+          },
+          "instructor_notes": {
+            "anyOf": [
+              {
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Instructor Notes",
+            "description": "Instructor notes"
+          }
+        },
+        "type": "object",
+        "title": "EnrollmentUpdateRequest",
+        "description": "Request DTO for updating an enrollment."
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}
