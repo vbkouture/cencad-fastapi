@@ -11,7 +11,7 @@ from app.api.v1.schemas.schedule_dto import (
     ScheduleUpdateRequest,
     SessionDTO,
 )
-from app.core.dependencies import require_admin
+from app.core.dependencies import get_current_user_id, require_admin, require_tutor
 from app.db.schedule_repository import ScheduleRepository
 from app.domain.schedules.schedule import Schedule
 from app.domain.users.value_objects import UserRole
@@ -87,6 +87,25 @@ async def get_upcoming_schedules(
         )
 
     return results
+
+
+@router.get(
+    "/my-schedules",
+    response_model=list[ScheduleResponse],
+    summary="Get my schedules (tutor)",
+)
+async def get_my_schedules(
+    repo: Annotated[ScheduleRepository, Depends(get_schedule_repository)],
+    current_user_id: str = Depends(get_current_user_id),
+    _: UserRole = Depends(require_tutor),
+) -> list[ScheduleResponse]:
+    """
+    Get schedules for the currently authenticated tutor.
+
+    **Tutor only** - Returns all schedules where the tutor is assigned.
+    """
+    docs = await repo.get_schedules_by_tutor(current_user_id)
+    return [ScheduleResponse.model_validate(Schedule.from_mongo(doc).model_dump()) for doc in docs]
 
 
 @router.get(
