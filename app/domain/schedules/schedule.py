@@ -18,6 +18,23 @@ class ScheduleStatus(str, Enum):
     CANCELLED = "CANCELLED"
 
 
+class ResourceType(str, Enum):
+    """Resource type."""
+
+    COURSE_MATERIAL = "course_material"
+    LAB_LINK = "lab_link"
+    CLASS_LINK = "class_link"
+
+
+class Resource(BaseModel):
+    """Resource for a schedule."""
+
+    title: str | None = None
+    type: ResourceType
+    details: str | None = None
+    url: str | None = None
+
+
 class Session(BaseModel):
     """Individual course session."""
 
@@ -38,6 +55,7 @@ class Schedule(BaseModel):
     status: ScheduleStatus = ScheduleStatus.UPCOMING
     meeting_url: str | None = None
     timezone: str = "UTC"
+    resources: list[Resource] | None = None
     created_at: datetime
     updated_at: datetime
 
@@ -69,6 +87,11 @@ class Schedule(BaseModel):
             status=ScheduleStatus(data.get("status", "UPCOMING")),
             meeting_url=data.get("meeting_url"),
             timezone=data.get("timezone", "UTC"),
+            resources=(
+                [Resource(**r) for r in data.get("resources", [])]
+                if data.get("resources")
+                else None
+            ),
             created_at=data["created_at"],
             updated_at=data["updated_at"],
         )

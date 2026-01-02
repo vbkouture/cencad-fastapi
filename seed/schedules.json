@@ -12,7 +12,24 @@
     "enrollment_count": 1,
     "status": "UPCOMING",
     "meeting_url": "https://zoom.us/j/123456789",
-    "timezone": "UTC"
+    "timezone": "UTC",
+    "resources": [
+      {
+        "title": "Course Slides",
+        "type": "course_material",
+        "details": "Introduction to Python programming slides"
+      },
+      {
+        "title": "Practice Lab",
+        "type": "lab_link",
+        "details": "https://lab.example.com/python-101"
+      },
+      {
+        "title": "Zoom Meeting",
+        "type": "class_link",
+        "details": "https://zoom.us/j/123456789"
+      }
+    ]
   },
   {
     "_id": "5f8d0d55b54764421b715802",

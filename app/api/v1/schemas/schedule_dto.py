@@ -3,8 +3,18 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Literal
 
 from pydantic import BaseModel, Field
+
+
+class ResourceDTO(BaseModel):
+    """DTO for a schedule resource."""
+
+    title: str | None = Field(None, description="Resource title")
+    type: Literal["course_material", "lab_link", "class_link"] = Field(description="Resource type")
+    details: str | None = Field(None, description="Resource details")
+    url: str | None = Field(None, description="Resource URL")
 
 
 class SessionDTO(BaseModel):
@@ -24,6 +34,7 @@ class ScheduleCreateRequest(BaseModel):
     capacity: int = Field(ge=1, description="Maximum capacity")
     meeting_url: str | None = Field(None, description="Meeting URL for online sessions")
     timezone: str = Field("UTC", description="Timezone (e.g., 'America/New_York')")
+    resources: list[ResourceDTO] | None = Field(None, description="List of resources")
 
 
 class ScheduleUpdateRequest(BaseModel):
@@ -37,6 +48,7 @@ class ScheduleUpdateRequest(BaseModel):
     )
     meeting_url: str | None = Field(None, description="Meeting URL")
     timezone: str | None = Field(None, description="Timezone")
+    resources: list[ResourceDTO] | None = Field(None, description="List of resources")
 
 
 class ScheduleResponse(BaseModel):
@@ -51,6 +63,7 @@ class ScheduleResponse(BaseModel):
     status: str = Field(description="Schedule status")
     meeting_url: str | None = Field(description="Meeting URL")
     timezone: str = Field(description="Timezone")
+    resources: list[ResourceDTO] | None = Field(None, description="List of resources")
     created_at: datetime = Field(description="Creation timestamp")
     updated_at: datetime = Field(description="Last update timestamp")
 
