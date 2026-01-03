@@ -1,7 +1,9 @@
 """Database module initialization."""
 
 from app.db.contact_form_repository import ContactFormRepository
+from app.db.corporate_repository import CorporateRepository
 from app.db.course_category_repository import CourseCategoryRepository
+from app.db.enrollment_repository import EnrollmentRepository
 from app.db.job_role_repository import JobRoleRepository
 from app.db.mongo import close_mongodb_connection, connect_to_mongodb, get_database
 from app.db.repository import UserRepository
@@ -14,4 +16,6 @@ __all__ = [
     "CourseCategoryRepository",
     "JobRoleRepository",
     "ContactFormRepository",
+    "CorporateRepository",
+    "EnrollmentRepository",
 ]

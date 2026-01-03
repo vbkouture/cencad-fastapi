@@ -16,6 +16,7 @@ class UserRole(str, Enum):
     ADMIN = "admin"
     TUTOR = "tutor"
     STUDENT = "student"
+    CORPORATE_STAFF = "corporate_staff"
 
 
 class EmailAddress(BaseModel):

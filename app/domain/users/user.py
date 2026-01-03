@@ -24,6 +24,7 @@ class User(BaseModel):
     hashed_password: str = Field(...)
     role: UserRole = Field(default=UserRole.STUDENT)
     is_active: bool = Field(default=True)
+    force_password_change: bool = Field(default=False)
     created_at: datetime = Field(default_factory=utcnow)
     updated_at: datetime = Field(default_factory=utcnow)
 
@@ -35,6 +36,7 @@ class User(BaseModel):
         name: str,
         hashed_password: str,
         role: UserRole = UserRole.STUDENT,
+        force_password_change: bool = False,
     ) -> User:
         """Create a new user."""
         now = utcnow()
@@ -45,6 +47,7 @@ class User(BaseModel):
             hashed_password=hashed_password,
             role=role,
             is_active=True,
+            force_password_change=force_password_change,
             created_at=now,
             updated_at=now,
         )

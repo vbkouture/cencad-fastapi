@@ -5,6 +5,7 @@ from .assignments import router as assignments_router
 from .auth import router as auth_router
 from .certifications import router as certifications_router
 from .contact_forms import router as contact_forms_router
+from .corporate import router as corporate_router
 from .course_categories import router as course_categories_router
 from .courses import router as courses_router
 from .enrollments import router as enrollments_router
@@ -22,6 +23,7 @@ __all__ = [
     "auth_router",
     "certifications_router",
     "contact_forms_router",
+    "corporate_router",
     "courses_router",
     "course_categories_router",
     "job_roles_router",
@@ -62,6 +64,9 @@ def get_v1_router() -> APIRouter:
 
     # Public forms
     router.include_router(contact_forms_router)
+
+    # Corporate
+    router.include_router(corporate_router)
 
     # Core features (mixed roles)
     router.include_router(course_categories_router)
