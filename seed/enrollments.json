@@ -9,13 +9,20 @@
     "currency": "cad",
     "payment_status": "PAID",
     "payment_method_type": "card",
+    "receipt_email": "student@example.com",
     "stripe_checkout_session_id": "cs_test_a1b2c3d4e5",
     "stripe_payment_intent_id": "pi_test_123456789",
     "stripe_customer_id": "cus_test_987654321",
+    "stripe_charge_id": "ch_test_abc123xyz",
     "created_at": "2024-12-01T09:55:00",
     "paid_at": "2024-12-01T10:00:00",
     "enrolled_at": "2024-12-01T10:00:00",
-    "instructor_notes": []
+    "completed_at": null,
+    "grade": null,
+    "certificate_url": null,
+    "instructor_notes": [],
+    "failure_message": null,
+    "amount_refunded": null
   },
   {
     "_id": "5f8d0d55b54764421b715902",
@@ -27,13 +34,49 @@
     "currency": "cad",
     "payment_status": "PAID",
     "payment_method_type": "card",
+    "receipt_email": "student@example.com",
     "stripe_checkout_session_id": "cs_test_x9y8z7",
     "stripe_payment_intent_id": "pi_test_987654321",
+    "stripe_customer_id": "cus_test_987654321",
+    "stripe_charge_id": "ch_test_def456uvw",
     "created_at": "2024-10-25T14:25:00",
     "paid_at": "2024-10-25T14:30:00",
     "enrolled_at": "2024-10-25T14:30:00",
+    "completed_at": null,
+    "grade": null,
+    "certificate_url": null,
     "instructor_notes": [
       {"note": "Great participation in week 1", "date": "2024-11-05T00:00:00"}
-    ]
+    ],
+    "failure_message": null,
+    "amount_refunded": null
+  },
+  {
+    "_id": "5f8d0d55b54764421b715903",
+    "user_id": "5f8d0d55b54764421b7156c3",
+    "schedule_id": "5f8d0d55b54764421b715806",
+    "course_id": "5f8d0d55b54764421b715704",
+    "status": "COMPLETED",
+    "amount_total": 89900,
+    "currency": "cad",
+    "payment_status": "PAID",
+    "payment_method_type": "card",
+    "receipt_email": "student@example.com",
+    "stripe_checkout_session_id": "cs_test_completed123",
+    "stripe_payment_intent_id": "pi_test_completed456",
+    "stripe_customer_id": "cus_test_987654321",
+    "stripe_charge_id": "ch_test_completed789",
+    "created_at": "2024-08-25T10:00:00",
+    "paid_at": "2024-08-25T10:05:00",
+    "enrolled_at": "2024-08-25T10:05:00",
+    "completed_at": "2024-11-01T00:00:00",
+    "grade": 92.5,
+    "certificate_url": "https://example.com/certificates/aws-saa-student001.pdf",
+    "instructor_notes": [
+      {"note": "Excellent performance throughout the course", "date": "2024-10-15T00:00:00"},
+      {"note": "Passed final exam with distinction", "date": "2024-11-01T00:00:00"}
+    ],
+    "failure_message": null,
+    "amount_refunded": null
   }
 ]

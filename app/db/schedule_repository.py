@@ -162,3 +162,87 @@ class ScheduleRepository:
         await self.collection.create_index("course_id")
         await self.collection.create_index("tutor_id")
         await self.collection.create_index("status")
+
+    # Resource CRUD methods
+
+    async def add_resource(
+        self, schedule_id: str, resource: dict[str, Any]
+    ) -> dict[str, Any] | None:
+        """Add a resource to a schedule."""
+        try:
+            result = await self.collection.find_one_and_update(
+                {"_id": ObjectId(schedule_id)},
+                {
+                    "$push": {"resources": resource},
+                    "$set": {"updated_at": ObjectId().generation_time},
+                },
+                return_document=True,
+            )
+            return result
+        except Exception:
+            return None
+
+    async def update_resource(
+        self, schedule_id: str, resource_index: int, resource_updates: dict[str, Any]
+    ) -> dict[str, Any] | None:
+        """Update a resource at a specific index in a schedule."""
+        try:
+            # Build the update dict with array index notation
+            update_fields: dict[str, Any] = {}
+            for key, value in resource_updates.items():
+                if value is not None:
+                    update_fields[f"resources.{resource_index}.{key}"] = value
+
+            if not update_fields:
+                return await self.find_by_id(schedule_id)
+
+            update_fields["updated_at"] = ObjectId().generation_time
+
+            result = await self.collection.find_one_and_update(
+                {"_id": ObjectId(schedule_id)},
+                {"$set": update_fields},
+                return_document=True,
+            )
+            return result
+        except Exception:
+            return None
+
+    async def delete_resource(self, schedule_id: str, resource_index: int) -> dict[str, Any] | None:
+        """Delete a resource at a specific index from a schedule."""
+        try:
+            # First, get the current schedule to validate index
+            schedule = await self.find_by_id(schedule_id)
+            if not schedule:
+                return None
+
+            resources = schedule.get("resources", [])
+            if resource_index < 0 or resource_index >= len(resources):
+                return None
+
+            # Remove the resource at the specified index
+            resources.pop(resource_index)
+
+            result = await self.collection.find_one_and_update(
+                {"_id": ObjectId(schedule_id)},
+                {
+                    "$set": {
+                        "resources": resources,
+                        "updated_at": ObjectId().generation_time,
+                    }
+                },
+                return_document=True,
+            )
+            return result
+        except Exception:
+            return None
+
+    async def get_resources(self, schedule_id: str) -> list[dict[str, Any]] | None:
+        """Get all resources for a schedule."""
+        try:
+            schedule = await self.find_by_id(schedule_id)
+            if not schedule:
+                return None
+            resources: list[dict[str, Any]] = schedule.get("resources", [])
+            return resources
+        except Exception:
+            return None

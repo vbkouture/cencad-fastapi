@@ -17,6 +17,26 @@ class ResourceDTO(BaseModel):
     url: str | None = Field(None, description="Resource URL")
 
 
+class ResourceCreateRequest(BaseModel):
+    """Request DTO for creating a resource."""
+
+    title: str | None = Field(None, description="Resource title")
+    type: Literal["course_material", "lab_link", "class_link"] = Field(description="Resource type")
+    details: str | None = Field(None, description="Resource details")
+    url: str | None = Field(None, description="Resource URL")
+
+
+class ResourceUpdateRequest(BaseModel):
+    """Request DTO for updating a resource."""
+
+    title: str | None = Field(None, description="Resource title")
+    type: Literal["course_material", "lab_link", "class_link"] | None = Field(
+        None, description="Resource type"
+    )
+    details: str | None = Field(None, description="Resource details")
+    url: str | None = Field(None, description="Resource URL")
+
+
 class SessionDTO(BaseModel):
     """DTO for a single session."""
 

@@ -1,17 +1,25 @@
 """Schedule router."""
 
-from typing import Annotated
+from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from app.api.v1.schemas.schedule_dto import (
     PublicScheduleResponse,
+    ResourceCreateRequest,
+    ResourceDTO,
+    ResourceUpdateRequest,
     ScheduleCreateRequest,
     ScheduleResponse,
     ScheduleUpdateRequest,
     SessionDTO,
 )
-from app.core.dependencies import get_current_user_id, require_admin, require_tutor
+from app.core.dependencies import (
+    get_current_user_id,
+    get_current_user_role,
+    require_admin,
+    require_tutor,
+)
 from app.db.schedule_repository import ScheduleRepository
 from app.domain.schedules.schedule import Schedule
 from app.domain.users.value_objects import UserRole
@@ -195,3 +203,157 @@ async def delete_schedule(
     deleted = await repo.delete_schedule(schedule_id)
     if not deleted:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Schedule not found")
+
+
+# Resource CRUD endpoints
+
+
+async def verify_schedule_access(
+    schedule_id: str,
+    user_id: str,
+    role: UserRole,
+    repo: ScheduleRepository,
+) -> dict[str, Any]:
+    """
+    Verify that the user has access to modify resources on a schedule.
+
+    Returns the schedule if access is granted.
+    Raises HTTPException if access is denied or schedule not found.
+    """
+    schedule_doc = await repo.find_by_id(schedule_id)
+    if not schedule_doc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Schedule not found")
+
+    # Allow if admin
+    if role == UserRole.ADMIN:
+        return schedule_doc
+
+    # Allow if the user is the assigned tutor
+    tutor_id = str(schedule_doc.get("tutor_id", ""))
+    if tutor_id == user_id:
+        return schedule_doc
+
+    raise HTTPException(
+        status_code=status.HTTP_403_FORBIDDEN,
+        detail="Only admins or the assigned tutor can modify resources",
+    )
+
+
+@router.get(
+    "/{schedule_id}/resources",
+    response_model=list[ResourceDTO],
+    summary="Get resources for a schedule",
+)
+async def get_schedule_resources(
+    schedule_id: str,
+    repo: Annotated[ScheduleRepository, Depends(get_schedule_repository)],
+) -> list[ResourceDTO]:
+    """
+    Get all resources for a schedule.
+
+    **Public endpoint**.
+    """
+    resources = await repo.get_resources(schedule_id)
+    if resources is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Schedule not found")
+    return [ResourceDTO.model_validate(r) for r in resources]
+
+
+@router.post(
+    "/{schedule_id}/resources",
+    response_model=ResourceDTO,
+    status_code=status.HTTP_201_CREATED,
+    summary="Add a resource to a schedule",
+)
+async def add_schedule_resource(
+    schedule_id: str,
+    request: ResourceCreateRequest,
+    repo: Annotated[ScheduleRepository, Depends(get_schedule_repository)],
+    current_user_id: str = Depends(get_current_user_id),
+    current_role: UserRole = Depends(get_current_user_role),
+) -> ResourceDTO:
+    """
+    Add a resource to a schedule.
+
+    **Admin or assigned tutor only**.
+    """
+    await verify_schedule_access(schedule_id, current_user_id, current_role, repo)
+
+    resource_data = request.model_dump()
+    updated_doc = await repo.add_resource(schedule_id, resource_data)
+    if not updated_doc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to add resource"
+        )
+
+    # Return the newly added resource (last one in the list)
+    resources = updated_doc.get("resources", [])
+    return ResourceDTO.model_validate(resources[-1])
+
+
+@router.put(
+    "/{schedule_id}/resources/{resource_index}",
+    response_model=ResourceDTO,
+    summary="Update a resource in a schedule",
+)
+async def update_schedule_resource(
+    schedule_id: str,
+    resource_index: int,
+    request: ResourceUpdateRequest,
+    repo: Annotated[ScheduleRepository, Depends(get_schedule_repository)],
+    current_user_id: str = Depends(get_current_user_id),
+    current_role: UserRole = Depends(get_current_user_role),
+) -> ResourceDTO:
+    """
+    Update a resource at a specific index in a schedule.
+
+    **Admin or assigned tutor only**.
+    """
+    schedule_doc = await verify_schedule_access(schedule_id, current_user_id, current_role, repo)
+
+    # Validate index
+    resources = schedule_doc.get("resources", [])
+    if resource_index < 0 or resource_index >= len(resources):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Resource not found")
+
+    update_data = request.model_dump(exclude_none=True)
+    updated_doc = await repo.update_resource(schedule_id, resource_index, update_data)
+    if not updated_doc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to update resource"
+        )
+
+    # Return the updated resource
+    updated_resources = updated_doc.get("resources", [])
+    return ResourceDTO.model_validate(updated_resources[resource_index])
+
+
+@router.delete(
+    "/{schedule_id}/resources/{resource_index}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Delete a resource from a schedule",
+)
+async def delete_schedule_resource(
+    schedule_id: str,
+    resource_index: int,
+    repo: Annotated[ScheduleRepository, Depends(get_schedule_repository)],
+    current_user_id: str = Depends(get_current_user_id),
+    current_role: UserRole = Depends(get_current_user_role),
+) -> None:
+    """
+    Delete a resource at a specific index from a schedule.
+
+    **Admin or assigned tutor only**.
+    """
+    schedule_doc = await verify_schedule_access(schedule_id, current_user_id, current_role, repo)
+
+    # Validate index
+    resources = schedule_doc.get("resources", [])
+    if resource_index < 0 or resource_index >= len(resources):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Resource not found")
+
+    deleted_doc = await repo.delete_resource(schedule_id, resource_index)
+    if not deleted_doc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to delete resource"
+        )

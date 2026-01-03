@@ -40,7 +40,8 @@ COLLECTIONS = [
         "name": "enrollments",
         "file": "enrollments.json",
         "key": "_id",
-        "date_fields": ["enrolled_at", "completed_at"],
+        "date_fields": ["created_at", "paid_at", "enrolled_at", "completed_at"],
+        "nested_date_fields": [("instructor_notes", "date")],
     },
 ]  # type: list[dict[str, Any]]
 
@@ -51,9 +52,9 @@ async def seed_collection(db: AsyncIOMotorDatabase[Any], collection_info: dict[s
     """Seed a single collection."""
     collection_name = collection_info["name"]
     file_name = collection_info["file"]
-    file_name = collection_info["file"]
     key_field = collection_info["key"]
     date_fields: list[str] = collection_info.get("date_fields", [])
+    nested_date_fields: list[tuple[str, str]] = collection_info.get("nested_date_fields", [])
 
     file_path = os.path.join(SEED_DIR, file_name)
 
@@ -102,6 +103,19 @@ async def seed_collection(db: AsyncIOMotorDatabase[Any], collection_info: dict[s
                         item[field] = datetime.fromisoformat(item[field])
                 except ValueError:
                     pass
+
+        # Parse nested date fields (e.g., instructor_notes[].date)
+        for list_field, date_key in nested_date_fields:
+            if list_field in item and isinstance(item[list_field], list):
+                for nested_item in item[list_field]:
+                    if isinstance(nested_item, dict) and date_key in nested_item:
+                        if isinstance(nested_item[date_key], str):
+                            try:
+                                nested_item[date_key] = datetime.fromisoformat(
+                                    nested_item[date_key]
+                                )
+                            except ValueError:
+                                pass
 
         # Add timestamps if missing
         now = datetime.now(UTC)

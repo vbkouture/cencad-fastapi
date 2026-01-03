@@ -44,7 +44,19 @@
     "enrollment_count": 1,
     "status": "ACTIVE",
     "meeting_url": "https://zoom.us/j/987654321",
-    "timezone": "America/New_York"
+    "timezone": "America/New_York",
+    "resources": [
+      {
+        "title": "React Documentation",
+        "type": "course_material",
+        "details": "Official React documentation and guides"
+      },
+      {
+        "title": "Zoom Meeting",
+        "type": "class_link",
+        "details": "https://zoom.us/j/987654321"
+      }
+    ]
   },
   {
     "_id": "5f8d0d55b54764421b715803",
@@ -59,7 +71,24 @@
     "enrollment_count": 5,
     "status": "UPCOMING",
     "meeting_url": "https://zoom.us/j/aws-class",
-    "timezone": "UTC"
+    "timezone": "UTC",
+    "resources": [
+      {
+        "title": "AWS Whitepapers",
+        "type": "course_material",
+        "details": "Essential AWS architecture whitepapers"
+      },
+      {
+        "title": "AWS Labs",
+        "type": "lab_link",
+        "details": "https://aws.amazon.com/training/digital/"
+      },
+      {
+        "title": "Zoom Meeting",
+        "type": "class_link",
+        "details": "https://zoom.us/j/aws-class"
+      }
+    ]
   },
   {
     "_id": "5f8d0d55b54764421b715804",
@@ -74,7 +103,24 @@
     "enrollment_count": 2,
     "status": "UPCOMING",
     "meeting_url": "https://meet.google.com/gcp-class",
-    "timezone": "America/Los_Angeles"
+    "timezone": "America/Los_Angeles",
+    "resources": [
+      {
+        "title": "GCP Documentation",
+        "type": "course_material",
+        "details": "Google Cloud Platform official documentation"
+      },
+      {
+        "title": "Qwiklabs",
+        "type": "lab_link",
+        "details": "https://www.cloudskillsboost.google/"
+      },
+      {
+        "title": "Google Meet",
+        "type": "class_link",
+        "details": "https://meet.google.com/gcp-class"
+      }
+    ]
   },
   {
     "_id": "5f8d0d55b54764421b715805",
@@ -89,7 +135,24 @@
     "enrollment_count": 0,
     "status": "UPCOMING",
     "meeting_url": "https://teams.microsoft.com/azure-class",
-    "timezone": "Europe/London"
+    "timezone": "Europe/London",
+    "resources": [
+      {
+        "title": "Azure Learn Path",
+        "type": "course_material",
+        "details": "Microsoft Learn AZ-900 learning path"
+      },
+      {
+        "title": "Azure Sandbox",
+        "type": "lab_link",
+        "details": "https://learn.microsoft.com/en-us/training/azure/"
+      },
+      {
+        "title": "Teams Meeting",
+        "type": "class_link",
+        "details": "https://teams.microsoft.com/azure-class"
+      }
+    ]
   },
   {
     "_id": "5f8d0d55b54764421b715806",
@@ -104,6 +167,18 @@
     "enrollment_count": 38,
     "status": "COMPLETED",
     "meeting_url": "https://zoom.us/j/aws-class-old",
-    "timezone": "UTC"
+    "timezone": "UTC",
+    "resources": [
+      {
+        "title": "AWS Whitepapers",
+        "type": "course_material",
+        "details": "Essential AWS architecture whitepapers"
+      },
+      {
+        "title": "Zoom Meeting",
+        "type": "class_link",
+        "details": "https://zoom.us/j/aws-class-old"
+      }
+    ]
   }
 ]
