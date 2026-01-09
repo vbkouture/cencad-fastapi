@@ -3,6 +3,10 @@
 import pytest
 from httpx import AsyncClient
 
+from app.core.security import hash_password
+from app.db import UserRepository, get_database
+from app.domain.users.value_objects import UserRole
+
 
 @pytest.mark.anyio
 async def test_signup_creates_user_with_default_role(client: AsyncClient) -> None:
@@ -199,3 +203,40 @@ async def test_jwt_token_contains_user_id_and_role(client: AsyncClient) -> None:
     assert payload is not None
     assert payload["sub"] is not None  # user_id
     assert payload["role"] == "student"
+
+
+@pytest.mark.anyio
+async def test_corporate_login_successful(client: AsyncClient) -> None:
+    """Test successful login for corporate staff users."""
+    # Manually create corporate user since signup endpoint defaults to student
+    db = get_database()
+    user_repo = UserRepository(db)
+
+    hashed_pwd = hash_password("corpsecure123")
+    await user_repo.create_user(
+        email="corp@example.com",
+        name="Corporate Staff",
+        hashed_password=hashed_pwd,
+        role=UserRole.CORPORATE_STAFF,
+    )
+
+    # Login with corporate credentials
+    response = await client.post(
+        "/api/v1/auth/login",
+        json={
+            "email": "corp@example.com",
+            "password": "corpsecure123",
+        },
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["email"] == "corp@example.com"
+    assert data["role"] == UserRole.CORPORATE_STAFF
+    assert "access_token" in data
+
+    # Verify token payload
+    from app.core.security import decode_access_token
+
+    payload = decode_access_token(data["access_token"])
+    assert payload["role"] == UserRole.CORPORATE_STAFF

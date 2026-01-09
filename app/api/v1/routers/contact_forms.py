@@ -7,7 +7,11 @@ import logging
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import Response
 
-from app.api.v1.schemas.contact_form_dto import ContactFormRequest, ContactFormResponse
+from app.api.v1.schemas.contact_form_dto import (
+    ContactFormRequest,
+    ContactFormResponse,
+    ContactFormStatusUpdateRequest,
+)
 from app.core.dependencies import get_current_user_id, require_admin
 from app.core.email_service import send_admin_notification_email, send_contact_form_email
 from app.db import ContactFormRepository, get_database
@@ -116,3 +120,40 @@ async def delete_contact_form(
         )
 
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.patch("/{form_id}/status", response_model=ContactFormResponse)
+async def update_contact_form_status(
+    form_id: str,
+    request: ContactFormStatusUpdateRequest,
+    current_user_id: str = Depends(get_current_user_id),
+    _: UserRole = Depends(require_admin),
+) -> ContactFormResponse:
+    """
+    Update the status of a contact form submission.
+
+    Admin only.
+
+    - **form_id**: The ID of the contact form to update
+    - **status**: New status (PENDING, READ, IN_PROGRESS, REPLIED, DISCARDED)
+    - **note**: Optional note explaining the change
+
+    Returns the updated contact form.
+    """
+    db = get_database()
+    contact_form_repo = ContactFormRepository(db)
+
+    updated_doc = await contact_form_repo.update_status(
+        form_id=form_id,
+        status=request.status,
+        user_id=current_user_id,
+        note=request.note,
+    )
+
+    if not updated_doc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Contact form not found",
+        )
+
+    return ContactFormResponse.from_document(updated_doc)

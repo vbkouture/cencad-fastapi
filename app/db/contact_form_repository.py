@@ -8,6 +8,8 @@ from typing import Any
 from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorCollection, AsyncIOMotorDatabase
 
+from app.domain.contact_forms.value_objects import ContactFormStatus
+
 
 class ContactFormRepository:
     """Repository for ContactForm aggregate using MongoDB."""
@@ -42,7 +44,10 @@ class ContactFormRepository:
             "email": email.lower(),
             "subject": subject,
             "message": message,
+            "status": ContactFormStatus.PENDING,
+            "history": [],
             "created_at": datetime.now(UTC),
+            "updated_at": None,
         }
 
         result = await self.collection.insert_one(contact_form_doc)
@@ -69,6 +74,50 @@ class ContactFormRepository:
         """Get all contact form submissions from database."""
         return await self.collection.find().sort("created_at", -1).to_list(length=None)
 
+    async def update_status(
+        self,
+        form_id: str,
+        status: ContactFormStatus,
+        user_id: str,
+        note: str | None = None,
+    ) -> dict[str, Any] | None:
+        """
+        Update the status of a contact form.
+
+        Args:
+            form_id: MongoDB ObjectId as string
+            status: New status to set
+            user_id: ID of the user (admin) making the change
+            note: Optional note explaining the change
+
+        Returns:
+            Updated contact form document if found, None otherwise
+        """
+        from datetime import datetime
+
+        history_entry = {
+            "status": status,
+            "changed_by": user_id,
+            "changed_at": datetime.now(UTC),
+            "note": note,
+        }
+
+        try:
+            result = await self.collection.find_one_and_update(
+                {"_id": ObjectId(form_id)},
+                {
+                    "$set": {
+                        "status": status,
+                        "updated_at": datetime.now(UTC),
+                    },
+                    "$push": {"history": history_entry},
+                },
+                return_document=True,
+            )
+            return result
+        except Exception:
+            return None
+
     async def delete(self, form_id: str) -> bool:
         """
         Delete a contact form submission from database.
@@ -92,3 +141,6 @@ class ContactFormRepository:
 
         # Create index on email for potential lookups
         await self.collection.create_index("email")
+
+        # Create index on status for filtering
+        await self.collection.create_index("status")

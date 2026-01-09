@@ -122,7 +122,7 @@ async def stripe_webhook(
     enrollment_repo: Annotated[EnrollmentRepository, Depends(get_enrollment_repository)],
 ) -> dict[str, bool]:
     """
-    Handle Stripe webhooks.
+    Handle Stripe webhooks for both individual enrollments and corporate licenses.
     """
     payload = await request.body()
     sig_header = request.headers.get("stripe-signature")
@@ -144,7 +144,13 @@ async def stripe_webhook(
     # Handle the event
     if event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
-        await _handle_checkout_session_completed(session, enrollment_repo)
+        metadata = session.get("metadata", {})
+        purchase_type = metadata.get("purchase_type", "individual")
+
+        if purchase_type == "corporate_license":
+            await _handle_corporate_checkout_completed(session)
+        else:
+            await _handle_checkout_session_completed(session, enrollment_repo)
 
     return {"received": True}
 
@@ -153,7 +159,7 @@ async def _handle_checkout_session_completed(
     session: dict[str, Any], repo: EnrollmentRepository
 ) -> None:
     """
-    Process successful checkout session.
+    Process successful checkout session for individual enrollment.
     """
     # Verify payment status
     if session.get("payment_status") != "paid":
@@ -204,3 +210,79 @@ async def _handle_checkout_session_completed(
             stripe_customer_id=session.get("customer"),
             payment_status="PAID",
         )
+
+
+async def _handle_corporate_checkout_completed(session: dict[str, Any]) -> None:
+    """
+    Process successful checkout session for corporate license purchase.
+    Creates a corporate license with the purchased seats.
+    """
+    print(f"[WEBHOOK] Processing corporate checkout session: {session.get('id')}")
+
+    # Verify payment status
+    if session.get("payment_status") != "paid":
+        print(f"[WEBHOOK] Payment not completed. Status: {session.get('payment_status')}")
+        return
+
+    # Extract metadata
+    metadata = session.get("metadata", {})
+    corporate_account_id = metadata.get("corporate_account_id")
+    schedule_id = metadata.get("schedule_id")
+    course_id = metadata.get("course_id")
+    quantity_str = metadata.get("quantity")
+
+    print(
+        f"[WEBHOOK] Metadata - Corp Account: {corporate_account_id}, Schedule: {schedule_id}, Course: {course_id}, Quantity: {quantity_str}"
+    )
+
+    if not all([corporate_account_id, schedule_id, course_id, quantity_str]):
+        print(f"[WEBHOOK ERROR] Missing metadata in corporate session {session.get('id')}")
+        print(f"[WEBHOOK ERROR] Full metadata: {metadata}")
+        return
+
+    try:
+        quantity = int(quantity_str)
+    except ValueError:
+        print(f"[WEBHOOK ERROR] Invalid quantity in session {session.get('id')}: {quantity_str}")
+        return
+
+    # Import here to avoid circular dependency
+    from app.domain.corporate.models import CorporateLicense
+
+    db = get_database()
+    from app.db.corporate_repository import CorporateRepository
+
+    corp_repo = CorporateRepository(db)
+
+    # Idempotency check: Check if license exists with this payment intent
+    payment_intent_id = session.get("payment_intent")
+    if payment_intent_id:
+        existing = await corp_repo.licenses.find_one(
+            {"stripe_payment_intent_id": payment_intent_id}
+        )
+        if existing:
+            print(f"[WEBHOOK] Corporate license already processed for payment {payment_intent_id}")
+            return
+
+    # Create the corporate license
+    license_obj = CorporateLicense(
+        id=str(ObjectId()),
+        corporate_account_id=corporate_account_id,
+        schedule_id=schedule_id,
+        course_id=course_id,
+        total_seats=quantity,
+        assigned_seats=0,
+        amount_total=session.get("amount_total", 0) / 100.0,  # Convert from cents
+        currency=session.get("currency", "cad"),
+        stripe_payment_intent_id=payment_intent_id,
+    )
+
+    print(f"[WEBHOOK] Creating license: {license_obj.model_dump(mode='json')}")
+
+    success = await corp_repo.create_license(license_obj)
+    if success:
+        print(
+            f"[WEBHOOK SUCCESS] Created corporate license {license_obj.id} with {quantity} seats for account {corporate_account_id}"
+        )
+    else:
+        print(f"[WEBHOOK ERROR] Failed to create corporate license for session {session.get('id')}")

@@ -4,12 +4,17 @@ import secrets
 import string
 from typing import Any
 
+import stripe
 from bson import ObjectId
 from fastapi import APIRouter, Depends, HTTPException, status
 
+from app.core.config import settings
 from app.core.dependencies import get_current_user_id
+from app.core.email_service import send_trainee_invitation_email
 from app.core.security import hash_password
 from app.db import CorporateRepository, EnrollmentRepository, UserRepository, get_database
+from app.db.course_repository import CourseRepository
+from app.db.schedule_repository import ScheduleRepository
 from app.domain.corporate.models import (
     AccountStatus,
     AssignmentStatus,
@@ -33,6 +38,9 @@ from app.domain.corporate.schemas import (
     UpdateCorporateAccountRequest,
 )
 from app.domain.users.value_objects import UserRole
+
+# Initialize Stripe
+stripe.api_key = settings.stripe_secret_key
 
 # NOTE: For brevity, we assume a helper to verify corporate role
 # In a real app, strict permissions should be enforced.
@@ -243,12 +251,151 @@ async def create_checkout_session(
     current_account: dict[str, Any] = Depends(get_my_corporate_account),
 ) -> CheckoutSessionResponse:
     """
-    Simulate creating a Stripe Checkout Session.
-    In real implementation, integrate stripe library here.
+    Create a Stripe Checkout Session for bulk purchase of course seats.
+
+    This creates a payment session for purchasing multiple seats (licenses)
+    for a specific course schedule. Upon successful payment, the webhook
+    will create the corporate license with the purchased seats.
     """
-    # MOCK RESPONSE
-    return CheckoutSessionResponse(
-        url="https://checkout.stripe.com/pay/cs_test_mock...", session_id="cs_test_mock_12345"
+    db = get_database()
+    schedule_repo = ScheduleRepository(db)
+    course_repo = CourseRepository(db)
+
+    account_id = str(current_account["_id"])
+
+    # 1. Fetch Schedule
+    schedule = await schedule_repo.find_by_id(request.schedule_id)
+    if not schedule:
+        raise HTTPException(status_code=404, detail="Schedule not found")
+
+    # 2. Fetch Course (for price)
+    course_id = str(schedule["course_id"])
+    course = await course_repo.find_by_id(course_id)
+    if not course:
+        raise HTTPException(status_code=404, detail="Course associated with schedule not found")
+
+    # Check if price exists
+    price = course.get("cost")
+    if price is None:
+        raise HTTPException(status_code=400, detail="Course has no price defined")
+
+    # 3. Calculate bulk price (price per seat * quantity)
+    total_price = float(price) * request.quantity
+
+    try:
+        # 4. Create Stripe Session
+        checkout_session = stripe.checkout.Session.create(
+            mode="payment",
+            success_url=f"{settings.frontend_url}/corporate/checkout/success?session_id={{CHECKOUT_SESSION_ID}}",
+            cancel_url=f"{settings.frontend_url}/corporate/checkout/cancel",
+            client_reference_id=account_id,
+            line_items=[
+                {
+                    "price_data": {
+                        "currency": "cad",
+                        "product_data": {
+                            "name": f"{course['title']} - Bulk Purchase",
+                            "description": f"{request.quantity} seats for {course['title']}",
+                        },
+                        "unit_amount": int(price * 100),
+                    },
+                    "quantity": request.quantity,
+                }
+            ],
+            metadata={
+                "purchase_type": "corporate_license",
+                "corporate_account_id": account_id,
+                "schedule_id": request.schedule_id,
+                "course_id": course_id,
+                "quantity": str(request.quantity),
+            },
+            payment_intent_data={
+                "metadata": {
+                    "purchase_type": "corporate_license",
+                    "corporate_account_id": account_id,
+                    "schedule_id": request.schedule_id,
+                    "course_id": course_id,
+                    "quantity": str(request.quantity),
+                }
+            },
+        )
+
+        if not checkout_session.url:
+            raise HTTPException(status_code=500, detail="Failed to generate checkout URL")
+
+        return CheckoutSessionResponse(url=checkout_session.url, session_id=checkout_session.id)
+
+    except stripe.error.StripeError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.post("/licenses/create", response_model=CorporateLicenseResponse)
+async def create_license_manually(
+    request: CreateBulkCheckoutSessionRequest,
+    current_account: dict[str, Any] = Depends(get_my_corporate_account),
+) -> CorporateLicenseResponse:
+    """
+    Manually create a corporate license without payment (for testing/admin purposes).
+
+    This endpoint is useful for:
+    - Testing the license management flow without Stripe integration
+    - Admin operations to grant licenses
+    - Development environments where webhook delivery is not configured
+
+    In production, licenses should be created via the checkout flow + webhook.
+    """
+    db = get_database()
+    schedule_repo = ScheduleRepository(db)
+    course_repo = CourseRepository(db)
+    corp_repo = CorporateRepository(db)
+
+    account_id = str(current_account["_id"])
+
+    # 1. Validate Schedule exists
+    schedule = await schedule_repo.find_by_id(request.schedule_id)
+    if not schedule:
+        raise HTTPException(status_code=404, detail="Schedule not found")
+
+    # 2. Validate Course exists
+    course_id = str(schedule["course_id"])
+    course = await course_repo.find_by_id(course_id)
+    if not course:
+        raise HTTPException(status_code=404, detail="Course not found")
+
+    # 3. Calculate amount
+    price = course.get("cost", 0)
+    total_amount = float(price) * request.quantity
+
+    # 4. Create license
+    from app.domain.corporate.models import CorporateLicense
+
+    license_obj = CorporateLicense(
+        id=str(ObjectId()),
+        corporate_account_id=account_id,
+        schedule_id=request.schedule_id,
+        course_id=course_id,
+        total_seats=request.quantity,
+        assigned_seats=0,
+        amount_total=total_amount,
+        currency="cad",
+        stripe_payment_intent_id=None,  # No payment for manual creation
+    )
+
+    success = await corp_repo.create_license(license_obj)
+    if not success:
+        raise HTTPException(status_code=500, detail="Failed to create license")
+
+    return CorporateLicenseResponse(
+        id=license_obj.id,
+        course_id=license_obj.course_id,
+        schedule_id=license_obj.schedule_id,
+        total_seats=license_obj.total_seats,
+        assigned_seats=license_obj.assigned_seats,
+        amount_total=license_obj.amount_total,
+        currency=license_obj.currency,
+        status=license_obj.status,
+        purchased_at=license_obj.purchased_at,
+        expires_at=license_obj.expires_at,
     )
 
 
@@ -359,12 +506,19 @@ async def invite_trainee(
 
     await corp_repo.create_trainee(trainee)
 
-    # 4. Email Logic
-    # In a real app, use the email_service.
-    # For now we simulate logging the OTP if new user
+    # 4. Send Email with temporary password
     if new_user_created and otp:
-        print(f"EMAIL SENT TO {email}: Your temporary password is: {otp}")
-        # await send_otp_email(email, otp) # TODO implement
+        company_name = current_account.get("company_name", "Your Company")
+        email_sent = await send_trainee_invitation_email(
+            recipient_email=email,
+            recipient_name=request.name,
+            company_name=company_name,
+            temporary_password=otp,
+        )
+        if email_sent:
+            print(f"✅ Invitation email sent to {email}")
+        else:
+            print(f"⚠️ Failed to send invitation email to {email}, but trainee was created")
 
     # 5. Optional Assignment
     if request.license_id:
