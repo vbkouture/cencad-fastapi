@@ -12,31 +12,26 @@ from app.core.config import settings
 from app.core.dependencies import get_current_user_id
 from app.core.email_service import send_trainee_invitation_email
 from app.core.security import hash_password
-from app.db import CorporateRepository, EnrollmentRepository, UserRepository, get_database
+from app.db import (CorporateRepository, EnrollmentRepository, UserRepository,
+                    get_database)
 from app.db.course_repository import CourseRepository
 from app.db.schedule_repository import ScheduleRepository
-from app.domain.corporate.models import (
-    AccountStatus,
-    AssignmentStatus,
-    CorporateAccount,
-    CorporateTrainee,
-    TraineeAssignment,
-)
-from app.domain.corporate.schemas import (
-    AssignTraineeRequest,
-    CheckoutSessionResponse,
-    CorporateAccountResponse,
-    CorporateDashboardStats,
-    CorporateLicenseResponse,
-    CorporateTraineeResponse,
-    CreateBulkCheckoutSessionRequest,
-    InviteTraineeRequest,
-    PaginatedLicenseResponse,
-    PaginatedTraineeResponse,
-    RegisterCorporateRequest,
-    UnassignTraineeRequest,
-    UpdateCorporateAccountRequest,
-)
+from app.domain.corporate.models import (AccountStatus, AssignmentStatus,
+                                         CorporateAccount, CorporateTrainee,
+                                         TraineeAssignment)
+from app.domain.corporate.schemas import (AssignTraineeRequest,
+                                          CheckoutSessionResponse,
+                                          CorporateAccountResponse,
+                                          CorporateDashboardStats,
+                                          CorporateLicenseResponse,
+                                          CorporateTraineeResponse,
+                                          CreateBulkCheckoutSessionRequest,
+                                          InviteTraineeRequest,
+                                          PaginatedLicenseResponse,
+                                          PaginatedTraineeResponse,
+                                          RegisterCorporateRequest,
+                                          UnassignTraineeRequest,
+                                          UpdateCorporateAccountRequest)
 from app.domain.users.value_objects import UserRole
 
 # Initialize Stripe
@@ -279,11 +274,8 @@ async def create_checkout_session(
     if price is None:
         raise HTTPException(status_code=400, detail="Course has no price defined")
 
-    # 3. Calculate bulk price (price per seat * quantity)
-    total_price = float(price) * request.quantity
-
     try:
-        # 4. Create Stripe Session
+        # 3. Create Stripe Session
         checkout_session = stripe.checkout.Session.create(
             mode="payment",
             success_url=f"{settings.frontend_url}/corporate/checkout/success?session_id={{CHECKOUT_SESSION_ID}}",

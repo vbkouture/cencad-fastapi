@@ -334,7 +334,9 @@ async def test_assign_trainee_success(
     # Verify seat count increased
     lic_res = await client.get("/api/v1/corporate/licenses", headers=headers)
     data = lic_res.json()
-    my_lic = next(license_item for license_item in data["items"] if license_item["id"] == license_id)
+    my_lic = next(
+        license_item for license_item in data["items"] if license_item["id"] == license_id
+    )
     assert my_lic["assigned_seats"] == 1
 
 
@@ -410,5 +412,7 @@ async def test_unassign_trainee(client: AsyncClient, corporate_admin_token, seed
 
     # Verify seat count back to 0
     lic_res = await client.get("/api/v1/corporate/licenses", headers=headers)
-    my_lic = next(license_item for license_item in lic_res.json()["items"] if license_item["id"] == license_id)
+    my_lic = next(
+        license_item for license_item in lic_res.json()["items"] if license_item["id"] == license_id
+    )
     assert my_lic["assigned_seats"] == 0
